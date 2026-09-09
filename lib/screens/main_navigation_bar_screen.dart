@@ -14,7 +14,7 @@ class MainNavigationBarScreen extends StatefulWidget {
 }
 
 class _MainNavigationBarScreenState extends State<MainNavigationBarScreen> {
-  int _selectedIndex = 0;
+  late int _selectedIndex;
 
   final _pages = [
     MyRouteScreen(),
@@ -22,6 +22,12 @@ class _MainNavigationBarScreenState extends State<MainNavigationBarScreen> {
     DiaryScreen(),
     AppointmentReminderScreen(),
   ];
+
+  @override
+  void initState() {
+    _selectedIndex = 0;
+    super.initState();
+  }
 
   void _onTabTapped(int index) {
     setState(() {

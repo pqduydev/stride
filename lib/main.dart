@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:stride/screens/my_route_screen.dart';
+import 'package:stride/screens/main_navigation_bar_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Color(0xFFF7F8FA)),
         fontFamily: 'Inter',
       ),
-      home: const MyRouteScreen(),
+      home: const MainNavigationBarScreen(),
     );
   }
 }

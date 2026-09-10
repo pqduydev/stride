@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:stride/screens/add_image_screen.dart';
 import 'package:stride/screens/main_navigation_bar_screen.dart';
 import 'package:stride/screens/my_route_screen.dart';
 import 'package:stride/screens/route_create_screen.dart';
@@ -23,6 +24,10 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: "/route_create",
       builder: (context, state) => const RouteCreateScreen(),
+    ),
+    GoRoute(
+      path: "/add_image",
+      builder: (context, state) => const AddImageScreen(),
     ),
   ],
 );

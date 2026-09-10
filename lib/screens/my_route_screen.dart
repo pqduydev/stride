@@ -93,10 +93,24 @@ class MyRouteScreen extends StatelessWidget {
                       color: Color(0xFF1C2520),
                     ),
                   ),
-                  CircleAvatar(
-                    radius: 21,
-                    backgroundColor: Color(0xFFD2F36B),
-                    child: Icon(Icons.add, color: Color(0xFF1C2520)),
+                  InkWell(
+                    onTap: () => context.push("/route_create"),
+                    child: SizedBox(
+                      width: 40,
+                      height: 40,
+                      child: CircleAvatar(
+                        backgroundColor: Color(0xFFD2F36B),
+                        child: SvgPicture.asset(
+                          "assets/icons/ic_plus.svg",
+                          colorFilter: ColorFilter.mode(
+                            Color(0xFF1C2520),
+                            BlendMode.srcIn,
+                          ),
+                          width: 21,
+                          height: 21,
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),

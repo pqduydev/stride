@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:stride/widgets/item_app_bar_title.dart';
+import 'package:stride/widgets/item_bottom_button.dart';
 
 class RouteDetailsScreen extends StatelessWidget {
   const new({super.key});
@@ -8,16 +10,7 @@ class RouteDetailsScreen extends StatelessWidget {
     return DefaultTabController(
       length: 3,
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            "Lộ trình tập gym",
-            style: TextStyle(
-              color: Color(0xFF1C2520),
-              fontSize: 19,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-        ),
+        appBar: AppBar(title: ItemAppBarTitle(data: "Lộ trình tập gym")),
         body: Padding(
           padding: EdgeInsets.only(left: 20, right: 20, bottom: 20),
           child: Expanded(
@@ -233,30 +226,7 @@ class RouteDetailsScreen extends StatelessWidget {
             ),
           ),
         ),
-        bottomNavigationBar: Container(
-          padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
-          child: InkWell(
-            onTap: () {},
-            overlayColor: WidgetStateProperty.all(Colors.transparent),
-            child: Container(
-              width: double.infinity,
-              height: 56,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: const Color(0xFFD2F36B),
-                borderRadius: BorderRadius.circular(13),
-              ),
-              child: const Text(
-                'Xem lịch tập',
-                style: TextStyle(
-                  color: Color(0xFF1C2520),
-                  fontSize: 15,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ),
-          ),
-        ),
+        bottomNavigationBar: ItemBottomButton(data: "Xem lịch tập"),
       ),
     );
   }

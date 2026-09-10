@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:stride/screens/main_navigation_bar_screen.dart';
 import 'package:stride/screens/my_route_screen.dart';
+import 'package:stride/screens/route_create_screen.dart';
 import 'package:stride/screens/route_details_screen.dart';
 
 final GoRouter router = GoRouter(
-  initialLocation: "/my_route",
+  initialLocation: "/main_navigation_bar",
   routes: [
+    GoRoute(
+      path: "/main_navigation_bar",
+      builder: (context, state) => const MainNavigationBarScreen(),
+    ),
     GoRoute(
       path: "/my_route",
       builder: (context, state) => const MyRouteScreen(),
@@ -13,6 +19,10 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: "/route_details",
       builder: (context, state) => const RouteDetailsScreen(),
+    ),
+    GoRoute(
+      path: "/route_create",
+      builder: (context, state) => const RouteCreateScreen(),
     ),
   ],
 );
@@ -33,7 +43,6 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Color(0xFFF7F8FA)),
         fontFamily: 'Inter',
       ),
-      // home: const RouteDetailsScreen(),
       routerConfig: router,
     );
   }

@@ -1,184 +1,220 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:stride/widgets/item_app_bar_title.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
+import 'package:stride/model/route_model.dart';
+import 'package:stride/route/route_cubit/route_cubit.dart';
+import 'package:stride/route/route_cubit/route_state.dart';
 import 'package:stride/widgets/item_bottom_button.dart';
 import 'package:stride/widgets/item_date_time.dart';
 import 'package:stride/widgets/item_dropdown_duration.dart';
 import 'package:stride/widgets/item_radio_route_group.dart';
 import 'package:stride/widgets/item_text_field.dart';
 
-class RouteCreateScreen extends StatelessWidget {
-  const new({super.key});
+class RouteCreateScreen extends StatefulWidget {
+  final RouteModel? routeToEdit;
+
+  const RouteCreateScreen({super.key, this.routeToEdit});
+
+  @override
+  State<RouteCreateScreen> createState() => _RouteCreateScreenState();
+}
+
+class _RouteCreateScreenState extends State<RouteCreateScreen> {
+  final _titleController = TextEditingController();
+  final _descriptionController = TextEditingController();
+
+  String _selectedCategory = 'Sức khỏe';
+  String _selectedDuration = '1 tháng';
+  DateTime? _startDate;
+  DateTime? _endDate = DateTime.now().add(const Duration(days: 30));
+
+  bool get isEditMode => widget.routeToEdit != null;
+
+  final DateFormat _dateFormat = DateFormat("dd/MM/yyyy");
+
+  @override
+  void initState() {
+    super.initState();
+    if (isEditMode) {
+      final route = widget.routeToEdit!;
+      _titleController.text = route.title;
+      _descriptionController.text = route.description;
+      _selectedCategory = route.category;
+      _selectedDuration = route.duration;
+
+      try {
+        _startDate = _dateFormat.parse(route.startDate);
+        _endDate = _dateFormat.parse(route.endDate);
+      } catch (_) {}
+    }
+  }
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _descriptionController.dispose();
+    super.dispose();
+  }
+
+  void _onSave(BuildContext context) {
+    final title = _titleController.text.trim();
+    if (title.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Vui lòng nhập tên lộ trình')),
+      );
+      return;
+    }
+
+    final cubit = context.read<RouteCubit>();
+    final startDateStr = _startDate != null
+        ? _dateFormat.format(_startDate!)
+        : '';
+    final endDateStr = _endDate != null ? _dateFormat.format(_endDate!) : '';
+
+    if (isEditMode) {
+      final updatedRoute = widget.routeToEdit!.copyWith(
+        title: title,
+        category: _selectedCategory,
+        duration: _selectedDuration,
+        startDate: startDateStr,
+        endDate: endDateStr,
+        description: _descriptionController.text,
+      );
+      cubit.updateRoute(updatedRoute);
+    } else {
+      final newRoute = RouteModel(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        title: title,
+        category: _selectedCategory,
+        duration: _selectedDuration,
+        startDate: startDateStr,
+        endDate: endDateStr,
+        description: _descriptionController.text,
+      );
+      cubit.addRoute(newRoute);
+    }
+
+    Navigator.pop(context);
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: ItemAppBarTitle(data: "Tạo lộ trình")),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.only(left: 20, right: 20, bottom: 20),
-          child: Column(
-            crossAxisAlignment: .start,
-            children: [
-              Text(
-                "Một mục tiêu, một hành trình mới.",
-                style: TextStyle(
-                  color: const Color(0xFF768079),
-                  fontSize: 14,
-                  fontWeight: .w400,
+    return BlocBuilder<RouteCubit, RouteState>(
+      builder: (context, state) {
+        final isLoading = state.status == RouteStatus.loading;
+
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(isEditMode ? 'Chỉnh sửa lộ trình' : 'Tạo lộ trình mới'),
+          ),
+          body: SingleChildScrollView(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Tên lộ trình",
+                  style: TextStyle(
+                    color: const Color(0xFF768079),
+                    fontSize: 13,
+                    fontWeight: .w500,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 15),
-              // TextField
-              Column(
-                crossAxisAlignment: .start,
-                children: [
-                  Text(
-                    "Tên lộ trình",
-                    style: TextStyle(
-                      color: const Color(0xFF768079),
-                      fontSize: 13,
-                      fontWeight: .w500,
-                    ),
-                  ),
-                  const SizedBox(height: 5),
-                  SizedBox(
-                    height: 52,
-                    child: ItemTextField(hintText: "Nhập tên lộ trình"),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              // Cac Radio button
-              ItemRadioTouteGroup(),
-              const SizedBox(height: 20),
-              // Dropdown menu
-              ItemDropdownDuration(),
-              // Form chon ngay
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: .spaceBetween,
-                crossAxisAlignment: .center,
-                children: [
-                  ItemDateTime(
-                    label: "Ngày bắt đầu",
-                    defaultDate: DateTime(
-                      DateTime.now().year,
-                      DateTime.now().month,
-                      DateTime.now().day,
-                    ),
-                  ),
-                  ItemDateTime(
-                    label: "Ngày kết thúc",
-                    defaultDate: DateTime(
-                      DateTime.now().year,
-                      DateTime.now().month + 1,
-                      DateTime.now().day,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              // TextField soan thao
-              Column(
-                crossAxisAlignment: .start,
-                children: [
-                  Text(
-                    "Mô tả mục tiêu",
-                    style: TextStyle(
-                      color: const Color(0xFF768079),
-                      fontSize: 13,
-                      fontWeight: .w500,
-                    ),
-                  ),
-                  const SizedBox(height: 5),
-                  SizedBox(
-                    height: 90,
-                    child: TextField(
-                      maxLines: 3,
-                      style: TextStyle(
-                        color: const Color(0xFF1C2520),
-                        fontSize: 14,
-                        fontWeight: .w400,
-                      ),
-                      decoration: InputDecoration(
-                        hintText: "Nhập mô tả mục tiêu",
-                        hintStyle: TextStyle(
-                          color: const Color(0xFF768079),
-                          fontSize: 14,
-                          fontWeight: .w400,
-                        ),
-                        filled: true,
-                        fillColor: const Color(0xFFFFFFFF),
-
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: const Color(0xFFE8ECE8),
-                            width: 1,
-                            style: BorderStyle.solid,
-                          ),
-
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: const Color(0xFFE8ECE8),
-                            width: 1,
-                            style: BorderStyle.solid,
-                          ),
-
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 15),
-              Container(
-                height: 57,
-                padding: EdgeInsets.all(15),
-                alignment: .center,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFEEF4E5),
-                  borderRadius: BorderRadius.circular(12),
+                const SizedBox(height: 5),
+                ItemTextField(
+                  hintText: 'Nhập tên lộ trình...',
+                  hintTextFontSize: 15,
+                  controller: _titleController,
+                  textColor: 0xFF1C2520,
+                  textFontSize: 15,
+                  textFontWeight: FontWeight.w500,
+                  borderColor: '0xFFE8ECE8',
+                  borderWidth: 1,
+                  borderStyle: 'solid',
                 ),
-                child: Row(
-                  mainAxisAlignment: .spaceBetween,
+                const SizedBox(height: 16),
+                ItemRadioTouteGroup(
+                  selectedCategory: _selectedCategory,
+                  onCategoryChanged: (category) {
+                    setState(() => _selectedCategory = category);
+                  },
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  "Thời lượng",
+                  style: TextStyle(
+                    color: const Color(0xFF768079),
+                    fontSize: 13,
+                    fontWeight: .w500,
+                  ),
+                ),
+                const SizedBox(height: 5),
+                ItemDropdownDuration(
+                  selectedDuration: _selectedDuration,
+                  onDurationChanged: (duration) {
+                    setState(() => _selectedDuration = duration);
+                  },
+                ),
+                const SizedBox(height: 16),
+                Row(
                   children: [
-                    Row(
-                      crossAxisAlignment: .center,
-                      children: [
-                        SvgPicture.asset(
-                          "assets/icons/ic_bell.svg",
-                          width: 20,
-                          height: 20,
-                        ),
-                        const SizedBox(width: 10),
-                        Text(
-                          "Thêm lịch tập & nhắc hẹn",
-                          style: TextStyle(
-                            color: const Color(0xFF526C30),
-                            fontSize: 14,
-                            fontWeight: .w600,
-                          ),
-                        ),
-                      ],
+                    Expanded(
+                      child: ItemDateTime(
+                        label: 'Ngày bắt đầu',
+                        initialDate: _startDate,
+                        onDateSelected: (date) {
+                          setState(() => _startDate = date);
+                        },
+                      ),
                     ),
-                    SvgPicture.asset(
-                      "assets/icons/Ic_chevron_right.svg",
-                      width: 18,
-                      height: 18,
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: ItemDateTime(
+                        label: 'Ngày kết thúc',
+                        initialDate: _endDate,
+                        onDateSelected: (date) {
+                          setState(() => _endDate = date);
+                        },
+                      ),
                     ),
                   ],
                 ),
-              ),
-            ],
+                const SizedBox(height: 16),
+                Text(
+                  "Mô tả mục tiêu",
+                  style: TextStyle(
+                    color: const Color(0xFF768079),
+                    fontSize: 13,
+                    fontWeight: .w500,
+                  ),
+                ),
+                const SizedBox(height: 5),
+                SizedBox(
+                  height: 90,
+                  child: ItemTextField(
+                    hintText: 'Nhập mô tả mục tiêu...',
+                    hintTextFontSize: 15,
+                    controller: _descriptionController,
+                    textColor: 0xFF1C2520,
+                    textFontSize: 15,
+                    textFontWeight: FontWeight.w400,
+                    borderColor: '0xFFE8ECE8',
+                    borderWidth: 1,
+                    borderStyle: 'solid',
+                    maxLines: 3,
+                  ),
+                ),
+                const SizedBox(height: 24),
+              ],
+            ),
           ),
-        ),
-      ),
-      bottomNavigationBar: ItemBottomButton(data: "Tạo lộ trình"),
+          bottomNavigationBar: ItemBottomButton(
+            text: isEditMode ? 'Lưu thay đổi' : 'Tạo lộ trình',
+            isLoading: isLoading,
+            onTap: () => _onSave(context),
+          ),
+        );
+      },
     );
   }
 }

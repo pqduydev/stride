@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:stride/model/route_model.dart';
+import 'package:stride/route/route_cubit/route_cubit.dart';
+import 'package:stride/repository/route_repository.dart';
 import 'package:stride/screens/add_image_screen.dart';
 import 'package:stride/screens/main_navigation_bar_screen.dart';
-import 'package:stride/screens/my_route_screen.dart';
+import 'package:stride/route/route_screen/my_route_screen.dart';
 import 'package:stride/screens/route_create_screen.dart';
 import 'package:stride/screens/route_details_screen.dart';
 
@@ -26,6 +30,13 @@ final GoRouter router = GoRouter(
       builder: (context, state) => const RouteCreateScreen(),
     ),
     GoRoute(
+      path: "/route_edit",
+      builder: (context, state) {
+        final routeToEdit = state.extra as RouteModel?;
+        return RouteCreateScreen(routeToEdit: routeToEdit);
+      },
+    ),
+    GoRoute(
       path: "/add_image",
       builder: (context, state) => const AddImageScreen(),
     ),
@@ -41,14 +52,22 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      title: 'Stride App',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Color(0xFFF7F8FA)),
-        fontFamily: 'Inter',
+    return RepositoryProvider(
+      create: (context) => RouteRepository(),
+      child: BlocProvider(
+        create: (context) =>
+            RouteCubit(RepositoryProvider.of<RouteRepository>(context))
+              ..loadRoutes(),
+        child: MaterialApp.router(
+          title: 'Stride App',
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(seedColor: Color(0xFFF7F8FA)),
+            fontFamily: 'Inter',
+          ),
+          routerConfig: router,
+        ),
       ),
-      routerConfig: router,
     );
   }
 }

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:stride/route/route_cubit/route_cubit.dart';
+import 'package:stride/route/route_cubit/route_state.dart';
 import 'package:stride/widgets/item_card_switch.dart';
 
 class MyRouteScreen extends StatelessWidget {
@@ -115,196 +118,250 @@ class MyRouteScreen extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 16),
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.all(Radius.circular(20)),
-                  border: Border.all(
-                    color: const Color(0xFFE8ECE8),
-                    width: 1,
-                    style: BorderStyle.solid,
-                  ),
-                ),
-                child: InkWell(
-                  onTap: () => context.push("/route_details"),
-                  child: Column(
-                    children: [
-                      Container(
-                        width: double.infinity,
-                        height: 140,
-                        decoration: BoxDecoration(
-                          image: const DecorationImage(
-                            image: AssetImage(
-                              'assets/images/img_background.jpg',
-                            ),
-                            fit: BoxFit.cover,
-                          ),
-                          borderRadius: const BorderRadius.all(
-                            Radius.circular(20),
-                          ),
-                        ),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Color(0xFF202C25).withValues(alpha: 0.64),
-                            borderRadius: const BorderRadius.all(
-                              Radius.circular(20),
-                            ),
-                          ),
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 20,
-                              vertical: 20,
-                            ),
-                            child: Column(
-                              crossAxisAlignment: .start,
-                              mainAxisAlignment: .spaceBetween,
-                              children: [
-                                Container(
-                                  width: 151,
-                                  height: 25,
-                                  alignment: .center,
-                                  padding: EdgeInsets.only(left: 10),
-                                  decoration: const BoxDecoration(
-                                    color: Color(0xFFD2F36B),
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(6),
-                                    ),
-                                  ),
-                                  child: Text(
-                                    "MỤC TIÊU 3 THÁNG",
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleLarge
-                                        ?.copyWith(
-                                          fontSize: 11,
-                                          fontWeight: FontWeight.w600,
-                                          color: Color(0xFF1C2520),
-                                        ),
-                                  ),
-                                ),
-                                const SizedBox(height: 15),
-                                SizedBox(
-                                  child: Column(
-                                    crossAxisAlignment: .start,
-                                    children: [
-                                      Text(
-                                        "Tập luyện bền bỉ",
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .titleLarge
-                                            ?.copyWith(
-                                              color: Color(0xFFFFFFFF),
-                                              fontSize: 25,
-                                              fontWeight: FontWeight.w700,
-                                            ),
-                                      ),
-                                      const SizedBox(height: 5),
-                                      Text(
-                                        "17/08 - 17/11/2026",
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .labelSmall
-                                            ?.copyWith(
-                                              color: Color(0xFFE4EBE3),
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w400,
-                                            ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 20,
-                        ),
-                        child: Column(
-                          crossAxisAlignment: .start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: .spaceBetween,
-                              crossAxisAlignment: .center,
-                              children: [
-                                Text(
-                                  "Đã hoàn thành",
-                                  style: Theme.of(context).textTheme.labelSmall
-                                      ?.copyWith(
-                                        color: Color(0xFF768079),
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w400,
-                                      ),
-                                ),
-                                Text(
-                                  "12 / 40 buổi",
-                                  style: Theme.of(context).textTheme.labelSmall
-                                      ?.copyWith(
-                                        color: Color(0xFF1C2520),
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 13),
-                            Container(
-                              height: 7,
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                color: Color(0xFFE8ECE8),
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(5),
-                                ),
+              // ListView ListRoute
+              BlocBuilder<RouteCubit, RouteState>(
+                builder: (context, state) {
+                  if (state.status == RouteStatus.loading) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  if (state.status == RouteStatus.failure) {
+                    return Text(state.errorMessage ?? 'Có lỗi xảy ra');
+                  }
+
+                  return Container(
+                    height: 150,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: const Color(0xFFE8ECE8)),
+                    ),
+                    child: Material(
+                      // Thêm widget Material để áp dụng hiệu ứng ripple
+                      color: Colors.transparent,
+                      borderRadius: BorderRadius.circular(19),
+                      clipBehavior:
+                          Clip.antiAlias, // Cắt triệt để màu nền của ListTile
+                      child: ListView.builder(
+                        itemCount: state.routes.length,
+                        itemExtent: 50,
+                        physics: const BouncingScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          final route = state.routes[index];
+                          final isEven = index % 2 == 0;
+                          return ListTile(
+                            tileColor: isEven
+                                ? const Color(0xFFEEF4E5)
+                                : Colors.white,
+                            dense: true,
+                            title: Text(
+                              route.title,
+                              style: const TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w400,
+                                color: Color(0xFF1C2520),
                               ),
-                              child: FractionallySizedBox(
-                                alignment: .centerLeft,
-                                widthFactor: 0.37,
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: Color(0xFF526C30),
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(5),
-                                    ),
-                                  ),
-                                ),
-                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
-                            const SizedBox(height: 13),
-                            Row(
-                              mainAxisAlignment: .spaceBetween,
-                              crossAxisAlignment: .center,
-                              children: [
-                                Text(
-                                  "Tuần 5",
-                                  style: Theme.of(context).textTheme.labelSmall
-                                      ?.copyWith(
-                                        color: Color(0xFF768079),
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w400,
-                                      ),
-                                ),
-                                Text(
-                                  "30%",
-                                  style: Theme.of(context).textTheme.labelSmall
-                                      ?.copyWith(
-                                        color: Color(0xFF526C30),
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
+                            onTap: () =>
+                                context.push("/route_edit", extra: route),
+                          );
+                        },
                       ),
-                    ],
-                  ),
-                ),
+                    ),
+                  );
+                },
               ),
+              // Container(
+              //   decoration: BoxDecoration(
+              //     color: Colors.white,
+              //     borderRadius: BorderRadius.all(Radius.circular(20)),
+              //     border: Border.all(
+              //       color: const Color(0xFFE8ECE8),
+              //       width: 1,
+              //       style: BorderStyle.solid,
+              //     ),
+              //   ),
+              //   child: InkWell(
+              //     onTap: () => context.push("/route_details"),
+              //     child: Column(
+              //       children: [
+              //         Container(
+              //           width: double.infinity,
+              //           height: 140,
+              //           decoration: BoxDecoration(
+              //             image: const DecorationImage(
+              //               image: AssetImage(
+              //                 'assets/images/img_background.jpg',
+              //               ),
+              //               fit: BoxFit.cover,
+              //             ),
+              //             borderRadius: const BorderRadius.all(
+              //               Radius.circular(20),
+              //             ),
+              //           ),
+              //           child: Container(
+              //             decoration: BoxDecoration(
+              //               color: Color(0xFF202C25).withValues(alpha: 0.64),
+              //               borderRadius: const BorderRadius.all(
+              //                 Radius.circular(20),
+              //               ),
+              //             ),
+              //             child: Padding(
+              //               padding: EdgeInsets.symmetric(
+              //                 horizontal: 20,
+              //                 vertical: 20,
+              //               ),
+              //               child: Column(
+              //                 crossAxisAlignment: .start,
+              //                 mainAxisAlignment: .spaceBetween,
+              //                 children: [
+              //                   Container(
+              //                     width: 151,
+              //                     height: 25,
+              //                     alignment: .center,
+              //                     padding: EdgeInsets.only(left: 10),
+              //                     decoration: const BoxDecoration(
+              //                       color: Color(0xFFD2F36B),
+              //                       borderRadius: BorderRadius.all(
+              //                         Radius.circular(6),
+              //                       ),
+              //                     ),
+              //                     child: Text(
+              //                       "MỤC TIÊU 3 THÁNG",
+              //                       style: Theme.of(context)
+              //                           .textTheme
+              //                           .titleLarge
+              //                           ?.copyWith(
+              //                             fontSize: 11,
+              //                             fontWeight: FontWeight.w600,
+              //                             color: Color(0xFF1C2520),
+              //                           ),
+              //                     ),
+              //                   ),
+              //                   const SizedBox(height: 15),
+              //                   SizedBox(
+              //                     child: Column(
+              //                       crossAxisAlignment: .start,
+              //                       children: [
+              //                         Text(
+              //                           "Tập luyện bền bỉ",
+              //                           style: Theme.of(context)
+              //                               .textTheme
+              //                               .titleLarge
+              //                               ?.copyWith(
+              //                                 color: Color(0xFFFFFFFF),
+              //                                 fontSize: 25,
+              //                                 fontWeight: FontWeight.w700,
+              //                               ),
+              //                         ),
+              //                         const SizedBox(height: 5),
+              //                         Text(
+              //                           "17/08 - 17/11/2026",
+              //                           style: Theme.of(context)
+              //                               .textTheme
+              //                               .labelSmall
+              //                               ?.copyWith(
+              //                                 color: Color(0xFFE4EBE3),
+              //                                 fontSize: 12,
+              //                                 fontWeight: FontWeight.w400,
+              //                               ),
+              //                         ),
+              //                       ],
+              //                     ),
+              //                   ),
+              //                 ],
+              //               ),
+              //             ),
+              //           ),
+              //         ),
+              //         Padding(
+              //           padding: EdgeInsets.symmetric(
+              //             horizontal: 20,
+              //             vertical: 20,
+              //           ),
+              //           child: Column(
+              //             crossAxisAlignment: .start,
+              //             children: [
+              //               Row(
+              //                 mainAxisAlignment: .spaceBetween,
+              //                 crossAxisAlignment: .center,
+              //                 children: [
+              //                   Text(
+              //                     "Đã hoàn thành",
+              //                     style: Theme.of(context).textTheme.labelSmall
+              //                         ?.copyWith(
+              //                           color: Color(0xFF768079),
+              //                           fontSize: 13,
+              //                           fontWeight: FontWeight.w400,
+              //                         ),
+              //                   ),
+              //                   Text(
+              //                     "12 / 40 buổi",
+              //                     style: Theme.of(context).textTheme.labelSmall
+              //                         ?.copyWith(
+              //                           color: Color(0xFF1C2520),
+              //                           fontSize: 14,
+              //                           fontWeight: FontWeight.w700,
+              //                         ),
+              //                   ),
+              //                 ],
+              //               ),
+              //               const SizedBox(height: 13),
+              //               Container(
+              //                 height: 7,
+              //                 width: double.infinity,
+              //                 decoration: BoxDecoration(
+              //                   color: Color(0xFFE8ECE8),
+              //                   borderRadius: BorderRadius.all(
+              //                     Radius.circular(5),
+              //                   ),
+              //                 ),
+              //                 child: FractionallySizedBox(
+              //                   alignment: .centerLeft,
+              //                   widthFactor: 0.37,
+              //                   child: Container(
+              //                     decoration: BoxDecoration(
+              //                       color: Color(0xFF526C30),
+              //                       borderRadius: BorderRadius.all(
+              //                         Radius.circular(5),
+              //                       ),
+              //                     ),
+              //                   ),
+              //                 ),
+              //               ),
+              //               const SizedBox(height: 13),
+              //               Row(
+              //                 mainAxisAlignment: .spaceBetween,
+              //                 crossAxisAlignment: .center,
+              //                 children: [
+              //                   Text(
+              //                     "Tuần 5",
+              //                     style: Theme.of(context).textTheme.labelSmall
+              //                         ?.copyWith(
+              //                           color: Color(0xFF768079),
+              //                           fontSize: 13,
+              //                           fontWeight: FontWeight.w400,
+              //                         ),
+              //                   ),
+              //                   Text(
+              //                     "30%",
+              //                     style: Theme.of(context).textTheme.labelSmall
+              //                         ?.copyWith(
+              //                           color: Color(0xFF526C30),
+              //                           fontSize: 14,
+              //                           fontWeight: FontWeight.w700,
+              //                         ),
+              //                   ),
+              //                 ],
+              //               ),
+              //             ],
+              //           ),
+              //         ),
+              //       ],
+              //     ),
+              //   ),
+              // ),
               const SizedBox(height: 30),
               Column(
                 children: [
@@ -319,12 +376,16 @@ class MyRouteScreen extends StatelessWidget {
                           color: Color(0xFF1C2520),
                         ),
                       ),
-                      Text(
-                        "Xem lịch",
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w700,
-                          color: Color(0xFF526C30),
+                      InkWell(
+                        onTap: () => context.push("/add_image"),
+                        child: Text(
+                          "Xem lịch",
+                          style: Theme.of(context).textTheme.titleLarge
+                              ?.copyWith(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w700,
+                                color: Color(0xFF526C30),
+                              ),
                         ),
                       ),
                     ],

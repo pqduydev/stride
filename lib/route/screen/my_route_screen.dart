@@ -13,8 +13,8 @@ class MyRouteScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        forceMaterialTransparency: true,
         scrolledUnderElevation: 0,
-        elevation: 0,
         shadowColor: Colors.transparent,
         title: Container(
           padding: EdgeInsets.symmetric(horizontal: 5),
@@ -27,12 +27,15 @@ class MyRouteScreen extends StatelessWidget {
                 height: 39.15,
                 child: Stack(
                   children: [
-                    SvgPicture.asset(
-                      'assets/icons/ic_logo.svg',
-                      height: 29,
-                      colorFilter: const ColorFilter.mode(
-                        Color(0xFF1C2520),
-                        BlendMode.srcIn,
+                    InkWell(
+                      onTap: () => context.push("/login"),
+                      child: SvgPicture.asset(
+                        'assets/icons/ic_logo.svg',
+                        height: 29,
+                        colorFilter: const ColorFilter.mode(
+                          Color(0xFF1C2520),
+                          BlendMode.srcIn,
+                        ),
                       ),
                     ),
 

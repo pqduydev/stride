@@ -9,7 +9,7 @@ import 'package:stride/screens/main_navigation_bar_screen.dart';
 import 'package:stride/route/screen/my_route_screen.dart';
 import 'package:stride/screens/route_create_screen.dart';
 import 'package:stride/screens/route_details_screen.dart';
-import 'package:stride/user/screen/auth_screen.dart';
+import 'package:stride/auth/screen/auth_screen.dart';
 
 final GoRouter router = GoRouter(
   initialLocation: "/main_navigation_bar",
@@ -44,6 +44,10 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: "/register",
       builder: (context, state) => AuthScreen(isLogin: false),
+    ),
+    GoRoute(
+      path: "/login",
+      builder: (context, state) => AuthScreen(isLogin: true),
     ),
   ],
 );

@@ -4,6 +4,8 @@ import 'package:intl/intl.dart';
 import 'package:stride/model/route_model.dart';
 import 'package:stride/route/route_cubit/route_cubit.dart';
 import 'package:stride/route/route_cubit/route_state.dart';
+import 'package:stride/widgets/appbar_custom.dart';
+import 'package:stride/widgets/item_app_bar_title.dart';
 import 'package:stride/widgets/item_bottom_button.dart';
 import 'package:stride/widgets/item_date_time.dart';
 import 'package:stride/widgets/item_dropdown_duration.dart';
@@ -129,8 +131,13 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
         final isLoading = state.actionStatus == RouteStatus.loading;
 
         return Scaffold(
-          appBar: AppBar(
-            title: Text(isEditMode ? 'Chỉnh sửa lộ trình' : 'Tạo lộ trình mới'),
+          appBar: PreferredSize(
+            preferredSize: const Size.fromHeight(kToolbarHeight),
+            child: AppbarCustom(
+              title: ItemAppBarTitle(
+                data: isEditMode ? 'Chỉnh sửa lộ trình' : 'Tạo lộ trình mới',
+              ),
+            ),
           ),
           body: Form(
             key: _formKey,
@@ -271,10 +278,13 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
               ),
             ),
           ),
-          bottomNavigationBar: ItemBottomButton(
-            text: isEditMode ? 'Lưu thay đổi' : 'Tạo lộ trình',
-            isLoading: isLoading,
-            onTap: () => _onSave(context),
+          bottomNavigationBar: Padding(
+            padding: EdgeInsets.fromLTRB(20, 20, 20, 30),
+            child: ItemBottomButton(
+              text: isEditMode ? 'Lưu thay đổi' : 'Tạo lộ trình',
+              isLoading: isLoading,
+              onTap: () => _onSave(context),
+            ),
           ),
         );
       },

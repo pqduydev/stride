@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:stride/widgets/appbar_custom.dart';
 import 'package:stride/widgets/item_app_bar_title.dart';
 import 'package:stride/widgets/item_bottom_button.dart';
 
@@ -10,7 +11,10 @@ class RouteDetailsScreen extends StatelessWidget {
     return DefaultTabController(
       length: 3,
       child: Scaffold(
-        appBar: AppBar(title: ItemAppBarTitle(data: "Lộ trình tập gym")),
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(kToolbarHeight),
+          child: AppbarCustom(title: ItemAppBarTitle(data: 'Lộ trình tập gym')),
+        ),
         body: Padding(
           padding: EdgeInsets.only(left: 20, right: 20, bottom: 20),
           child: Column(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:stride/widgets/appbar_custom.dart';
 import 'package:stride/widgets/item_app_bar_title.dart';
 import 'package:stride/widgets/item_bottom_button.dart';
 
@@ -9,7 +10,10 @@ class AddImageScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: ItemAppBarTitle(data: "Thêm hình ảnh")),
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: AppbarCustom(title: ItemAppBarTitle(data: 'Thêm hình ảnh')),
+      ),
       body: Padding(
         padding: EdgeInsets.fromLTRB(20, 0, 20, 30),
         child: Column(
@@ -139,7 +143,10 @@ class AddImageScreen extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: ItemBottomButton(text: "Thêm 1 ảnh", onTap: () {}),
+      bottomNavigationBar: Padding(
+        padding: EdgeInsets.fromLTRB(20, 20, 20, 30),
+        child: ItemBottomButton(text: "Thêm 1 ảnh", onTap: () {}),
+      ),
     );
   }
 }

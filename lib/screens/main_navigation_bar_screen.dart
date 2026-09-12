@@ -23,6 +23,13 @@ class _MainNavigationBarScreenState extends State<MainNavigationBarScreen> {
     AppointmentReminderScreen(),
   ];
 
+  final _itemList = [
+    _Items(assetName: "assets/icons/ic_layout_grid.svg", label: "Lộ trình"),
+    _Items(assetName: "assets/icons/ic_calendar_days.svg", label: "Lịch hẹn"),
+    _Items(assetName: "assets/icons/ic_diary.svg", label: "Nhật ký"),
+    _Items(assetName: "assets/icons/ic_bell.svg", label: "Nhắc hẹn"),
+  ];
+
   @override
   void initState() {
     _selectedIndex = 0;
@@ -83,53 +90,28 @@ class _MainNavigationBarScreenState extends State<MainNavigationBarScreen> {
           ),
           backgroundColor: Color(0xFFFFFFFF),
           items: [
-            BottomNavigationBarItem(
-              icon: _buildCuttomIconSvg(
-                assetName: 'assets/icons/ic_layout_grid.svg',
-                isSelected: false,
+            for (_Items item in _itemList)
+              BottomNavigationBarItem(
+                icon: _buildCuttomIconSvg(
+                  assetName: item.assetName,
+                  isSelected: false,
+                ),
+                activeIcon: _buildCuttomIconSvg(
+                  assetName: item.assetName,
+                  isSelected: true,
+                ),
+                label: item.label,
               ),
-              activeIcon: _buildCuttomIconSvg(
-                assetName: 'assets/icons/ic_layout_grid.svg',
-                isSelected: true,
-              ),
-              label: "Lộ trình",
-            ),
-            BottomNavigationBarItem(
-              icon: _buildCuttomIconSvg(
-                assetName: 'assets/icons/ic_calendar_days.svg',
-                isSelected: false,
-              ),
-              activeIcon: _buildCuttomIconSvg(
-                assetName: 'assets/icons/ic_calendar_days.svg',
-                isSelected: true,
-              ),
-              label: "Lịch hẹn",
-            ),
-            BottomNavigationBarItem(
-              icon: _buildCuttomIconSvg(
-                assetName: 'assets/icons/ic_diary.svg',
-                isSelected: false,
-              ),
-              activeIcon: _buildCuttomIconSvg(
-                assetName: 'assets/icons/ic_diary.svg',
-                isSelected: true,
-              ),
-              label: "Nhật ký",
-            ),
-            BottomNavigationBarItem(
-              icon: _buildCuttomIconSvg(
-                assetName: 'assets/icons/ic_bell.svg',
-                isSelected: false,
-              ),
-              activeIcon: _buildCuttomIconSvg(
-                assetName: 'assets/icons/ic_bell.svg',
-                isSelected: true,
-              ),
-              label: "Nhắc hẹn",
-            ),
           ],
         ),
       ),
     );
   }
+}
+
+class _Items {
+  late String assetName;
+  late String label;
+
+  _Items({required this.assetName, required this.label});
 }

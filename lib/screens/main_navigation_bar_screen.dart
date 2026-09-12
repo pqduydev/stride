@@ -6,7 +6,7 @@ import 'package:stride/screens/diary_screen.dart';
 import 'package:stride/route/screen/my_route_screen.dart';
 
 class MainNavigationBarScreen extends StatefulWidget {
-  const new({super.key});
+  const MainNavigationBarScreen({super.key});
 
   @override
   State<MainNavigationBarScreen> createState() =>

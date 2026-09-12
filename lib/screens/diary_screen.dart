@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class DiaryScreen extends StatelessWidget {
-  const new({super.key});
+  const DiaryScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

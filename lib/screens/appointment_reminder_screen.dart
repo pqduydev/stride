@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class AppointmentReminderScreen extends StatelessWidget {
-  const new({super.key});
+  const AppointmentReminderScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

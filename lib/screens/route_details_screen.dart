@@ -3,7 +3,7 @@ import 'package:stride/widgets/item_app_bar_title.dart';
 import 'package:stride/widgets/item_bottom_button.dart';
 
 class RouteDetailsScreen extends StatelessWidget {
-  const new({super.key});
+  const RouteDetailsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -234,7 +234,7 @@ class RouteDetailsScreen extends StatelessWidget {
 }
 
 class _OverView extends StatelessWidget {
-  const new();
+  const _OverView();
 
   @override
   Widget build(BuildContext context) {

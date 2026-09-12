@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 class ItemDateTime extends StatefulWidget {
   final String label;
   final DateTime? initialDate;
+  final DateTime? firstDate;
   final ValueChanged<DateTime> onDateSelected;
 
   const ItemDateTime({
@@ -12,6 +13,7 @@ class ItemDateTime extends StatefulWidget {
     required this.label,
     this.initialDate,
     required this.onDateSelected,
+    this.firstDate,
   });
 
   @override
@@ -40,15 +42,19 @@ class _ItemDateTimeState extends State<ItemDateTime> {
       selectedDayTime = widget.initialDate;
       _controller.text = widget.initialDate != null
           ? DateFormat("dd/MM/yyyy").format(widget.initialDate!)
-          : DateFormat("dd/MM/yyyy").format(DateTime.now());
+          : '';
     }
   }
 
   void openSelectDayTime() async {
+    final minDate = widget.firstDate ?? DateTime(1900);
+    final currentInitial = selectedDayTime ?? DateTime.now();
+
     final result = await showDatePicker(
       context: context,
-      initialDate: selectedDayTime ?? DateTime.now(),
-      firstDate: DateTime.now(),
+      // Đảm bảo initialDate không bao giờ nhỏ hơn firstDate
+      initialDate: currentInitial.isBefore(minDate) ? minDate : currentInitial,
+      firstDate: minDate,
       lastDate: DateTime(2100),
     );
 
@@ -82,7 +88,7 @@ class _ItemDateTimeState extends State<ItemDateTime> {
         ),
         const SizedBox(height: 5),
         Container(
-          width: 150,
+          width: double.infinity,
           height: 49,
           decoration: BoxDecoration(
             color: const Color(0xFFFFFFFF),

@@ -48,15 +48,18 @@ class MyRouteScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              CircleAvatar(
-                radius: 21,
-                backgroundColor: const Color(0xFFE7EDD9),
-                child: Text(
-                  "TA",
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontSize: 13,
-                    fontWeight: FontWeight.bold,
-                    color: const Color(0xFF526C30),
+              InkWell(
+                onTap: () => context.push("/register"),
+                child: CircleAvatar(
+                  radius: 21,
+                  backgroundColor: const Color(0xFFE7EDD9),
+                  child: Text(
+                    "TA",
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                      color: const Color(0xFF526C30),
+                    ),
                   ),
                 ),
               ),
@@ -119,23 +122,24 @@ class MyRouteScreen extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               // ListView ListRoute
-              BlocBuilder<RouteCubit, RouteState>(
-                builder: (context, state) {
-                  if (state.status == RouteStatus.loading) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
+              Container(
+                height: 150,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: const Color(0xFFE8ECE8)),
+                  color: Colors.white,
+                ),
+                child: BlocBuilder<RouteCubit, RouteState>(
+                  builder: (context, state) {
+                    if (state.listStatus == RouteStatus.loading) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
 
-                  if (state.status == RouteStatus.failure) {
-                    return Text(state.errorMessage ?? 'Có lỗi xảy ra');
-                  }
+                    if (state.listStatus == RouteStatus.failure) {
+                      return Text(state.errorMessage ?? 'Có lỗi xảy ra');
+                    }
 
-                  return Container(
-                    height: 150,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: const Color(0xFFE8ECE8)),
-                    ),
-                    child: Material(
+                    return Material(
                       // Thêm widget Material để áp dụng hiệu ứng ripple
                       color: Colors.transparent,
                       borderRadius: BorderRadius.circular(19),
@@ -168,9 +172,9 @@ class MyRouteScreen extends StatelessWidget {
                           );
                         },
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
               // Container(
               //   decoration: BoxDecoration(

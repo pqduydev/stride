@@ -3,7 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:stride/screens/appointment_reminder_screen.dart';
 import 'package:stride/screens/appointment_screen.dart';
 import 'package:stride/screens/diary_screen.dart';
-import 'package:stride/route/route_screen/my_route_screen.dart';
+import 'package:stride/route/screen/my_route_screen.dart';
 
 class MainNavigationBarScreen extends StatefulWidget {
   const new({super.key});

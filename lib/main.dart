@@ -6,9 +6,10 @@ import 'package:stride/route/route_cubit/route_cubit.dart';
 import 'package:stride/repository/route_repository.dart';
 import 'package:stride/screens/add_image_screen.dart';
 import 'package:stride/screens/main_navigation_bar_screen.dart';
-import 'package:stride/route/route_screen/my_route_screen.dart';
+import 'package:stride/route/screen/my_route_screen.dart';
 import 'package:stride/screens/route_create_screen.dart';
 import 'package:stride/screens/route_details_screen.dart';
+import 'package:stride/user/screen/auth_screen.dart';
 
 final GoRouter router = GoRouter(
   initialLocation: "/main_navigation_bar",
@@ -40,6 +41,10 @@ final GoRouter router = GoRouter(
       path: "/add_image",
       builder: (context, state) => const AddImageScreen(),
     ),
+    GoRoute(
+      path: "/register",
+      builder: (context, state) => AuthScreen(isLogin: false),
+    ),
   ],
 );
 
@@ -57,7 +62,7 @@ class MyApp extends StatelessWidget {
       child: BlocProvider(
         create: (context) =>
             RouteCubit(RepositoryProvider.of<RouteRepository>(context))
-              ..loadRoutes(),
+              ..loadRoutes(), // Tải danh sách lộ trình khi khởi tạo
         child: MaterialApp.router(
           title: 'Stride App',
           debugShowCheckedModeBanner: false,

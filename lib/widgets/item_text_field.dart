@@ -17,6 +17,7 @@ class ItemTextField extends StatelessWidget {
   final bool readOnly;
   final VoidCallback? onTap;
   final TextEditingController? controller;
+  final FormFieldValidator<String>? validator;
 
   const ItemTextField({
     super.key,
@@ -36,12 +37,14 @@ class ItemTextField extends StatelessWidget {
     this.readOnly = false,
     this.onTap,
     this.controller,
+    this.validator,
   });
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
+    return TextFormField(
       controller: controller,
+      validator: validator,
       style: TextStyle(
         color: Color(textColor),
         fontSize: textFontSize,
@@ -58,6 +61,15 @@ class ItemTextField extends StatelessWidget {
         filled: true,
         fillColor: Color(
           backgroundColor != null ? int.parse(backgroundColor!) : 0xFFFFFFFF,
+        ),
+
+        helperText: ' ',
+        helperStyle: const TextStyle(fontSize: 12, height: 1.2),
+
+        errorStyle: const TextStyle(
+          color: Colors.redAccent,
+          fontSize: 12,
+          height: 1.2,
         ),
 
         enabledBorder: OutlineInputBorder(
@@ -85,6 +97,16 @@ class ItemTextField extends StatelessWidget {
                 : BorderStyle.solid,
           ),
 
+          borderRadius: BorderRadius.circular(12),
+        ),
+
+        errorBorder: OutlineInputBorder(
+          borderSide: const BorderSide(color: Colors.redAccent, width: 1),
+          borderRadius: BorderRadius.circular(12),
+        ),
+
+        focusedErrorBorder: OutlineInputBorder(
+          borderSide: const BorderSide(color: Colors.redAccent, width: 1),
           borderRadius: BorderRadius.circular(12),
         ),
       ),

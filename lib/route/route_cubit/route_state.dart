@@ -4,24 +4,28 @@ import 'package:stride/model/route_model.dart';
 enum RouteStatus { initial, loading, success, failure }
 
 class RouteState extends Equatable {
-  final RouteStatus status;
+  final RouteStatus listStatus;
+  final RouteStatus actionStatus;
   final List<RouteModel> routes;
   final String? errorMessage;
 
   const RouteState({
-    this.status = RouteStatus.initial,
+    this.listStatus = RouteStatus.initial,
+    this.actionStatus = RouteStatus.initial,
     this.routes = const [],
     this.errorMessage,
   });
 
   RouteState copyWith({
-    RouteStatus? status,
+    RouteStatus? listStatus,
+    RouteStatus? actionStatus,
     List<RouteModel>? routes,
     String? errorMessage,
     bool clearErrorMessage = false,
   }) {
     return RouteState(
-      status: status ?? this.status,
+      listStatus: listStatus ?? this.listStatus,
+      actionStatus: actionStatus ?? this.actionStatus,
       routes: routes ?? this.routes,
       errorMessage: clearErrorMessage
           ? null
@@ -30,5 +34,5 @@ class RouteState extends Equatable {
   }
 
   @override
-  List<Object?> get props => [status, routes, errorMessage];
+  List<Object?> get props => [listStatus, actionStatus, routes, errorMessage];
 }

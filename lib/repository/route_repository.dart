@@ -35,17 +35,28 @@ class RouteRepository {
   Future<List<RouteModel>> fetchRoutes() async {
     await Future.delayed(const Duration(milliseconds: 200));
     return List.from(_routes);
+    // Trả về một bản sao của danh sách để tránh thay đổi trực tiếp
+    // không thông qua repository
   }
 
   // Thêm Lộ trình mới
-  Future<void> addRoute(RouteModel newRoute) async {
+  Future<void> addRoute(RouteModel newRoute, {bool isError = false}) async {
     await Future.delayed(const Duration(milliseconds: 200));
+    if (isError) {
+      throw Exception('Không thể thêm lộ trình. Bạn hãy thử lại.');
+    }
     _routes.add(newRoute);
   }
 
   // Cập nhật Lộ trình cũ
-  Future<void> updateRoute(RouteModel updatedRoute) async {
+  Future<void> updateRoute(
+    RouteModel updatedRoute, {
+    bool isError = false,
+  }) async {
     await Future.delayed(const Duration(milliseconds: 200));
+    if (isError) {
+      throw Exception('Không thể sửa lộ trình. Bạn hãy thử lại.');
+    }
     final index = _routes.indexWhere((r) => r.id == updatedRoute.id);
     if (index != -1) {
       _routes[index] = updatedRoute;

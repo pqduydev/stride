@@ -9,14 +9,16 @@ class RouteCubit extends Cubit<RouteState> {
   RouteCubit(this._routeRepository) : super(RouteState());
 
   Future<void> loadRoutes() async {
-    emit(state.copyWith(status: RouteStatus.loading, clearErrorMessage: true));
+    emit(
+      state.copyWith(listStatus: RouteStatus.loading, clearErrorMessage: true),
+    );
 
     try {
       final routes = await _routeRepository.fetchRoutes();
 
       emit(
         state.copyWith(
-          status: RouteStatus.success,
+          listStatus: RouteStatus.success,
           routes: routes,
           clearErrorMessage: true,
         ),
@@ -24,7 +26,7 @@ class RouteCubit extends Cubit<RouteState> {
     } catch (e) {
       emit(
         state.copyWith(
-          status: RouteStatus.failure,
+          listStatus: RouteStatus.failure,
           errorMessage: 'Không tải được buổi tập. Bạn hãy thử lại.',
         ),
       );
@@ -32,15 +34,26 @@ class RouteCubit extends Cubit<RouteState> {
   }
 
   // Thêm lộ trình
-  Future<void> addRoute(RouteModel route) async {
-    emit(state.copyWith(status: RouteStatus.loading, clearErrorMessage: true));
+  Future<void> addRoute(RouteModel route, {bool isError = false}) async {
+    emit(
+      state.copyWith(
+        actionStatus: RouteStatus.loading,
+        clearErrorMessage: true,
+      ),
+    );
     try {
-      await _routeRepository.addRoute(route);
+      await _routeRepository.addRoute(route, isError: isError);
+      emit(
+        state.copyWith(
+          actionStatus: RouteStatus.success,
+          clearErrorMessage: true,
+        ),
+      );
       await loadRoutes(); // Tải lại danh sách sau khi thêm
     } catch (e) {
       emit(
         state.copyWith(
-          status: RouteStatus.failure,
+          actionStatus: RouteStatus.failure,
           errorMessage: 'Không thể thêm lộ trình. Bạn hãy thử lại.',
         ),
       );
@@ -48,18 +61,30 @@ class RouteCubit extends Cubit<RouteState> {
   }
 
   // Sửa lộ trình
-  Future<void> updateRoute(RouteModel route) async {
-    emit(state.copyWith(status: RouteStatus.loading, clearErrorMessage: true));
+  Future<void> updateRoute(RouteModel route, {bool isError = false}) async {
+    emit(
+      state.copyWith(
+        actionStatus: RouteStatus.loading,
+        clearErrorMessage: true,
+      ),
+    );
     try {
-      await _routeRepository.updateRoute(route);
+      await _routeRepository.updateRoute(route, isError: isError);
+      emit(
+        state.copyWith(
+          actionStatus: RouteStatus.success,
+          clearErrorMessage: true,
+        ),
+      );
       await loadRoutes(); // Tải lại danh sách sau khi sửa
     } catch (e) {
       emit(
         state.copyWith(
-          status: RouteStatus.failure,
+          actionStatus: RouteStatus.failure,
           errorMessage: 'Không thể sửa lộ trình. Bạn hãy thử lại.',
         ),
       );
     }
+    await loadRoutes(); // Tải lại danh sách sau khi sửa
   }
 }

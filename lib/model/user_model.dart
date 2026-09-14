@@ -1,15 +1,42 @@
 class UserModel {
-  final String id;
-  final String name;
+  final int? id;
+  final String username;
   final String email;
+  final String? firstName;
+  final String? lastName;
+  final String? accessToken;
+  final String? refreshToken;
 
-  UserModel({required this.id, required this.name, required this.email});
+  UserModel({
+    this.id,
+    required this.username,
+    required this.email,
+    this.firstName,
+    this.lastName,
+    this.accessToken,
+    this.refreshToken,
+  });
 
-  UserModel copyWith({String? id, String? name, String? email}) {
+  // Chuẩn hóa chữ liệu nhận được
+  factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
-      id: id ?? this.id,
-      name: name ?? this.name,
-      email: email ?? this.email,
+      id: json['id'],
+      username: json['username'] ?? '',
+      email: json['email'] ?? '',
+      firstName: json['first_name'],
+      lastName: json['last_name'],
+      accessToken: json['access'],
+      refreshToken: json['refresh'],
     );
+  }
+
+  // Chuẩn hóa dữ liệu gửi đi
+  Map<String, dynamic> toJson() {
+    return {
+      'username': username,
+      'email': email,
+      'first_name': firstName,
+      'last_name': lastName,
+    };
   }
 }

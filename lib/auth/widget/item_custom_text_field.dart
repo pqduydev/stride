@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class ItemCustomTextField extends StatelessWidget {
+class ItemCustomTextField extends StatefulWidget {
   final String label;
   final String? hintText;
   final TextEditingController? controller;
@@ -25,10 +25,30 @@ class ItemCustomTextField extends StatelessWidget {
   });
 
   @override
+  State<ItemCustomTextField> createState() => _ItemCustomTextFieldState();
+}
+
+class _ItemCustomTextFieldState extends State<ItemCustomTextField> {
+  // 1. Khởi tạo FocusNode để điều khiển trạng thái focus của TextField
+  late FocusNode _focusNode;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode = FocusNode();
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return FormField<String>(
-      validator: validator,
-      initialValue: controller?.text,
+      validator: widget.validator,
+      initialValue: widget.controller?.text,
       builder: (field) {
         final hasError = field.hasError;
 
@@ -36,70 +56,86 @@ class ItemCustomTextField extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              height: 76.15,
-              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: hasError ? Colors.redAccent : const Color(0xFFE8ECE8),
-                  width: 1,
+            // 2. Bọc Container bằng GestureDetector để bắt sự kiện chạm
+            GestureDetector(
+              onTap: () {
+                // Yêu cầu focus vào TextField khi người dùng chạm vào bất kỳ đâu trong vùng này
+                _focusNode.requestFocus();
+              },
+              // Thêm HitTestBehavior.opaque để đảm bảo bắt được sự kiện tap cả ở những khoảng trắng
+              behavior: HitTestBehavior.opaque,
+              child: Container(
+                height: 76.15,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 15,
+                  vertical: 12,
                 ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    label,
-                    style: const TextStyle(
-                      color: Color(0xFF768079),
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                    ),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: hasError
+                        ? Colors.redAccent
+                        : const Color(0xFFE8ECE8),
+                    width: 1,
                   ),
-                  const SizedBox(height: 4),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: controller,
-                          autofillHints: autofillHints,
-                          obscureText: obscureText,
-                          textInputAction: textInputAction,
-                          keyboardType: keyboardType,
-                          onChanged: (value) {
-                            field.didChange(value);
-                          },
-                          style: const TextStyle(
-                            color: Color(0xFF1C2520),
-                            fontSize: 15,
-                            fontWeight: FontWeight.w500,
-                          ),
-                          decoration: InputDecoration(
-                            hintText: hintText,
-                            hintStyle: const TextStyle(
-                              color: Color(0xFFC4C9C5),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      widget.label,
+                      style: const TextStyle(
+                        color: Color(0xFF768079),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            // 3. Gắn FocusNode vào TextField
+                            focusNode: _focusNode,
+                            controller: widget.controller,
+                            autofillHints: widget.autofillHints,
+                            obscureText: widget.obscureText,
+                            textInputAction: widget.textInputAction,
+                            keyboardType: widget.keyboardType,
+                            onChanged: (value) {
+                              field.didChange(value);
+                            },
+                            style: const TextStyle(
+                              color: Color(0xFF1C2520),
                               fontSize: 15,
-                              fontWeight: FontWeight.w400,
+                              fontWeight: FontWeight.w500,
                             ),
-                            isDense: true,
-                            contentPadding: EdgeInsets.zero,
-                            border: InputBorder.none,
-                            enabledBorder: InputBorder.none,
-                            focusedBorder: InputBorder.none,
+                            decoration: InputDecoration(
+                              hintText: widget.hintText,
+                              hintStyle: const TextStyle(
+                                color: Color(0xFFC4C9C5),
+                                fontSize: 15,
+                                fontWeight: FontWeight.w400,
+                              ),
+                              isDense: true,
+                              contentPadding: EdgeInsets.zero,
+                              border: InputBorder.none,
+                              enabledBorder: InputBorder.none,
+                              focusedBorder: InputBorder.none,
+                            ),
                           ),
                         ),
-                      ),
-                      if (suffixIcon != null) ...[
-                        const SizedBox(width: 8),
-                        suffixIcon!,
+                        if (widget.suffixIcon != null) ...[
+                          const SizedBox(width: 8),
+                          widget.suffixIcon!,
+                        ],
                       ],
-                    ],
-                  ),
-                ],
+                    ),
+                  ],
+                ),
               ),
             ),
 

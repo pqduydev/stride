@@ -10,6 +10,8 @@ class ItemCustomTextField extends StatefulWidget {
   final TextInputType? keyboardType;
   final TextInputAction? textInputAction;
   final Iterable<String>? autofillHints;
+  final bool autocorrect;
+  final bool enableSuggestions;
 
   const ItemCustomTextField({
     super.key,
@@ -22,6 +24,8 @@ class ItemCustomTextField extends StatefulWidget {
     this.keyboardType = TextInputType.text,
     this.textInputAction = TextInputAction.next,
     this.autofillHints,
+    this.autocorrect = true,
+    this.enableSuggestions = true,
   });
 
   @override
@@ -29,7 +33,6 @@ class ItemCustomTextField extends StatefulWidget {
 }
 
 class _ItemCustomTextFieldState extends State<ItemCustomTextField> {
-  // 1. Khởi tạo FocusNode để điều khiển trạng thái focus của TextField
   late FocusNode _focusNode;
 
   @override
@@ -48,7 +51,6 @@ class _ItemCustomTextFieldState extends State<ItemCustomTextField> {
   Widget build(BuildContext context) {
     return FormField<String>(
       validator: widget.validator,
-      initialValue: widget.controller?.text,
       builder: (field) {
         final hasError = field.hasError;
 
@@ -56,13 +58,8 @@ class _ItemCustomTextFieldState extends State<ItemCustomTextField> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            // 2. Bọc Container bằng GestureDetector để bắt sự kiện chạm
             GestureDetector(
-              onTap: () {
-                // Yêu cầu focus vào TextField khi người dùng chạm vào bất kỳ đâu trong vùng này
-                _focusNode.requestFocus();
-              },
-              // Thêm HitTestBehavior.opaque để đảm bảo bắt được sự kiện tap cả ở những khoảng trắng
+              onTap: () => _focusNode.requestFocus(),
               behavior: HitTestBehavior.opaque,
               child: Container(
                 height: 76.15,
@@ -98,16 +95,15 @@ class _ItemCustomTextFieldState extends State<ItemCustomTextField> {
                       children: [
                         Expanded(
                           child: TextField(
-                            // 3. Gắn FocusNode vào TextField
                             focusNode: _focusNode,
                             controller: widget.controller,
                             autofillHints: widget.autofillHints,
                             obscureText: widget.obscureText,
                             textInputAction: widget.textInputAction,
                             keyboardType: widget.keyboardType,
-                            onChanged: (value) {
-                              field.didChange(value);
-                            },
+                            autocorrect: widget.autocorrect,
+                            enableSuggestions: widget.enableSuggestions,
+                            onChanged: (value) => field.didChange(value),
                             style: const TextStyle(
                               color: Color(0xFF1C2520),
                               fontSize: 15,
@@ -138,8 +134,6 @@ class _ItemCustomTextFieldState extends State<ItemCustomTextField> {
                 ),
               ),
             ),
-
-            // Giữ cố định kích thước ô lỗi, không làm giật/đẩy layout bên dưới
             Padding(
               padding: const EdgeInsets.only(top: 1, left: 2),
               child: Visibility(

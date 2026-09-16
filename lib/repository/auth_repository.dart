@@ -1,9 +1,60 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stride/model/user_model.dart';
+import 'package:stride/services/api_exception.dart';
 import 'package:stride/services/dio_client.dart';
 
 class AuthRepository {
   final Dio _dio = DioClient.instance;
+
+  Future<UserModel> login({
+    required String username,
+    required String password,
+  }) async {
+    try {
+      final response = await _dio.post(
+        'v1/auth/login/',
+        data: {'username': username, 'password': password},
+      );
+
+      final user = UserModel.fromJson(response.data);
+      final prefs = await SharedPreferences.getInstance();
+
+      // Lưu Tokens & User Profile Data
+      if (user.accessToken != null) {
+        await prefs.setString('access_token', user.accessToken!);
+      }
+      if (user.refreshToken != null) {
+        await prefs.setString('refresh_token', user.refreshToken!);
+      }
+      await prefs.setString('user_data', jsonEncode(user.toJson()));
+
+      return user;
+    } on DioException catch (e) {
+      throw ApiException.fromDioException(e);
+    } catch (e) {
+      throw {'Đã có lỗi xảy ra, vui lòng thử lại'};
+    }
+  }
+
+  // Lấy dữ liệu đã được lưu lại dưới SharedPreferences sau khi đăng nhập thành công
+  Future<UserModel?> getSavedUser() async {
+    final prefs = await SharedPreferences.getInstance();
+    final userDataString = prefs.getString('user_data');
+
+    if (userDataString != null && userDataString.isNotEmpty) {
+      try {
+        Map<String, dynamic> userMap = jsonDecode(userDataString);
+        return UserModel.fromJson(userMap);
+      } catch (e) {
+        return null;
+      }
+    }
+    return null;
+  }
 
   Future<UserModel> register({
     required String username,
@@ -25,43 +76,31 @@ class AuthRepository {
           'last_name': lastName,
         },
       );
+
       return UserModel.fromJson(response.data);
     } on DioException catch (e) {
-      final errorData = e.response?.data;
-
-      if (errorData is Map) {
-        // Ném nguyên bản Map lỗi từ Django để tầng Cubit xử lý
-        throw errorData;
-      }
-      throw {'detail': 'Đã có lỗi xảy ra, vui lòng thử lại'};
+      throw ApiException.fromDioException(e);
+    } catch (e) {
+      throw {'Đã có lỗi xảy ra, vui lòng thử lại'};
     }
   }
 
-  Future<UserModel> login({
-    required String email,
-    required String password,
-  }) async {
+  Future<void> logout() async {
+    final prefs = await SharedPreferences.getInstance();
+    final refreshToken = prefs.getString('refresh_token');
+
     try {
-      final normalizedEmail = email.trim().toLowerCase();
-
-      final response = await _dio.post(
-        'v1/auth/login/',
-        data: {'username': normalizedEmail, 'password': password},
-      );
-
-      return UserModel.fromJson(response.data);
-    } on DioException catch (e) {
-      final errorData = e.response?.data;
-      String errorMessage = 'Tài khoản hoặc mật khẩu không chính xác';
-
-      if (errorData is Map) {
-        if (errorData.containsKey('detail')) {
-          errorMessage = errorData['detail'];
-        } else if (errorData.containsKey('non_field_errors')) {
-          errorMessage = errorData['non_field_errors'][0];
-        }
+      if (refreshToken != null && refreshToken.isNotEmpty) {
+        await _dio.post('v1/auth/logout/', data: {'refresh': refreshToken});
       }
-      throw Exception(errorMessage);
+    } on DioException catch (e) {
+      throw ApiException.fromDioException(e);
+    } catch (e) {
+      throw {'Đã có lỗi xảy ra, vui lòng thử lại'};
+    } finally {
+      await prefs.remove('access_token');
+      await prefs.remove('refresh_token');
+      await prefs.remove('user_data');
     }
   }
 }

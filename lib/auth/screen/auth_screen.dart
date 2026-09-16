@@ -5,13 +5,12 @@ import 'package:go_router/go_router.dart';
 import 'package:stride/auth/auth_cubit/auth_cubit.dart';
 import 'package:stride/auth/auth_cubit/auth_state.dart';
 import 'package:stride/auth/widget/item_custom_text_field.dart';
-import 'package:stride/repository/auth_repository.dart';
+import 'package:stride/core/utils/instant_obscure_controller.dart';
 import 'package:stride/widgets/appbar_custom.dart';
 import 'package:stride/widgets/item_app_bar_title.dart';
 import 'package:stride/widgets/item_bottom_button.dart';
 import 'package:stride/widgets/item_social_button.dart';
 
-// AuthScreen đóng vai trò bọc BlocProvider
 class AuthScreen extends StatelessWidget {
   final bool isLogin;
 
@@ -19,14 +18,10 @@ class AuthScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => AuthCubit(AuthRepository()),
-      child: AuthView(isLogin: isLogin),
-    );
+    return AuthView(isLogin: isLogin);
   }
 }
 
-// AuthView chứa toàn bộ giao diện và logic UI
 class AuthView extends StatefulWidget {
   final bool isLogin;
 
@@ -40,22 +35,20 @@ class _AuthViewState extends State<AuthView> {
   final _formKey = GlobalKey<FormState>();
   late bool _isLogin;
 
-  String? _repositoryThrowError;
-
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
   final _usernameController = TextEditingController();
   final _mailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  final _passwordConfirmController = TextEditingController();
+  final _passwordController = InstantObscureController();
+  final _passwordConfirmController = InstantObscureController();
+
+  bool _obscurePassword = true;
 
   @override
   void initState() {
     super.initState();
     _isLogin = widget.isLogin;
 
-    // Lắng nghe thay đổi input để tự động xóa trạng
-    // thái lỗi cũ, giúp nút bấm sumbit không bị đơ
     final controllers = [
       _usernameController,
       _firstNameController,
@@ -86,15 +79,12 @@ class _AuthViewState extends State<AuthView> {
   }
 
   void _submit() {
-    // Reset lỗi form cũ trước khi gửi request mới
-    setState(() {});
-
     if (!_formKey.currentState!.validate()) return;
 
     final cubit = context.read<AuthCubit>();
     if (_isLogin) {
       cubit.login(
-        email: _mailController.text.trim(),
+        username: _usernameController.text,
         password: _passwordController.text,
       );
     } else {
@@ -104,7 +94,7 @@ class _AuthViewState extends State<AuthView> {
         lastName: _lastNameController.text.trim(),
         email: _mailController.text.trim(),
         password: _passwordController.text,
-        passwordConfirm: _passwordConfirmController.text, // Thêm tham số này
+        passwordConfirm: _passwordConfirmController.text,
       );
     }
   }
@@ -122,8 +112,9 @@ class _AuthViewState extends State<AuthView> {
       ),
       body: BlocListener<AuthCubit, AuthState>(
         listener: (context, state) {
-          if (state.status == AuthStatus.failure) {
-            // Ép form validate lại để các ItemCustomTextField đọc lỗi từ state.fieldErrors
+          if (state.status == AuthStatus.authenticated) {
+            context.go('/main_navigation_bar');
+          } else if (state.status == AuthStatus.failure) {
             _formKey.currentState?.validate();
 
             if (state.errorMessage != null) {
@@ -134,48 +125,29 @@ class _AuthViewState extends State<AuthView> {
                 ),
               );
             }
-          } else if (state.status == AuthStatus.success) {
-            if (state.status == AuthStatus.success && !_isLogin) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text(
-                    "Đăng ký thành công! Vui lòng đăng nhập.",
-                    style: TextStyle(color: Color(0xFF526C30)),
-                  ),
-                  backgroundColor: Color(0xFFEEF4E5),
+          } else if (state.status == AuthStatus.success && !_isLogin) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text(
+                  "Đăng ký thành công! Vui lòng đăng nhập.",
+                  style: TextStyle(color: Color(0xFF526C30)),
                 ),
-              );
+                backgroundColor: Color(0xFFEEF4E5),
+              ),
+            );
 
-              // Đăng ký thành công -> Chuyển sang UI Đăng nhập
-              setState(() {
-                _isLogin = true;
+            setState(() {
+              _isLogin = true;
+              _firstNameController.clear();
+              _lastNameController.clear();
+              _usernameController.clear();
+              _mailController.clear();
+              _passwordController.clear();
+              _passwordConfirmController.clear();
+              _obscurePassword = true;
+            });
 
-                // Xóa trắng Form
-                _firstNameController.clear();
-                _lastNameController.clear();
-                _usernameController.clear();
-                _mailController.clear();
-                _passwordController.clear();
-                _lastNameController.clear();
-                _passwordConfirmController.clear();
-              });
-
-              context.read<AuthCubit>().resetStatus();
-            } else {
-              // Đăng nhập thành công
-              final currentUser = state.users.isNotEmpty
-                  ? state.users.last
-                  : null;
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    "Đăng nhập thành công! Chào ${currentUser?.username ?? ''}",
-                  ),
-                  backgroundColor: const Color(0xFF526C30),
-                ),
-              );
-              context.pop(context);
-            }
+            context.read<AuthCubit>().resetStatus();
           }
         },
         child: Form(
@@ -222,9 +194,7 @@ class _AuthViewState extends State<AuthView> {
                           },
                         ),
                       ),
-                      const SizedBox(
-                        width: 10,
-                      ), // Khoảng cách giữa ô Họ và ô Tên
+                      const SizedBox(width: 10),
                       Expanded(
                         child: ItemCustomTextField(
                           label: 'Tên',
@@ -264,14 +234,10 @@ class _AuthViewState extends State<AuthView> {
                     if (value == null || value.trim().isEmpty) {
                       return 'Vui lòng nhập tên đăng nhập';
                     }
-
-                    // Biểu thức chính quy kiểm tra ràng buộc username
                     final usernameRegex = RegExp(r'^[a-zA-Z0-9_]{3,20}$');
                     if (!usernameRegex.hasMatch(value.trim())) {
                       return 'Username từ 3-20 ký tự, chỉ gồm chữ, số và dấu _';
                     }
-
-                    // Đọc lỗi từ Cubit/State do Django trả về
                     final fieldErrors = context
                         .read<AuthCubit>()
                         .state
@@ -305,11 +271,6 @@ class _AuthViewState extends State<AuthView> {
                       if (!emailRegex.hasMatch(value.trim())) {
                         return 'Email không đúng định dạng';
                       }
-                      if (_repositoryThrowError != null) {
-                        return _repositoryThrowError;
-                      }
-
-                      // Đọc lỗi từ Cubit/State do Django trả về
                       final fieldErrors = context
                           .read<AuthCubit>()
                           .state
@@ -324,20 +285,31 @@ class _AuthViewState extends State<AuthView> {
                       return null;
                     },
                   ),
+                  const SizedBox(height: 3),
                 ],
-                const SizedBox(height: 3),
                 ItemCustomTextField(
                   label: 'Mật khẩu',
                   controller: _passwordController,
-                  suffixIcon: SvgPicture.asset(
-                    "assets/icons/ic_lock.svg",
-                    width: 19,
-                    height: 19,
+                  obscureText: false,
+                  suffixIcon: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _obscurePassword = !_obscurePassword;
+                        _passwordController.isObscured = _obscurePassword;
+                      });
+                    },
+                    child: Icon(
+                      _obscurePassword
+                          ? Icons.visibility_off
+                          : Icons.visibility,
+                      color: const Color(0xFF768079),
+                      size: 19,
+                    ),
                   ),
-                  keyboardType: TextInputType.visiblePassword,
-                  obscureText: true,
+                  keyboardType: TextInputType.text,
                   textInputAction: TextInputAction.done,
-                  autofillHints: const [AutofillHints.password],
+                  autocorrect: false,
+                  enableSuggestions: false,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Vui lòng nhập mật khẩu';
@@ -345,11 +317,6 @@ class _AuthViewState extends State<AuthView> {
                     if (value.length < 6) {
                       return 'Mật khẩu phải có ít nhất 6 ký tự';
                     }
-                    if (_isLogin && _repositoryThrowError != null) {
-                      return _repositoryThrowError;
-                    }
-
-                    // Đọc lỗi từ Cubit/State do Django trả về
                     final fieldErrors = context
                         .read<AuthCubit>()
                         .state
@@ -367,12 +334,27 @@ class _AuthViewState extends State<AuthView> {
                   ItemCustomTextField(
                     label: 'Xác nhận mật khẩu',
                     controller: _passwordConfirmController,
-                    obscureText: true,
-                    suffixIcon: SvgPicture.asset(
-                      "assets/icons/ic_lock.svg",
-                      width: 19,
-                      height: 19,
+                    obscureText: false,
+                    suffixIcon: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _obscurePassword = !_obscurePassword;
+                          _passwordConfirmController.isObscured =
+                              _obscurePassword;
+                        });
+                      },
+                      child: Icon(
+                        _obscurePassword
+                            ? Icons.visibility_off
+                            : Icons.visibility,
+                        color: const Color(0xFF768079),
+                        size: 19,
+                      ),
                     ),
+                    keyboardType: TextInputType.text,
+                    textInputAction: TextInputAction.done,
+                    autocorrect: false,
+                    enableSuggestions: false,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Vui lòng xác nhận mật khẩu';
@@ -380,8 +362,6 @@ class _AuthViewState extends State<AuthView> {
                       if (value != _passwordController.text) {
                         return 'Mật khẩu xác nhận không khớp';
                       }
-
-                      // Kiểm tra lỗi trả về từ Django cho trường password_confirm
                       final fieldErrors = context
                           .read<AuthCubit>()
                           .state
@@ -396,8 +376,8 @@ class _AuthViewState extends State<AuthView> {
                       return null;
                     },
                   ),
+                  const SizedBox(height: 3),
                 ],
-                const SizedBox(height: 3),
                 if (_isLogin)
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
@@ -460,9 +440,7 @@ class _AuthViewState extends State<AuthView> {
                     }
                     return ItemBottomButton(
                       text: _isLogin ? "Đăng nhập" : "Tạo tài khoản bằng email",
-                      onTap: state.status == AuthStatus.loading
-                          ? null
-                          : _submit,
+                      onTap: _submit,
                     );
                   },
                 ),
@@ -531,7 +509,6 @@ class _AuthViewState extends State<AuthView> {
                           _formKey.currentState?.reset();
                         });
 
-                        // Xóa trắng Form
                         _usernameController.clear();
                         _mailController.clear();
                         _passwordController.clear();

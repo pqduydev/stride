@@ -19,12 +19,14 @@ class UserModel {
 
   // Chuẩn hóa chữ liệu nhận được
   factory UserModel.fromJson(Map<String, dynamic> json) {
+    final userData = json["user"] ?? json;
+
     return UserModel(
-      id: json['id'],
-      username: json['username'] ?? '',
-      email: json['email'] ?? '',
-      firstName: json['first_name'],
-      lastName: json['last_name'],
+      id: userData['id'],
+      username: userData['username'] ?? '',
+      email: userData['email'] ?? '',
+      firstName: userData['first_name'],
+      lastName: userData['last_name'],
       accessToken: json['access'],
       refreshToken: json['refresh'],
     );

@@ -2,12 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:stride/auth/auth_cubit/auth_cubit.dart';
+import 'package:stride/auth/auth_cubit/auth_state.dart';
 import 'package:stride/route/route_cubit/route_cubit.dart';
 import 'package:stride/route/route_cubit/route_state.dart';
 import 'package:stride/widgets/item_card_switch.dart';
 
 class MyRouteScreen extends StatelessWidget {
   const MyRouteScreen({super.key});
+
+  // Hàm lấy chữ cái đầu của last_name và first_name cho avatar
+  String _getInitials(String? firstName, String? lastName) {
+    final lastInitial = (lastName != null && lastName.trim().isNotEmpty)
+        ? lastName.trim()[0].toUpperCase()
+        : '';
+    final firstInitial = (firstName != null && firstName.trim().isNotEmpty)
+        ? firstName.trim()[0].toUpperCase()
+        : '';
+
+    final initials = '$lastInitial$firstInitial';
+    return initials.isNotEmpty ? initials : 'U';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,15 +42,29 @@ class MyRouteScreen extends StatelessWidget {
                 height: 39.15,
                 child: Stack(
                   children: [
-                    InkWell(
-                      onTap: () => context.push("/login"),
-                      child: SvgPicture.asset(
-                        'assets/icons/ic_logo.svg',
-                        height: 29,
-                        colorFilter: const ColorFilter.mode(
-                          Color(0xFF1C2520),
-                          BlendMode.srcIn,
-                        ),
+                    SizedBox(
+                      width: 135,
+                      height: 39.15,
+                      child: Stack(
+                        children: [
+                          SvgPicture.asset(
+                            'assets/icons/ic_logo.svg',
+                            height: 29,
+                            colorFilter: const ColorFilter.mode(
+                              Color(0xFF1C2520),
+                              BlendMode.srcIn,
+                            ),
+                          ),
+                          Positioned(
+                            top: -5,
+                            right: 0,
+                            child: SvgPicture.asset(
+                              'assets/icons/ic_arrow_up_right.svg',
+                              width: 28,
+                              height: 28,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
 
@@ -51,20 +80,144 @@ class MyRouteScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              InkWell(
-                onTap: () => context.push("/register"),
-                child: CircleAvatar(
-                  radius: 21,
-                  backgroundColor: const Color(0xFFE7EDD9),
-                  child: Text(
-                    "TA",
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontSize: 13,
-                      fontWeight: FontWeight.bold,
-                      color: const Color(0xFF526C30),
-                    ),
-                  ),
-                ),
+
+              BlocBuilder<AuthCubit, AuthState>(
+                builder: (context, authState) {
+                  if (authState.status == AuthStatus.authenticated &&
+                      authState.user != null) {
+                    final user = authState.user!;
+                    final initials = _getInitials(
+                      user.firstName,
+                      user.lastName,
+                    );
+
+                    // Bọc PopupMenuButton để custom bỏ hiệu ứng overlay khi nhấn
+                    return Theme(
+                      data: Theme.of(context).copyWith(
+                        splashColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
+                        hoverColor: Colors.transparent,
+                      ),
+                      child: PopupMenuButton<String>(
+                        offset: const Offset(0, 50),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        color: Color(0xFFFFFFFF),
+                        onSelected: (String value) {
+                          if (value == 'profile') {
+                            // Gán xử lý xem thông tin người dùng
+                          } else if (value == 'logout') {
+                            context.read<AuthCubit>().logout();
+                          }
+                        },
+
+                        // Danh sách các tùy
+                        itemBuilder: (BuildContext context) =>
+                            <PopupMenuEntry<String>>[
+                              PopupMenuItem<String>(
+                                value: 'profile',
+                                child: Row(
+                                  children: [
+                                    SvgPicture.asset(
+                                      "assets/icons/ic_user.svg",
+                                      colorFilter: ColorFilter.mode(
+                                        Color(0xFF1C2520),
+                                        BlendMode.srcIn,
+                                      ),
+                                      width: 21,
+                                      height: 21,
+                                    ),
+                                    const SizedBox(width: 10),
+                                    const Text(
+                                      'Thông tin người dùng',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Color(0xFF1C2520),
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+
+                              const PopupMenuDivider(), // Dòng kẻ ngang phân cách
+
+                              const PopupMenuItem<String>(
+                                value: 'logout',
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.logout,
+                                      size: 21,
+                                      color: Colors.redAccent,
+                                    ),
+                                    SizedBox(width: 10),
+                                    Text(
+                                      'Đăng xuất',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.redAccent,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+
+                        // Avatar
+                        child: CircleAvatar(
+                          radius: 21,
+                          backgroundColor: const Color(0xFFE7EDD9),
+                          child: Text(
+                            initials,
+                            style: Theme.of(context).textTheme.titleLarge
+                                ?.copyWith(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.bold,
+                                  color: const Color(0xFF526C30),
+                                ),
+                          ),
+                        ),
+                      ),
+                    );
+                  }
+
+                  return Row(
+                    children: [
+                      InkWell(
+                        onTap: () => context.push("/login"),
+                        child: const Text(
+                          "Đăng nhập",
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF526C30),
+                          ),
+                        ),
+                      ),
+                      const Text(
+                        " · ",
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Color(0xFF768079),
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () => context.push("/register"),
+                        child: const Text(
+                          "Đăng ký",
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF526C30),
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                },
               ),
             ],
           ),

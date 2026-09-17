@@ -6,7 +6,6 @@ class ItemCustomTextField extends StatefulWidget {
   final TextEditingController? controller;
   final Widget? suffixIcon;
   final FormFieldValidator<String>? validator;
-  final bool obscureText;
   final TextInputType? keyboardType;
   final TextInputAction? textInputAction;
   final Iterable<String>? autofillHints;
@@ -20,7 +19,6 @@ class ItemCustomTextField extends StatefulWidget {
     this.controller,
     this.suffixIcon,
     this.validator,
-    this.obscureText = false,
     this.keyboardType = TextInputType.text,
     this.textInputAction = TextInputAction.next,
     this.autofillHints,
@@ -98,7 +96,6 @@ class _ItemCustomTextFieldState extends State<ItemCustomTextField> {
                             focusNode: _focusNode,
                             controller: widget.controller,
                             autofillHints: widget.autofillHints,
-                            obscureText: widget.obscureText,
                             textInputAction: widget.textInputAction,
                             keyboardType: widget.keyboardType,
                             autocorrect: widget.autocorrect,

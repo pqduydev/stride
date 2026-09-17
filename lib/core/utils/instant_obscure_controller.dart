@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 class InstantObscureController extends TextEditingController {
   bool isObscured;
 
-  InstantObscureController({String? text, this.isObscured = true})
-    : super(text: text);
+  InstantObscureController({super.text, this.isObscured = true});
 
   @override
   TextSpan buildTextSpan({

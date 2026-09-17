@@ -8,7 +8,6 @@ import 'package:stride/widgets/appbar_custom.dart';
 import 'package:stride/widgets/item_app_bar_title.dart';
 import 'package:stride/widgets/item_bottom_button.dart';
 import 'package:stride/widgets/item_date_time.dart';
-import 'package:stride/widgets/item_dropdown_duration.dart';
 import 'package:stride/widgets/item_radio_route_group.dart';
 import 'package:stride/widgets/item_text_field.dart';
 
@@ -27,14 +26,11 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
 
-  String _selectedCategory = 'Sức khỏe';
-  String _selectedDuration = '1 tháng';
+  String _selectedGoal = 'weight_loss';
   DateTime _startDate = DateTime.now();
   DateTime _endDate = DateTime.now().add(const Duration(days: 1));
 
   bool get isEditMode => widget.routeToEdit != null;
-
-  final DateFormat _dateFormat = DateFormat("dd/MM/yyyy");
 
   @override
   void initState() {
@@ -43,13 +39,10 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
       final route = widget.routeToEdit!;
       _titleController.text = route.title;
       _descriptionController.text = route.description;
-      _selectedCategory = route.category;
-      _selectedDuration = route.duration;
+      _selectedGoal = route.goal;
 
-      try {
-        _startDate = _dateFormat.parse(route.startDate);
-        _endDate = _dateFormat.parse(route.endDate);
-      } catch (_) {}
+      _startDate = DateTime.parse(route.startDate);
+      _endDate = DateTime.parse(route.endDate);
     }
   }
 
@@ -60,39 +53,28 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
     super.dispose();
   }
 
-  void _onSave(BuildContext context) {
-    // Kiểm tra việc validate form trước khi thực hiện các thao tác tiếp theo
+  void _onSave() {
     if (!_formKey.currentState!.validate()) {
       return;
     }
 
-    final title = _titleController.text.trim();
-    final cubit = context.read<RouteCubit>();
-    final startDateStr = _dateFormat.format(_startDate);
-    final endDateStr = _dateFormat.format(_endDate);
+    final String formattedStartDate = DateFormat('yyyy-MM-dd')
+        .format(_startDate);
+    final String formattedEndDate = DateFormat('yyyy-MM-dd').format(_endDate);
 
-    if (isEditMode) {
-      final updatedRoute = widget.routeToEdit!.copyWith(
-        title: title,
-        category: _selectedCategory,
-        duration: _selectedDuration,
-        startDate: startDateStr,
-        endDate: endDateStr,
-        description: _descriptionController.text,
-      );
-      cubit.updateRoute(updatedRoute);
-    } else {
-      final newRoute = RouteModel(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        title: title,
-        category: _selectedCategory,
-        duration: _selectedDuration,
-        startDate: startDateStr,
-        endDate: endDateStr,
-        description: _descriptionController.text,
-      );
-      cubit.addRoute(newRoute, isError: true);
-    }
+    final route = RouteModel(
+      id: widget.routeToEdit?.id ?? 0,
+      title: _titleController.text.trim(),
+      description: _descriptionController.text.trim(),
+      goal: _selectedGoal,
+      startDate: formattedStartDate,
+      endDate: formattedEndDate,
+      isActive: true,
+    );
+
+    final cubit = context.read<RouteCubit>();
+
+    isEditMode ? cubit.updateRoute(route) : cubit.addRoute(route);
   }
 
   @override
@@ -122,9 +104,7 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
               backgroundColor: const Color(0xFFEEF4E5),
             ),
           );
-          Navigator.pop(
-            context,
-          ); // Quay lại màn hình trước đó sau tạo hoặc cập nhật thành công
+          Navigator.pop(context);
         }
       },
       builder: (context, state) {
@@ -146,21 +126,21 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  const Text(
                     "Một mục tiêu, một hành trình mới.",
                     style: TextStyle(
                       color: Color(0xFF768079),
                       fontSize: 14,
-                      fontWeight: .w400,
+                      fontWeight: FontWeight.w400,
                     ),
                   ),
                   const SizedBox(height: 20),
-                  Text(
+                  const Text(
                     "Tên lộ trình",
                     style: TextStyle(
-                      color: const Color(0xFF768079),
+                      color: Color(0xFF768079),
                       fontSize: 13,
-                      fontWeight: .w500,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                   const SizedBox(height: 5),
@@ -181,27 +161,11 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
                       return null;
                     },
                   ),
-                  const SizedBox(height: 2),
-                  ItemRadioTouteGroup(
-                    selectedCategory: _selectedCategory,
-                    onCategoryChanged: (category) {
-                      setState(() => _selectedCategory = category);
-                    },
-                  ),
-                  const SizedBox(height: 20),
-                  Text(
-                    "Thời lượng",
-                    style: TextStyle(
-                      color: const Color(0xFF768079),
-                      fontSize: 13,
-                      fontWeight: .w500,
-                    ),
-                  ),
-                  const SizedBox(height: 5),
-                  ItemDropdownDuration(
-                    selectedDuration: _selectedDuration,
-                    onDurationChanged: (duration) {
-                      setState(() => _selectedDuration = duration);
+                  const SizedBox(height: 10),
+                  ItemRadioRouteGroup(
+                    selectedGoalKey: _selectedGoal,
+                    onGoalChanged: (goalEnum) {
+                      setState(() => _selectedGoal = goalEnum);
                     },
                   ),
                   const SizedBox(height: 20),
@@ -243,12 +207,12 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
                     ],
                   ),
                   const SizedBox(height: 20),
-                  Text(
+                  const Text(
                     "Mô tả mục tiêu",
                     style: TextStyle(
-                      color: const Color(0xFF768079),
+                      color: Color(0xFF768079),
                       fontSize: 13,
-                      fontWeight: .w500,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                   const SizedBox(height: 5),
@@ -279,11 +243,11 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
             ),
           ),
           bottomNavigationBar: Padding(
-            padding: EdgeInsets.fromLTRB(20, 20, 20, 30),
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 30),
             child: ItemBottomButton(
               text: isEditMode ? 'Lưu thay đổi' : 'Tạo lộ trình',
               isLoading: isLoading,
-              onTap: () => _onSave(context),
+              onTap: _onSave,
             ),
           ),
         );

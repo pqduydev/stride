@@ -5,8 +5,24 @@ import 'package:stride/navigator/app_router.dart';
 import 'package:stride/repository/auth_repository.dart';
 import 'package:stride/repository/route_repository.dart';
 import 'package:stride/route/route_cubit/route_cubit.dart';
+import 'package:stride/services/dio_client.dart';
 
 void main() {
+  // Có tác dụng cầu nối giữa flutter và hệ thống (android, ios)
+  // Mặc định sau khi chạy runApp() thì cầu nối này mới được tạo ra
+  // Nếu không có cầu nối này mà thực hiện xử lý bất đồng bộ trước runApp() thì
+  // sẽ bị lỗi crack
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final authRepository = AuthRepository(dio: DioClient.instance);
+  final authCubit = AuthCubit(authRepository);
+
+  // Truyền hàm callback xử lý khi bị hết hạn Token
+  DioClient.setupInterceptors(() {
+    // Khi Token hết hạn hoàn toàn, cập nhật AuthState về Unauthenticated
+    authCubit.forceLogout();
+  });
+
   runApp(const MyApp());
 }
 
@@ -27,10 +43,13 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    _authRepository = AuthRepository();
-    _routeRepository = RouteRepository();
+    final dio = DioClient.instance;
+
+    _authRepository = AuthRepository(dio: dio);
+    _routeRepository = RouteRepository(dio: dio);
+
     _authCubit = AuthCubit(_authRepository)..checkAuthStatus();
-    _routeCubit = RouteCubit(_routeRepository)..loadRoutes();
+    _routeCubit = RouteCubit(_routeRepository);
     _appRouter = AppRouter(_authCubit);
   }
 

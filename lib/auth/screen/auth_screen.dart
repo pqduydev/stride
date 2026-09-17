@@ -43,6 +43,7 @@ class _AuthViewState extends State<AuthView> {
   final _passwordConfirmController = InstantObscureController();
 
   bool _obscurePassword = true;
+  bool _obscureConfirmPassword = true;
 
   @override
   void initState() {
@@ -138,13 +139,22 @@ class _AuthViewState extends State<AuthView> {
 
             setState(() {
               _isLogin = true;
+
+              // Clear các field
               _firstNameController.clear();
               _lastNameController.clear();
               _usernameController.clear();
               _mailController.clear();
               _passwordController.clear();
               _passwordConfirmController.clear();
+
+              // Đặt lại trạng thái icon
               _obscurePassword = true;
+              _obscureConfirmPassword = true;
+
+              // Cập nhật trạng thái cho controller
+              _passwordController.isObscured = true;
+              _passwordConfirmController.isObscured = true;
             });
 
             context.read<AuthCubit>().resetStatus();
@@ -174,7 +184,7 @@ class _AuthViewState extends State<AuthView> {
                       Expanded(
                         child: ItemCustomTextField(
                           label: 'Họ',
-                          controller: _firstNameController,
+                          controller: _lastNameController,
                           validator: (value) {
                             if (value == null || value.trim().isEmpty) {
                               return 'Vui lòng nhập họ';
@@ -184,8 +194,8 @@ class _AuthViewState extends State<AuthView> {
                                 .state
                                 .fieldErrors;
                             if (fieldErrors != null &&
-                                fieldErrors.containsKey('first_name')) {
-                              final errors = fieldErrors['first_name'];
+                                fieldErrors.containsKey('last_name')) {
+                              final errors = fieldErrors['last_name'];
                               if (errors is List && errors.isNotEmpty) {
                                 return errors[0];
                               }
@@ -198,7 +208,7 @@ class _AuthViewState extends State<AuthView> {
                       Expanded(
                         child: ItemCustomTextField(
                           label: 'Tên',
-                          controller: _lastNameController,
+                          controller: _firstNameController,
                           validator: (value) {
                             if (value == null || value.trim().isEmpty) {
                               return 'Vui lòng nhập tên';
@@ -208,8 +218,8 @@ class _AuthViewState extends State<AuthView> {
                                 .state
                                 .fieldErrors;
                             if (fieldErrors != null &&
-                                fieldErrors.containsKey('last_name')) {
-                              final errors = fieldErrors['last_name'];
+                                fieldErrors.containsKey('first_name')) {
+                              final errors = fieldErrors['first_name'];
                               if (errors is List && errors.isNotEmpty) {
                                 return errors[0];
                               }
@@ -290,7 +300,6 @@ class _AuthViewState extends State<AuthView> {
                 ItemCustomTextField(
                   label: 'Mật khẩu',
                   controller: _passwordController,
-                  obscureText: false,
                   suffixIcon: GestureDetector(
                     onTap: () {
                       setState(() {
@@ -334,17 +343,16 @@ class _AuthViewState extends State<AuthView> {
                   ItemCustomTextField(
                     label: 'Xác nhận mật khẩu',
                     controller: _passwordConfirmController,
-                    obscureText: false,
                     suffixIcon: GestureDetector(
                       onTap: () {
                         setState(() {
-                          _obscurePassword = !_obscurePassword;
+                          _obscureConfirmPassword = !_obscureConfirmPassword;
                           _passwordConfirmController.isObscured =
-                              _obscurePassword;
+                              _obscureConfirmPassword;
                         });
                       },
                       child: Icon(
-                        _obscurePassword
+                        _obscureConfirmPassword
                             ? Icons.visibility_off
                             : Icons.visibility,
                         color: const Color(0xFF768079),
@@ -512,8 +520,17 @@ class _AuthViewState extends State<AuthView> {
                         _usernameController.clear();
                         _mailController.clear();
                         _passwordController.clear();
+                        _passwordConfirmController.clear();
                         _firstNameController.clear();
                         _lastNameController.clear();
+
+                        // Đặt lại trạng thái icon
+                        _obscurePassword = true;
+                        _obscureConfirmPassword = true;
+
+                        // Cập nhật trạng thái cho controller
+                        _passwordController.isObscured = true;
+                        _passwordConfirmController.isObscured = true;
 
                         context.read<AuthCubit>().resetStatus();
                       },

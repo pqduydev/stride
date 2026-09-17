@@ -1,39 +1,63 @@
+import 'package:stride/model/phase_model.dart';
+
 class RouteModel {
-  final String id;
+  final int? id;
   final String title;
-  final String category;
-  final String duration;
+  final String description;
+  final String goal;
   final String startDate;
   final String endDate;
-  final String description;
+  final bool isActive;
+  final List<PhaseModel> phases;
 
   RouteModel({
-    required this.id,
+    this.id,
     required this.title,
-    required this.category,
-    required this.duration,
+    required this.description,
+    required this.goal,
     required this.startDate,
     required this.endDate,
-    required this.description,
+    required this.isActive,
+    this.phases = const [],
   });
 
+  // Chuyển JSON từ API thành Object
+  factory RouteModel.fromJson(Map<String, dynamic> json) {
+    return RouteModel(
+      id: json['id'] as int,
+      title: json['title'] as String? ?? '',
+      description: json['description'] as String? ?? '',
+      goal: json['goal'] as String? ?? '',
+      startDate: json['start_date'] as String? ?? '',
+      endDate: json['end_date'] as String? ?? '',
+      isActive: json['is_active'] as bool? ?? false,
+      phases:
+          (json['phases'] as List<dynamic>?)
+              ?.map((e) => PhaseModel.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
+    );
+  }
+
   RouteModel copyWith({
-    String? id,
+    int? id,
     String? title,
-    String? category,
-    String? duration,
+    String? description,
+    String? goal,
     String? startDate,
     String? endDate,
-    String? description,
+    bool? isActive,
+    List<PhaseModel>? phases,
   }) {
     return RouteModel(
       id: id ?? this.id,
       title: title ?? this.title,
-      category: category ?? this.category,
-      duration: duration ?? this.duration,
+      description: description ?? this.description,
+      goal: goal ?? this.goal,
       startDate: startDate ?? this.startDate,
       endDate: endDate ?? this.endDate,
-      description: description ?? this.description,
+      isActive: isActive ?? this.isActive,
+      phases: phases ?? this.phases,
     );
   }
 }

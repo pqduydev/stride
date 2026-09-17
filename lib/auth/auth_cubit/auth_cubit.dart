@@ -27,7 +27,9 @@ class AuthCubit extends Cubit<AuthState> {
     final savedUser = await _authRepository.getSavedUser();
 
     if (token != null && token.isNotEmpty && savedUser != null) {
-      emit(state.copyWith(status: AuthStatus.authenticated, user: savedUser));
+      final updateInfo = await _authRepository.getUser();
+
+      emit(state.copyWith(status: AuthStatus.authenticated, user: updateInfo));
     } else {
       emit(state.copyWith(status: AuthStatus.unauthenticated));
     }
@@ -70,7 +72,7 @@ class AuthCubit extends Cubit<AuthState> {
       emit(
         state.copyWith(
           status: AuthStatus.failure,
-          errorMessage: e.toString().replaceAll('Exception: ', ''),
+          errorMessage: 'Đã xãy ra lỗi không xác định',
         ),
       );
     }
@@ -87,7 +89,7 @@ class AuthCubit extends Cubit<AuthState> {
     emit(state.copyWith(status: AuthStatus.loading, clearErrorMessage: true));
 
     try {
-      final newUser = await _authRepository.register(
+      await _authRepository.register(
         firstName: firstName,
         lastName: lastName,
         username: username,
@@ -100,12 +102,7 @@ class AuthCubit extends Cubit<AuthState> {
         return; // Khi người dùng thoát màn hình trong khi đợi response
       }
 
-      emit(
-        state.copyWith(
-          status: AuthStatus.success,
-          users: [...state.users, newUser],
-        ),
-      );
+      emit(state.copyWith(status: AuthStatus.success));
     } on ApiException catch (e) {
       emit(
         state.copyWith(
@@ -118,7 +115,7 @@ class AuthCubit extends Cubit<AuthState> {
       emit(
         state.copyWith(
           status: AuthStatus.failure,
-          errorMessage: e.toString().replaceAll('Exception: ', ''),
+          errorMessage: 'Đã xãy ra lỗi không xác định',
         ),
       );
     }
@@ -133,6 +130,10 @@ class AuthCubit extends Cubit<AuthState> {
       if (isClosed) {
         return; // Khi người dùng thoát màn hình trong khi đợi response
       }
+
+      final prefs = await SharedPreferences.getInstance();
+      prefs.clear;
+      emit(const AuthState(status: AuthStatus.unauthenticated));
     } on ApiException catch (e) {
       emit(
         state.copyWith(
@@ -145,20 +146,14 @@ class AuthCubit extends Cubit<AuthState> {
       emit(
         state.copyWith(
           status: AuthStatus.failure,
-          errorMessage: e.toString().replaceAll('Exception: ', ''),
+          errorMessage: 'Đã xãy ra lỗi không xác định',
         ),
       );
-    } finally {
-      if (!isClosed) {
-        emit(
-          state.copyWith(
-            status: AuthStatus.unauthenticated,
-            user: null,
-            clearErrorMessage: true,
-          ),
-        );
-      }
     }
+  }
+
+  void forceLogout() {
+    emit(const AuthState(status: AuthStatus.unauthenticated));
   }
 
   void resetStatus() {

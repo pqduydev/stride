@@ -13,14 +13,12 @@ enum AuthStatus {
 class AuthState extends Equatable {
   final AuthStatus status;
   final UserModel? user;
-  final List<UserModel> users;
   final String? errorMessage;
   final Map<String, dynamic>? fieldErrors;
 
   const AuthState({
     this.status = AuthStatus.initial,
     this.user,
-    this.users = const [],
     this.errorMessage,
     this.fieldErrors,
   });
@@ -36,7 +34,6 @@ class AuthState extends Equatable {
     return AuthState(
       status: status ?? this.status,
       user: user ?? this.user,
-      users: users ?? this.users,
       errorMessage: clearErrorMessage
           ? null
           : (errorMessage ?? this.errorMessage),
@@ -45,5 +42,5 @@ class AuthState extends Equatable {
   }
 
   @override
-  List<Object?> get props => [status, user, users, errorMessage, fieldErrors];
+  List<Object?> get props => [status, user, errorMessage, fieldErrors];
 }

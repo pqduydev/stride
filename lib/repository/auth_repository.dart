@@ -5,10 +5,11 @@ import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stride/model/user_model.dart';
 import 'package:stride/services/api_exception.dart';
-import 'package:stride/services/dio_client.dart';
 
 class AuthRepository {
-  final Dio _dio = DioClient.instance;
+  final Dio _dio;
+
+  AuthRepository({required this._dio});
 
   Future<UserModel> login({
     required String username,
@@ -36,7 +37,8 @@ class AuthRepository {
     } on DioException catch (e) {
       throw ApiException.fromDioException(e);
     } catch (e) {
-      throw {'Đã có lỗi xảy ra, vui lòng thử lại'};
+      // Thống nhất ném ApiException
+      throw ApiException(message: 'Đã có lỗi xảy ra, vui lòng thử lại');
     }
   }
 
@@ -54,6 +56,31 @@ class AuthRepository {
       }
     }
     return null;
+  }
+
+  // Lấy dữ liệu người dùng hiện tại
+  Future<UserModel> getUser() async {
+    try {
+      final reponse = await _dio.get('/v1/auth/me/', data: {});
+
+      final user = UserModel.fromJson(reponse.data);
+      final prefs = await SharedPreferences.getInstance();
+
+      // Cập nhật Tokens & User Profile Data
+      if (user.accessToken != null) {
+        await prefs.setString('access_token', user.accessToken!);
+      }
+      if (user.refreshToken != null) {
+        await prefs.setString('refresh_token', user.refreshToken!);
+      }
+      await prefs.setString('user_data', jsonEncode(user.toJson()));
+
+      return user;
+    } on DioException catch (e) {
+      throw ApiException.fromDioException(e);
+    } catch (e) {
+      throw ApiException(message: 'Đã có lỗi xảy ra, vui lòng thử lại');
+    }
   }
 
   Future<UserModel> register({
@@ -81,7 +108,7 @@ class AuthRepository {
     } on DioException catch (e) {
       throw ApiException.fromDioException(e);
     } catch (e) {
-      throw {'Đã có lỗi xảy ra, vui lòng thử lại'};
+      throw ApiException(message: 'Đã có lỗi xảy ra, vui lòng thử lại');
     }
   }
 
@@ -96,7 +123,7 @@ class AuthRepository {
     } on DioException catch (e) {
       throw ApiException.fromDioException(e);
     } catch (e) {
-      throw {'Đã có lỗi xảy ra, vui lòng thử lại'};
+      throw ApiException(message: 'Đã có lỗi xảy ra, vui lòng thử lại');
     } finally {
       await prefs.remove('access_token');
       await prefs.remove('refresh_token');

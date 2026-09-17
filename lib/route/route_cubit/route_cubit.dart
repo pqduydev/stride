@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:stride/model/route_model.dart';
 import 'package:stride/route/route_cubit/route_state.dart';
 import 'package:stride/repository/route_repository.dart';
+import 'package:stride/services/api_exception.dart';
 
 class RouteCubit extends Cubit<RouteState> {
   final RouteRepository _routeRepository;
@@ -23,6 +24,13 @@ class RouteCubit extends Cubit<RouteState> {
           clearErrorMessage: true,
         ),
       );
+    } on ApiException catch (e) {
+      emit(
+        state.copyWith(
+          listStatus: RouteStatus.failure,
+          errorMessage: e.message,
+        ),
+      );
     } catch (e) {
       emit(
         state.copyWith(
@@ -34,57 +42,78 @@ class RouteCubit extends Cubit<RouteState> {
   }
 
   // Thêm lộ trình
-  Future<void> addRoute(RouteModel route, {bool isError = false}) async {
+  Future<void> addRoute(RouteModel route) async {
     emit(
       state.copyWith(
         actionStatus: RouteStatus.loading,
         clearErrorMessage: true,
       ),
     );
+
     try {
-      await _routeRepository.addRoute(route, isError: isError);
+      await _routeRepository.addRoute(route);
+      if (isClosed) return;
+
       emit(
         state.copyWith(
           actionStatus: RouteStatus.success,
           clearErrorMessage: true,
         ),
       );
-      await loadRoutes(); // Tải lại danh sách sau khi thêm
+
+      await loadRoutes(); // Tải lại danh sách
+    } on ApiException catch (e) {
+      emit(
+        state.copyWith(
+          actionStatus: RouteStatus.failure,
+          errorMessage: e.message,
+        ),
+      );
     } catch (e) {
       emit(
         state.copyWith(
           actionStatus: RouteStatus.failure,
-          errorMessage: 'Không thể thêm lộ trình. Bạn hãy thử lại.',
+          errorMessage: 'Không thể tạo lộ trình. Vui lòng thử lại.',
         ),
       );
     }
   }
 
-  // Sửa lộ trình
-  Future<void> updateRoute(RouteModel route, {bool isError = false}) async {
+  // Cập nhật lộ trình
+  Future<void> updateRoute(RouteModel route) async {
     emit(
       state.copyWith(
         actionStatus: RouteStatus.loading,
         clearErrorMessage: true,
       ),
     );
+
     try {
-      await _routeRepository.updateRoute(route, isError: isError);
+      await _routeRepository.updateRoute(route, route.id!);
+      if (isClosed) return;
+
       emit(
         state.copyWith(
           actionStatus: RouteStatus.success,
           clearErrorMessage: true,
         ),
       );
+
       await loadRoutes(); // Tải lại danh sách sau khi sửa
+    } on ApiException catch (e) {
+      emit(
+        state.copyWith(
+          actionStatus: RouteStatus.failure,
+          errorMessage: e.message,
+        ),
+      );
     } catch (e) {
       emit(
         state.copyWith(
           actionStatus: RouteStatus.failure,
-          errorMessage: 'Không thể sửa lộ trình. Bạn hãy thử lại.',
+          errorMessage: 'Không thể cập nhật lộ trình. Vui lòng thử lại.',
         ),
       );
     }
-    await loadRoutes(); // Tải lại danh sách sau khi sửa
   }
 }

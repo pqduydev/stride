@@ -81,6 +81,10 @@ class AppRouter {
         path: "/add_image",
         builder: (context, state) => const AddImageScreen(),
       ),
+      GoRoute(
+        path: "/schedules",
+        builder: (context, state) => const AddImageScreen(),
+      ),
     ],
   );
 }

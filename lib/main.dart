@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:stride/auth/auth_cubit/auth_cubit.dart';
 import 'package:stride/navigator/app_router.dart';
 import 'package:stride/repository/auth_repository.dart';
@@ -8,21 +9,6 @@ import 'package:stride/route/route_cubit/route_cubit.dart';
 import 'package:stride/services/dio_client.dart';
 
 void main() {
-  // Có tác dụng cầu nối giữa flutter và hệ thống (android, ios)
-  // Mặc định sau khi chạy runApp() thì cầu nối này mới được tạo ra
-  // Nếu không có cầu nối này mà thực hiện xử lý bất đồng bộ trước runApp() thì
-  // sẽ bị lỗi crack
-  WidgetsFlutterBinding.ensureInitialized();
-
-  final authRepository = AuthRepository(dio: DioClient.instance);
-  final authCubit = AuthCubit(authRepository);
-
-  // Truyền hàm callback xử lý khi bị hết hạn Token
-  DioClient.setupInterceptors(() {
-    // Khi Token hết hạn hoàn toàn, cập nhật AuthState về Unauthenticated
-    authCubit.forceLogout();
-  });
-
   runApp(const MyApp());
 }
 
@@ -47,6 +33,11 @@ class _MyAppState extends State<MyApp> {
 
     _authRepository = AuthRepository(dio: dio);
     _routeRepository = RouteRepository(dio: dio);
+
+    DioClient.setupInterceptors(() {
+      // Khi Token hết hạn hoàn toàn, cập nhật AuthState về Unauthenticated
+      _authCubit.forceLogout();
+    });
 
     _authCubit = AuthCubit(_authRepository)..checkAuthStatus();
     _routeCubit = RouteCubit(_routeRepository);
@@ -75,6 +66,18 @@ class _MyAppState extends State<MyApp> {
         child: MaterialApp.router(
           title: 'Stride App',
           debugShowCheckedModeBanner: false,
+
+          localizationsDelegates: const [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: const [
+            Locale('vi', 'VN'),
+            Locale('en', 'US'), // Dự phòng
+          ],
+          locale: const Locale('vi', 'VN'),
+
           theme: ThemeData(
             colorScheme: ColorScheme.fromSeed(
               seedColor: const Color(0xFFF7F8FA),

@@ -19,17 +19,36 @@ class AuthCubit extends Cubit<AuthState> {
     );
   }
 
-  void checkAuthStatus() async {
+  Future<void> checkAuthStatus() async {
     final prefs = await SharedPreferences.getInstance();
-    if (isClosed) return;
 
     final token = prefs.getString("access_token");
     final savedUser = await _authRepository.getSavedUser();
+    if (isClosed) return;
 
     if (token != null && token.isNotEmpty && savedUser != null) {
-      final updateInfo = await _authRepository.getUser();
+      try {
+        final updateInfo = await _authRepository.getUser();
 
-      emit(state.copyWith(status: AuthStatus.authenticated, user: updateInfo));
+        emit(
+          state.copyWith(status: AuthStatus.authenticated, user: updateInfo),
+        );
+      } on ApiException catch (e) {
+        emit(
+          state.copyWith(
+            status: AuthStatus.failure,
+            errorMessage: e.message,
+            fieldErrors: e.fieldErrors,
+          ),
+        );
+      } catch (e) {
+        emit(
+          state.copyWith(
+            status: AuthStatus.failure,
+            errorMessage: 'Đã xãy ra lỗi không xác định',
+          ),
+        );
+      }
     } else {
       emit(state.copyWith(status: AuthStatus.unauthenticated));
     }

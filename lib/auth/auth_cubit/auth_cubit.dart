@@ -20,6 +20,9 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   Future<void> checkAuthStatus() async {
+    // Khởi tạo thời gian delay chạy song song call API
+    final minDelay = Future.delayed(const Duration(seconds: 1));
+
     final prefs = await SharedPreferences.getInstance();
 
     final token = prefs.getString("access_token");
@@ -29,6 +32,9 @@ class AuthCubit extends Cubit<AuthState> {
     if (token != null && token.isNotEmpty && savedUser != null) {
       try {
         final updateInfo = await _authRepository.getUser();
+
+        // Đợi nốt 1s
+        await minDelay;
 
         emit(
           state.copyWith(status: AuthStatus.authenticated, user: updateInfo),
@@ -151,7 +157,7 @@ class AuthCubit extends Cubit<AuthState> {
       }
 
       final prefs = await SharedPreferences.getInstance();
-      prefs.clear;
+      await prefs.clear();
       emit(const AuthState(status: AuthStatus.unauthenticated));
     } on ApiException catch (e) {
       emit(

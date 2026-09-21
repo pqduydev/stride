@@ -21,14 +21,7 @@ class WelcomeScreen extends StatelessWidget {
                 height: 39.15,
                 child: Stack(
                   children: [
-                    SvgPicture.asset(
-                      'assets/icons/ic_logo.svg',
-                      height: 28,
-                      colorFilter: const ColorFilter.mode(
-                        Color(0xFF526C30),
-                        BlendMode.srcIn,
-                      ),
-                    ),
+                    SvgPicture.asset('assets/icons/ic_stride.svg', height: 28),
                     Positioned(
                       top: -5,
                       right: 0,

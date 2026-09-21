@@ -18,6 +18,7 @@ import 'package:stride/screens/main_navigation_bar_screen.dart';
 import 'package:stride/screens/privacy_information_screen.dart';
 import 'package:stride/screens/route_create_screen.dart';
 import 'package:stride/screens/route_details_screen.dart';
+import 'package:stride/screens/splash_screen.dart';
 import 'package:stride/screens/welcome_screen.dart';
 import 'package:stride/widgets/login_with_apple_screen.dart';
 
@@ -28,36 +29,57 @@ class AppRouter {
 
   late final router = GoRouter(
     // Màn hình khởi tạo
-    initialLocation: '/welcome',
+    initialLocation: '/splash',
     refreshListenable: GoRouterRefreshStream(authCubit.stream),
     redirect: (context, state) {
       final authStatus = authCubit.state.status;
-      final isAuthRoute =
-          state.matchedLocation == '/login' ||
-          state.matchedLocation == '/register';
+      final location = state.matchedLocation;
 
-      // Đã đăng nhập thì không cho quay lại màn hình Login/Register
-      if (authStatus == AuthStatus.authenticated && isAuthRoute) {
-        return '/main_navigation_bar';
+      // Khi đang ở trạng thái ban đầu -> Giữ ở Splash
+      if (authStatus == AuthStatus.initial) {
+        return '/splash';
       }
 
-      // Danh sách các màn hình "không bắt buộc đăng nhập"
-      final publicRoutes = ['/welcome', '/login', '/register'];
+      final isAuthRoute =
+          location == '/login' ||
+          location == '/register' ||
+          location == '/welcome';
 
-      // Kiểm tra xem đích đến hiện tại có nằm trong danh sách public không
+      /** ĐÃ ĐĂNG NHẬP */
+      if (authStatus == AuthStatus.authenticated) {
+        // Nếu đang ở các trang auth/welcome/splash thì đẩy vào main_navigation_bar
+        if (isAuthRoute || location == '/splash') {
+          return '/main_navigation_bar';
+        }
+        return null;
+      }
+
+      /** CHƯA ĐĂNG NHẬP */
+      // Danh sách các màn hình KHÔNG bắt buộc đăng nhập
+      final publicRoutes = ['/welcome', '/login', '/register', '/splash'];
       final isPublicRoute = publicRoutes.any(
-        (route) => state.matchedLocation.startsWith(route),
+        (route) => location.startsWith(route),
       );
 
-      // Nếu chưa đăng nhập và màn hình đích không thuộc danh sách public -> Đá về login
-      if (authStatus == AuthStatus.unauthenticated && !isPublicRoute) {
+      // Nếu cố tình truy cập màn hình yêu cầu đăng nhập -> Đá về Welcome
+      if (!isPublicRoute) {
         return '/welcome';
       }
 
-      // Các trường hợp còn lại thì cho phép đi tiếp
+      // Nếu đang ở Splash mà xác thực thất bại/chưa đăng nhập -> Đá về Welcome
+      if (location == '/splash' &&
+          (authStatus == AuthStatus.unauthenticated ||
+              authStatus == AuthStatus.failure)) {
+        return '/welcome';
+      }
+
       return null;
     },
     routes: [
+      GoRoute(
+        path: "/splash",
+        builder: (context, state) => const SplashScreen(),
+      ),
       GoRoute(
         path: "/welcome",
         builder: (context, state) => const WelcomeScreen(),

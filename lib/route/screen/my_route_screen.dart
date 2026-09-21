@@ -19,11 +19,8 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
   @override
   void initState() {
     super.initState();
-    // Tải danh sách lộ trình khi đã đăng nhập
-    final authStatus = context.read<AuthCubit>().state.status;
-    if (authStatus == AuthStatus.authenticated) {
-      context.read<RouteCubit>().loadRoutes();
-    }
+    // Tải danh sách lộ trình ngay khi vào màn hình
+    context.read<RouteCubit>().loadRoutes();
   }
 
   // Hàm lấy chữ cái đầu của last_name và first_name cho avatar
@@ -53,7 +50,7 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
           scrolledUnderElevation: 0,
           shadowColor: Colors.transparent,
           title: Container(
-            padding: EdgeInsets.symmetric(horizontal: 5),
+            padding: const EdgeInsets.symmetric(horizontal: 5),
             child: Row(
               mainAxisAlignment: .spaceBetween,
               crossAxisAlignment: .center,
@@ -84,141 +81,99 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                   ),
                 ),
 
+                // Avatar & Menu tài khoản người dùng
                 BlocBuilder<AuthCubit, AuthState>(
                   builder: (context, authState) {
-                    if (authState.status == AuthStatus.authenticated &&
-                        authState.user != null) {
-                      final user = authState.user!;
-                      final initials = _getInitials(
-                        user.firstName,
-                        user.lastName,
-                      );
+                    final user = authState.user;
+                    final initials = _getInitials(
+                      user?.firstName,
+                      user?.lastName,
+                    );
 
-                      // Bọc PopupMenuButton để custom bỏ hiệu ứng overlay khi nhấn
-                      return Theme(
-                        data: Theme.of(context).copyWith(
-                          splashColor: Colors.transparent,
-                          highlightColor: Colors.transparent,
-                          hoverColor: Colors.transparent,
+                    // Bọc PopupMenuButton để custom bỏ hiệu ứng overlay khi nhấn
+                    return Theme(
+                      data: Theme.of(context).copyWith(
+                        splashColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
+                        hoverColor: Colors.transparent,
+                      ),
+                      child: PopupMenuButton<String>(
+                        offset: const Offset(0, 50),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                        child: PopupMenuButton<String>(
-                          offset: const Offset(0, 50),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          color: Color(0xFFFFFFFF),
-                          onSelected: (String value) {
-                            if (value == 'profile') {
-                              // Gán xử lý xem thông tin người dùng
-                            } else if (value == 'logout') {
-                              context.read<AuthCubit>().logout();
-                            }
-                          },
-
-                          // Danh sách các tùy
-                          itemBuilder: (BuildContext context) =>
-                              <PopupMenuEntry<String>>[
-                                PopupMenuItem<String>(
-                                  value: 'profile',
-                                  child: Row(
-                                    children: [
-                                      SvgPicture.asset(
-                                        "assets/icons/ic_user.svg",
-                                        colorFilter: ColorFilter.mode(
-                                          Color(0xFF1C2520),
-                                          BlendMode.srcIn,
-                                        ),
-                                        width: 21,
-                                        height: 21,
+                        color: const Color(0xFFFFFFFF),
+                        onSelected: (String value) {
+                          if (value == 'profile') {
+                            // Gán xử lý xem thông tin người dùng
+                          } else if (value == 'logout') {
+                            context.read<AuthCubit>().logout();
+                          }
+                        },
+                        itemBuilder: (BuildContext context) =>
+                            <PopupMenuEntry<String>>[
+                              PopupMenuItem<String>(
+                                value: 'profile',
+                                child: Row(
+                                  children: [
+                                    SvgPicture.asset(
+                                      "assets/icons/ic_user.svg",
+                                      colorFilter: const ColorFilter.mode(
+                                        Color(0xFF1C2520),
+                                        BlendMode.srcIn,
                                       ),
-                                      const SizedBox(width: 10),
-                                      const Text(
-                                        'Thông tin người dùng',
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          color: Color(0xFF1C2520),
-                                          fontWeight: FontWeight.w500,
-                                        ),
+                                      width: 21,
+                                      height: 21,
+                                    ),
+                                    const SizedBox(width: 10),
+                                    const Text(
+                                      'Thông tin người dùng',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Color(0xFF1C2520),
+                                        fontWeight: FontWeight.w500,
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
-
-                                const PopupMenuDivider(), // Dòng kẻ ngang phân cách
-
-                                const PopupMenuItem<String>(
-                                  value: 'logout',
-                                  child: Row(
-                                    children: [
-                                      Icon(
-                                        Icons.logout,
-                                        size: 21,
+                              ),
+                              const PopupMenuDivider(),
+                              const PopupMenuItem<String>(
+                                value: 'logout',
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.logout,
+                                      size: 21,
+                                      color: Colors.redAccent,
+                                    ),
+                                    SizedBox(width: 10),
+                                    Text(
+                                      'Đăng xuất',
+                                      style: TextStyle(
+                                        fontSize: 14,
                                         color: Colors.redAccent,
+                                        fontWeight: FontWeight.w500,
                                       ),
-                                      SizedBox(width: 10),
-                                      Text(
-                                        'Đăng xuất',
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.redAccent,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
-                              ],
-
-                          // Avatar
-                          child: CircleAvatar(
-                            radius: 21,
-                            backgroundColor: const Color(0xFFE7EDD9),
-                            child: Text(
-                              initials,
-                              style: Theme.of(context).textTheme.titleLarge
-                                  ?.copyWith(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.bold,
-                                    color: const Color(0xFF526C30),
-                                  ),
-                            ),
+                              ),
+                            ],
+                        child: CircleAvatar(
+                          radius: 21,
+                          backgroundColor: const Color(0xFFE7EDD9),
+                          child: Text(
+                            initials,
+                            style: Theme.of(context).textTheme.titleLarge
+                                ?.copyWith(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.bold,
+                                  color: const Color(0xFF526C30),
+                                ),
                           ),
                         ),
-                      );
-                    }
-
-                    return Row(
-                      children: [
-                        InkWell(
-                          onTap: () => context.push("/login"),
-                          child: const Text(
-                            "Đăng nhập",
-                            style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600,
-                              color: Color(0xFF526C30),
-                            ),
-                          ),
-                        ),
-                        const Text(
-                          " · ",
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: Color(0xFF768079),
-                          ),
-                        ),
-                        InkWell(
-                          onTap: () => context.push("/register"),
-                          child: const Text(
-                            "Đăng ký",
-                            style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600,
-                              color: Color(0xFF526C30),
-                            ),
-                          ),
-                        ),
-                      ],
+                      ),
                     );
                   },
                 ),
@@ -228,7 +183,12 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
         ),
         body: SingleChildScrollView(
           child: Padding(
-            padding: EdgeInsets.only(top: 0, left: 20, right: 20, bottom: 30),
+            padding: const EdgeInsets.only(
+              top: 0,
+              left: 20,
+              right: 20,
+              bottom: 30,
+            ),
             child: Column(
               children: [
                 Row(
@@ -239,7 +199,7 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                         style: Theme.of(context).textTheme.labelLarge?.copyWith(
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
-                          color: Color(0xFF768079),
+                          color: const Color(0xFF768079),
                         ),
                       ),
                     ),
@@ -255,7 +215,7 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontSize: 26,
                         fontWeight: FontWeight.w700,
-                        color: Color(0xFF1C2520),
+                        color: const Color(0xFF1C2520),
                       ),
                     ),
                     InkWell(
@@ -264,10 +224,10 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                         width: 40,
                         height: 40,
                         child: CircleAvatar(
-                          backgroundColor: Color(0xFFD2F36B),
+                          backgroundColor: const Color(0xFFD2F36B),
                           child: SvgPicture.asset(
                             "assets/icons/ic_plus.svg",
-                            colorFilter: ColorFilter.mode(
+                            colorFilter: const ColorFilter.mode(
                               Color(0xFF1C2520),
                               BlendMode.srcIn,
                             ),
@@ -281,7 +241,7 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                 ),
                 const SizedBox(height: 16),
 
-                // ListView ListRoute
+                // Danh sách lộ trình
                 Container(
                   height: 150,
                   decoration: BoxDecoration(
@@ -289,137 +249,96 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                     border: Border.all(color: const Color(0xFFE8ECE8)),
                     color: Colors.white,
                   ),
-                  child: BlocBuilder<AuthCubit, AuthState>(
-                    builder: (context, authState) {
-                      // Chưa đăng nhập
-                      if (authState.status != AuthStatus.authenticated) {
+                  child: BlocBuilder<RouteCubit, RouteState>(
+                    builder: (context, routeState) {
+                      if (routeState.listStatus == RouteStatus.loading ||
+                          routeState.listStatus == RouteStatus.initial) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+
+                      if (routeState.listStatus == RouteStatus.failure) {
                         return Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Text(
-                                "Đăng nhập để xem danh sách\nlộ trình tập luyện của bạn.",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: Color(0xFF768079),
-                                  fontSize: 13,
+                          child: Padding(
+                            padding: const EdgeInsets.all(24.0),
+                            child: Column(
+                              mainAxisAlignment: .center,
+                              children: [
+                                Text(
+                                  routeState.errorMessage ?? 'Có lỗi xảy ra',
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                    color: Color(0xFFE57373),
+                                    fontSize: 14,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(height: 10),
-                              TextButton(
-                                onPressed: () => context.push('/login'),
-                                child: const Text(
-                                  "Đăng nhập ngay",
-                                  style: TextStyle(color: Color(0xFF526C30)),
+                                const SizedBox(height: 5),
+                                ElevatedButton.icon(
+                                  onPressed: () {
+                                    context.read<RouteCubit>().loadRoutes();
+                                  },
+                                  icon: const Icon(
+                                    Icons.refresh_rounded,
+                                    size: 18,
+                                  ),
+                                  label: const Text("Thử lại"),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFF1C2520),
+                                    foregroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         );
                       }
 
-                      // Đã đăng nhập
-                      return BlocBuilder<RouteCubit, RouteState>(
-                        builder: (context, routeState) {
-                          if (routeState.listStatus == RouteStatus.loading ||
-                              routeState.listStatus == RouteStatus.initial) {
-                            return const Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          }
-
-                          if (routeState.listStatus == RouteStatus.failure) {
-                            return Center(
-                              child: Padding(
-                                padding: const EdgeInsets.all(24.0),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      routeState.errorMessage ??
-                                          'Có lỗi xãy ra',
-                                      textAlign: TextAlign.center,
-                                      style: const TextStyle(
-                                        color: Color(0xFFE57373),
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 5),
-                                    ElevatedButton.icon(
-                                      onPressed: () {
-                                        context.read<RouteCubit>().loadRoutes();
-                                      },
-                                      icon: const Icon(
-                                        Icons.refresh_rounded,
-                                        size: 18,
-                                      ),
-                                      label: const Text("Thử lại"),
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: const Color(
-                                          0xFF1C2520,
-                                        ),
-                                        foregroundColor: Colors.white,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            8,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          }
-
-                          // Đã đăng nhập nhưng danh sách lộ trình trống
-                          if (routeState.routes.isEmpty) {
-                            return const Center(
-                              child: Text(
-                                "Bạn chưa có lộ trình tập luyện nào.",
-                                style: TextStyle(
-                                  color: Color(0xFF768079),
-                                  fontSize: 14,
-                                ),
-                              ),
-                            );
-                          }
-
-                          return Material(
-                            // Thêm widget Material để áp dụng hiệu ứng ripple
-                            color: Colors.transparent,
-                            borderRadius: BorderRadius.circular(19),
-                            clipBehavior: Clip
-                                .antiAlias, // Cắt triệt để màu nền của ListTile
-                            child: ListView.builder(
-                              itemCount: routeState.routes.length,
-                              itemExtent: 50,
-                              physics: const BouncingScrollPhysics(),
-                              itemBuilder: (context, index) {
-                                final route = routeState.routes[index];
-                                final isEven = index % 2 == 0;
-                                return ListTile(
-                                  tileColor: isEven
-                                      ? const Color(0xFFEEF4E5)
-                                      : Colors.white,
-                                  dense: true,
-                                  title: Text(
-                                    route.title,
-                                    style: const TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w400,
-                                      color: Color(0xFF1C2520),
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  onTap: () =>
-                                      context.push("/route_edit", extra: route),
-                                );
-                              },
+                      // Danh sách lộ trình trống
+                      if (routeState.routes.isEmpty) {
+                        return const Center(
+                          child: Text(
+                            "Bạn chưa có lộ trình tập luyện nào.",
+                            style: TextStyle(
+                              color: Color(0xFF768079),
+                              fontSize: 14,
                             ),
-                          );
-                        },
+                          ),
+                        );
+                      }
+
+                      return Material(
+                        color: Colors.transparent,
+                        borderRadius: BorderRadius.circular(19),
+                        clipBehavior: Clip.antiAlias,
+                        child: ListView.builder(
+                          itemCount: routeState.routes.length,
+                          itemExtent: 50,
+                          physics: const BouncingScrollPhysics(),
+                          itemBuilder: (context, index) {
+                            final route = routeState.routes[index];
+                            final isEven = index % 2 == 0;
+                            return ListTile(
+                              tileColor: isEven
+                                  ? const Color(0xFFEEF4E5)
+                                  : Colors.white,
+                              dense: true,
+                              title: Text(
+                                route.title,
+                                style: const TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w400,
+                                  color: Color(0xFF1C2520),
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              onTap: () =>
+                                  context.push("/route_edit", extra: route),
+                            );
+                          },
+                        ),
                       );
                     },
                   ),
@@ -614,6 +533,7 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                 //     ),
                 //   ),
                 // ),
+
                 const SizedBox(height: 30),
                 Column(
                   children: [
@@ -626,7 +546,7 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                               ?.copyWith(
                                 fontSize: 19,
                                 fontWeight: FontWeight.w700,
-                                color: Color(0xFF1C2520),
+                                color: const Color(0xFF1C2520),
                               ),
                         ),
                         InkWell(
@@ -637,7 +557,7 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                                 ?.copyWith(
                                   fontSize: 13,
                                   fontWeight: FontWeight.w700,
-                                  color: Color(0xFF526C30),
+                                  color: const Color(0xFF526C30),
                                 ),
                           ),
                         ),
@@ -646,10 +566,12 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                     const SizedBox(height: 10),
                     Container(
                       height: 135,
-                      padding: EdgeInsets.all(20),
+                      padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
-                        color: Color(0xFFFFFFFF),
-                        borderRadius: BorderRadius.all(Radius.circular(20)),
+                        color: const Color(0xFFFFFFFF),
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(20),
+                        ),
                         border: Border.all(
                           color: const Color(0xFFE8ECE8),
                           width: 1,
@@ -661,7 +583,7 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                           Container(
                             width: 5,
                             height: double.infinity,
-                            decoration: BoxDecoration(
+                            decoration: const BoxDecoration(
                               color: Color(0xFFD2F36B),
                               borderRadius: BorderRadius.vertical(
                                 top: Radius.circular(5),
@@ -685,7 +607,7 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                                           .textTheme
                                           .labelLarge
                                           ?.copyWith(
-                                            color: Color(0xFF1C2520),
+                                            color: const Color(0xFF1C2520),
                                             fontSize: 23,
                                             fontWeight: FontWeight.w700,
                                           ),
@@ -693,9 +615,9 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                                     Container(
                                       width: 88,
                                       height: 25,
-                                      alignment: Alignment.centerLeft,
-                                      padding: EdgeInsets.only(left: 10),
-                                      decoration: BoxDecoration(
+                                      alignment: .centerLeft,
+                                      padding: const EdgeInsets.only(left: 10),
+                                      decoration: const BoxDecoration(
                                         color: Color(0xFFF7F8FA),
                                         borderRadius: BorderRadius.all(
                                           Radius.circular(7),
@@ -707,7 +629,7 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                                             .textTheme
                                             .labelLarge
                                             ?.copyWith(
-                                              color: Color(0xFF768079),
+                                              color: const Color(0xFF768079),
                                               fontSize: 11,
                                               fontWeight: FontWeight.w600,
                                             ),
@@ -719,7 +641,7 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                                   "Thân trên & core",
                                   style: Theme.of(context).textTheme.labelLarge
                                       ?.copyWith(
-                                        color: Color(0xFF1C2520),
+                                        color: const Color(0xFF1C2520),
                                         fontSize: 16,
                                         fontWeight: FontWeight.w600,
                                       ),
@@ -736,7 +658,7 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                                           .textTheme
                                           .labelLarge
                                           ?.copyWith(
-                                            color: Color(0xFF768079),
+                                            color: const Color(0xFF768079),
                                             fontSize: 12,
                                             fontWeight: FontWeight.w400,
                                           ),
@@ -762,7 +684,7 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                           "Nhìn lại hành trình",
                           style: Theme.of(context).textTheme.titleLarge
                               ?.copyWith(
-                                color: Color(0xFF1C2520),
+                                color: const Color(0xFF1C2520),
                                 fontSize: 19,
                                 fontWeight: FontWeight.w700,
                               ),
@@ -796,8 +718,8 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                           const SizedBox(width: 10),
                           Expanded(
                             child: Container(
-                              padding: EdgeInsets.all(10),
-                              decoration: BoxDecoration(
+                              padding: const EdgeInsets.all(10),
+                              decoration: const BoxDecoration(
                                 color: Color(0xFFFFFFFF),
                                 borderRadius: BorderRadius.all(
                                   Radius.circular(12),
@@ -811,7 +733,7 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                                     width: 69,
                                     height: 25,
                                     alignment: .center,
-                                    decoration: BoxDecoration(
+                                    decoration: const BoxDecoration(
                                       color: Color(0xFFEEF4E5),
                                       borderRadius: BorderRadius.all(
                                         Radius.circular(7),
@@ -823,7 +745,7 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                                           .textTheme
                                           .labelMedium
                                           ?.copyWith(
-                                            color: Color(0xFF526C30),
+                                            color: const Color(0xFF526C30),
                                             fontSize: 11,
                                             fontWeight: FontWeight.w600,
                                           ),
@@ -835,7 +757,7 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                                         .textTheme
                                         .labelMedium
                                         ?.copyWith(
-                                          color: Color(0xFF1C2520),
+                                          color: const Color(0xFF1C2520),
                                           fontSize: 14,
                                           fontWeight: FontWeight.w600,
                                         ),
@@ -846,7 +768,7 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                                         .textTheme
                                         .labelMedium
                                         ?.copyWith(
-                                          color: Color(0xFF768079),
+                                          color: const Color(0xFF768079),
                                           fontSize: 12,
                                           fontWeight: FontWeight.w400,
                                         ),
@@ -861,7 +783,7 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                   ],
                 ),
                 const SizedBox(height: 30),
-                ItemCardSwitch(),
+                const ItemCardSwitch(),
               ],
             ),
           ),

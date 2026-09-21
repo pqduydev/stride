@@ -63,32 +63,14 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                   height: 39.15,
                   child: Stack(
                     children: [
-                      SizedBox(
-                        width: 135,
-                        height: 39.15,
-                        child: Stack(
-                          children: [
-                            SvgPicture.asset(
-                              'assets/icons/ic_logo.svg',
-                              height: 29,
-                              colorFilter: const ColorFilter.mode(
-                                Color(0xFF1C2520),
-                                BlendMode.srcIn,
-                              ),
-                            ),
-                            Positioned(
-                              top: -5,
-                              right: 0,
-                              child: SvgPicture.asset(
-                                'assets/icons/ic_arrow_up_right.svg',
-                                width: 28,
-                                height: 28,
-                              ),
-                            ),
-                          ],
+                      SvgPicture.asset(
+                        'assets/icons/ic_logo.svg',
+                        height: 29,
+                        colorFilter: const ColorFilter.mode(
+                          Color(0xFF1C2520),
+                          BlendMode.srcIn,
                         ),
                       ),
-
                       Positioned(
                         top: -5,
                         right: 0,

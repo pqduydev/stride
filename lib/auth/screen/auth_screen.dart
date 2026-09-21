@@ -392,12 +392,15 @@ class _AuthViewState extends State<AuthView> {
                     children: [
                       Container(
                         padding: const EdgeInsets.fromLTRB(0, 10, 35, 35),
-                        child: const Text(
-                          "Quên mật khẩu?",
-                          style: TextStyle(
-                            color: Color(0xFF526C30),
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
+                        child: InkWell(
+                          onTap: () => context.push('/login/forget_password'),
+                          child: Text(
+                            "Quên mật khẩu?",
+                            style: TextStyle(
+                              color: Color(0xFF526C30),
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
                       ),
@@ -406,9 +409,9 @@ class _AuthViewState extends State<AuthView> {
                 else
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      SizedBox(height: 15),
-                      Text(
+                    children: [
+                      const SizedBox(height: 15),
+                      const Text(
                         "Dùng ít nhất 12 ký tự cho mật khẩu.",
                         style: TextStyle(
                           color: Color(0xFF768079),
@@ -416,8 +419,8 @@ class _AuthViewState extends State<AuthView> {
                           fontWeight: FontWeight.w400,
                         ),
                       ),
-                      SizedBox(height: 25),
-                      Text(
+                      const SizedBox(height: 25),
+                      const Text(
                         "Khi tạo tài khoản, bạn đồng ý với",
                         style: TextStyle(
                           color: Color(0xFF768079),
@@ -425,16 +428,19 @@ class _AuthViewState extends State<AuthView> {
                           fontWeight: FontWeight.w400,
                         ),
                       ),
-                      SizedBox(height: 8),
-                      Text(
-                        "Điều khoản sử dụng và Quyền riêng tư.",
-                        style: TextStyle(
-                          color: Color(0xFF526C30),
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
+                      const SizedBox(height: 8),
+                      InkWell(
+                        onTap: () => context.push('/register/privacy'),
+                        child: const Text(
+                          "Điều khoản sử dụng và Quyền riêng tư.",
+                          style: TextStyle(
+                            color: Color(0xFF526C30),
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
-                      SizedBox(height: 40),
+                      const SizedBox(height: 40),
                     ],
                   ),
                 BlocBuilder<AuthCubit, AuthState>(
@@ -477,7 +483,8 @@ class _AuthViewState extends State<AuthView> {
                           height: 20,
                         ),
                         borderColor: const Color(0xFFE8ECE8),
-                        onTap: () {},
+                        onTap: () =>
+                            context.push('/login/login_with_phone_number'),
                       ),
                     ],
                   ),
@@ -492,7 +499,7 @@ class _AuthViewState extends State<AuthView> {
                     height: 20,
                   ),
                   borderColor: const Color(0xFF747775),
-                  onTap: () {},
+                  onTap: () => context.push('/register/login_with_google'),
                 ),
                 const SizedBox(height: 15),
                 ItemSocialButton(
@@ -504,7 +511,7 @@ class _AuthViewState extends State<AuthView> {
                     width: 20,
                     height: 20,
                   ),
-                  onTap: () {},
+                  onTap: () => context.push('/register/login_with_apple'),
                 ),
                 const SizedBox(height: 35),
                 Row(

@@ -40,10 +40,38 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
       title: 'Thân dưới & Cardio',
       time: '20:00 – 21:00',
       reminderTime: 'Nhắc lúc 19:45',
-      date: DateTime(2026, 9, 18),
+      date: DateTime(2026, 9, 19),
     ),
     ScheduleModel(
       id: '3',
+      title: 'Thân trên & core',
+      time: '18:00 – 19:00',
+      reminderTime: 'Nhắc lúc 17:45',
+      date: DateTime(2026, 9, 19),
+    ),
+    ScheduleModel(
+      id: '4',
+      title: 'Thân dưới & Cardio',
+      time: '20:00 – 21:00',
+      reminderTime: 'Nhắc lúc 19:45',
+      date: DateTime(2026, 9, 19),
+    ),
+    ScheduleModel(
+      id: '5',
+      title: 'Thân trên & core',
+      time: '18:00 – 19:00',
+      reminderTime: 'Nhắc lúc 17:45',
+      date: DateTime(2026, 9, 19),
+    ),
+    ScheduleModel(
+      id: '6',
+      title: 'Thân trên & core',
+      time: '18:00 – 19:00',
+      reminderTime: 'Nhắc lúc 17:45',
+      date: DateTime(2026, 9, 19),
+    ),
+    ScheduleModel(
+      id: '7',
       title: 'Chạy bộ bền bỉ',
       time: '06:00 – 07:00',
       reminderTime: 'Nhắc lúc 05:45',
@@ -70,97 +98,123 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: AppbarCustom(title: ItemAppBarTitle(data: 'Lịch hẹn')),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ItemDropdown(
-              onItemChanged: (item) {
-                setState(() => _selectedDropdownItem = item);
-              },
-              selectedItem: _selectedDropdownItem,
-              listDropdown: listDropDown,
-              icon: 'assets/icons/ic_dumbbell.svg',
-            ),
-
-            const SizedBox(height: 16),
-
-            CustomScheduleCalendar(
-              selectedDay: _selectedDate,
-              workoutDays: workoutDays,
-              onDaySelected: (date) {
-                setState(() {
-                  _selectedDate = date;
-                });
-              },
-            ),
-
-            const SizedBox(height: 20),
-            const Divider(height: 1, color: Color(0xFFE8ECE8)),
-            const SizedBox(height: 25),
-
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  _formatVietnameseHeaderDate(_selectedDate),
-                  style: const TextStyle(
-                    color: Color(0xFF1C2520),
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
+      body: CustomScrollView(
+        slivers: [
+          SliverPadding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            sliver: SliverToBoxAdapter(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ItemDropdown(
+                    onItemChanged: (item) {
+                      setState(() => _selectedDropdownItem = item);
+                    },
+                    selectedItem: _selectedDropdownItem,
+                    listDropdown: listDropDown,
+                    icon: 'assets/icons/ic_dumbbell.svg',
                   ),
-                ),
 
-                if (isToday)
-                  Container(
-                    width: 79,
-                    height: 25,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFEEF4E5),
-                      borderRadius: BorderRadius.circular(7),
-                    ),
-                    child: const Text(
-                      'Hôm nay',
-                      style: TextStyle(
-                        color: Color(0xFF526C30),
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
+                  const SizedBox(height: 16),
+
+                  CustomScheduleCalendar(
+                    selectedDay: _selectedDate,
+                    workoutDays: workoutDays,
+                    onDaySelected: (date) {
+                      setState(() {
+                        _selectedDate = date;
+                      });
+                    },
                   ),
-              ],
-            ),
 
-            const SizedBox(height: 20),
-
-            // Danh sách các thẻ bài tập
-            if (schedulesOfSelectedDay.isEmpty)
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 30),
-                child: Center(
-                  child: Text(
-                    'Không có lịch tập vào ngày này',
-                    style: TextStyle(color: Color(0xFF768079), fontSize: 14),
-                  ),
-                ),
-              )
-            else
-              ListView.separated(
-                shrinkWrap:
-                    true, // Cho phép ListView nằm trong SingleChildScrollView
-                physics: const NeverScrollableScrollPhysics(), // Ngăn tự cuộn
-                itemCount: schedulesOfSelectedDay.length,
-                separatorBuilder: (context, index) =>
-                    const SizedBox(height: 12),
-                itemBuilder: (context, index) {
-                  final item = schedulesOfSelectedDay[index];
-                  return _buildScheduleCard(item);
-                },
+                  const SizedBox(height: 20),
+                  const Divider(height: 1, color: Color(0xFFE8ECE8)),
+                ],
               ),
-          ],
-        ),
+            ),
+          ),
+
+          SliverPadding(
+            padding: const EdgeInsets.only(top: 15, left: 20, right: 20),
+            sliver: SliverPersistentHeader(
+              pinned: true,
+              delegate: _BuildAppointmentCard(
+                minHeight: 50,
+                maxHeight: 50,
+                child: Container(
+                  color: Color(0xFFF7F8FA),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        _formatVietnameseHeaderDate(_selectedDate),
+                        style: const TextStyle(
+                          color: Color(0xFF1C2520),
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+
+                      if (isToday)
+                        Container(
+                          width: 79,
+                          height: 25,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFEEF4E5),
+                            borderRadius: BorderRadius.circular(7),
+                          ),
+                          child: const Text(
+                            'Hôm nay',
+                            style: TextStyle(
+                              color: Color(0xFF526C30),
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          SliverPadding(
+            padding: const EdgeInsets.only(
+              top: 5,
+              left: 20,
+              right: 20,
+              bottom: 20,
+            ),
+            sliver: SliverToBoxAdapter(
+              child: schedulesOfSelectedDay.isEmpty
+                  ? const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 30),
+                      child: Center(
+                        child: Text(
+                          'Không có lịch tập vào ngày này',
+                          style: TextStyle(
+                            color: Color(0xFF768079),
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    )
+                  : ListView.separated(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: schedulesOfSelectedDay.length,
+                      separatorBuilder: (context, index) =>
+                          const SizedBox(height: 12),
+                      itemBuilder: (context, index) {
+                        final item = schedulesOfSelectedDay[index];
+                        return _buildScheduleCard(item);
+                      },
+                    ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -260,5 +314,39 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
         ],
       ),
     );
+  }
+}
+
+class _BuildAppointmentCard extends SliverPersistentHeaderDelegate {
+  final double minHeight;
+  final double maxHeight;
+  final Widget child;
+
+  _BuildAppointmentCard({
+    required this.minHeight,
+    required this.maxHeight,
+    required this.child,
+  });
+
+  @override
+  double get minExtent => minHeight;
+
+  @override
+  double get maxExtent => maxHeight;
+
+  @override
+  Widget build(
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
+    return SizedBox.expand(child: child);
+  }
+
+  @override
+  bool shouldRebuild(_BuildAppointmentCard oldDelegate) {
+    return maxHeight != oldDelegate.maxHeight ||
+        minHeight != oldDelegate.minHeight ||
+        child != oldDelegate.child;
   }
 }

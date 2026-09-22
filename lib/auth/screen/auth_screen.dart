@@ -4,7 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:stride/auth/auth_cubit/auth_cubit.dart';
 import 'package:stride/auth/auth_cubit/auth_state.dart';
-import 'package:stride/auth/widget/item_custom_text_field.dart';
+import 'package:stride/widgets/item_custom_text_field.dart';
 import 'package:stride/core/utils/instant_obscure_controller.dart';
 import 'package:stride/widgets/appbar_custom.dart';
 import 'package:stride/widgets/item_app_bar_title.dart';

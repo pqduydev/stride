@@ -16,6 +16,8 @@ import 'package:stride/screens/login_with_google_screen.dart';
 import 'package:stride/screens/login_with_phone_number_screen.dart';
 import 'package:stride/screens/main_navigation_bar_screen.dart';
 import 'package:stride/screens/privacy_information_screen.dart';
+import 'package:stride/user/feats/personal_information_screen.dart';
+import 'package:stride/user/feats/profile_screen.dart';
 import 'package:stride/screens/route_create_screen.dart';
 import 'package:stride/screens/route_details_screen.dart';
 import 'package:stride/screens/splash_screen.dart';
@@ -98,10 +100,10 @@ class AppRouter {
                   final data = state.extra as Map<String, dynamic>;
 
                   final appBarTitle = data['app_bar_title'] as String?;
-                  final title = data?['title'] as String?;
-                  final info = data?['info'] as String?;
-                  final buttonTitle = data?['button_title'] as String?;
-                  final onTap = data?['on_tap'] as VoidCallback?;
+                  final title = data['title'] as String?;
+                  final info = data['info'] as String?;
+                  final buttonTitle = data['button_title'] as String?;
+                  final onTap = data['on_tap'] as VoidCallback?;
 
                   return CheckScreen(
                     appBarTitle: appBarTitle,
@@ -174,16 +176,35 @@ class AppRouter {
         path: "/appointment",
         builder: (context, state) => const AppointmentScreen(),
       ),
+      GoRoute(
+        path: "/profile",
+        builder: (context, state) => const ProfileScreen(),
+        routes: [
+          GoRoute(
+            path: "personal_information",
+            builder: (context, state) => const PersonalInformationScreen(),
+          ),
+        ],
+      ),
     ],
   );
 }
 
 class GoRouterRefreshStream extends ChangeNotifier {
-  late final StreamSubscription<dynamic> _subscription;
+  late final StreamSubscription<AuthState> _subscription;
 
-  GoRouterRefreshStream(Stream<dynamic> stream) {
+  GoRouterRefreshStream(Stream<AuthState> stream) {
     notifyListeners();
-    _subscription = stream.asBroadcastStream().listen((_) => notifyListeners());
+    AuthStatus? lastStatus;
+
+    _subscription = stream.listen((state) {
+      // Chỉ thông báo cho GoRouter khi trạng thái xác thực (AuthStatus) thực sự thay đổi
+      // So sánh trạng thái cũ với trạng thái mới
+      if (state.status != lastStatus) {
+        lastStatus = state.status;
+        notifyListeners();
+      }
+    });
   }
 
   @override

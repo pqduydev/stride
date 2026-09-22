@@ -7,6 +7,7 @@ class ItemDateTime extends StatefulWidget {
   final DateTime? initialDate;
   final DateTime? firstDate;
   final ValueChanged<DateTime> onDateSelected;
+  final DateTime? lastDate;
 
   const ItemDateTime({
     super.key,
@@ -14,6 +15,7 @@ class ItemDateTime extends StatefulWidget {
     this.initialDate,
     required this.onDateSelected,
     this.firstDate,
+    this.lastDate,
   });
 
   @override
@@ -55,7 +57,7 @@ class _ItemDateTimeState extends State<ItemDateTime> {
       // Đảm bảo initialDate không bao giờ nhỏ hơn firstDate
       initialDate: currentInitial.isBefore(minDate) ? minDate : currentInitial,
       firstDate: minDate,
-      lastDate: DateTime(2100),
+      lastDate: widget.lastDate ?? DateTime(2100),
     );
 
     if (result != null) {

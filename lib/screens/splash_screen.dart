@@ -20,32 +20,8 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              width: 180,
-              height: 39.15,
-              child: Stack(
-                children: [
-                  SvgPicture.asset('assets/icons/ic_stride.svg', height: 45),
-                  Positioned(
-                    top: -5,
-                    right: 0,
-                    child: SvgPicture.asset(
-                      'assets/icons/ic_arrow_up_right.svg',
-                      width: 28,
-                      height: 28,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
+      backgroundColor: const Color(0xFFFFFFFF),
+      body: Center(child: SvgPicture.asset('assets/branding/splash_icon.svg')),
     );
   }
 }

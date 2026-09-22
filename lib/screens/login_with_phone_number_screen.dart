@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:stride/auth/widget/item_custom_text_field.dart';
+import 'package:stride/widgets/item_custom_text_field.dart';
 import 'package:stride/widgets/appbar_custom.dart';
 import 'package:stride/widgets/item_app_bar_title.dart';
 import 'package:stride/widgets/item_bottom_button.dart';
@@ -86,7 +86,7 @@ class LoginWithPhoneNumberScreen extends StatelessWidget {
                   // Regex kiểm tra số điện thoại VN không có số 0 ở đầu:
                   // ^[35789] : Bắt đầu bằng 3, 5, 7, 8 hoặc 9 (các đầu số di động hợp lệ)
                   // \d{8}$   : Tiếp theo là chính xác 8 chữ số
-                  final phoneRegex = RegExp(r'^[35789]\d{9}$');
+                  final phoneRegex = RegExp(r'^[35789]\d{8}$');
 
                   if (!phoneRegex.hasMatch(value.trim())) {
                     return 'Số điện thoại không hợp lệ (bỏ số 0 ở đầu)';

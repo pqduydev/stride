@@ -307,7 +307,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
             ],
           ),
           SvgPicture.asset(
-            'assets/icons/Ic_chevron_right.svg',
+            'assets/icons/ic_chevron_right.svg',
             width: 20,
             height: 20,
           ),

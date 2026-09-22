@@ -66,13 +66,7 @@ class AuthRepository {
       final user = UserModel.fromJson(reponse.data);
       final prefs = await SharedPreferences.getInstance();
 
-      // Cập nhật Tokens & User Profile Data
-      if (user.accessToken != null) {
-        await prefs.setString('access_token', user.accessToken!);
-      }
-      if (user.refreshToken != null) {
-        await prefs.setString('refresh_token', user.refreshToken!);
-      }
+      // Cập nhật User Profile Data
       await prefs.setString('user_data', jsonEncode(user.toJson()));
 
       return user;

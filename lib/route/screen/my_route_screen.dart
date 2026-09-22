@@ -23,19 +23,6 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
     context.read<RouteCubit>().loadRoutes();
   }
 
-  // Hàm lấy chữ cái đầu của last_name và first_name cho avatar
-  String _getInitials(String? firstName, String? lastName) {
-    final lastInitial = (lastName != null && lastName.trim().isNotEmpty)
-        ? lastName.trim()[0].toUpperCase()
-        : '';
-    final firstInitial = (firstName != null && firstName.trim().isNotEmpty)
-        ? firstName.trim()[0].toUpperCase()
-        : '';
-
-    final initials = '$firstInitial$lastInitial';
-    return initials.isNotEmpty ? initials : 'U';
-  }
-
   @override
   Widget build(BuildContext context) {
     return BlocListener<AuthCubit, AuthState>(
@@ -85,10 +72,7 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                 BlocBuilder<AuthCubit, AuthState>(
                   builder: (context, authState) {
                     final user = authState.user;
-                    final initials = _getInitials(
-                      user?.firstName,
-                      user?.lastName,
-                    );
+                    final initials = user?.displayInitials;
 
                     // Bọc PopupMenuButton để custom bỏ hiệu ứng overlay khi nhấn
                     return Theme(
@@ -97,74 +81,13 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                         highlightColor: Colors.transparent,
                         hoverColor: Colors.transparent,
                       ),
-                      child: PopupMenuButton<String>(
-                        offset: const Offset(0, 50),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        color: const Color(0xFFFFFFFF),
-                        onSelected: (String value) {
-                          if (value == 'profile') {
-                            // Gán xử lý xem thông tin người dùng
-                          } else if (value == 'logout') {
-                            context.read<AuthCubit>().logout();
-                          }
-                        },
-                        itemBuilder: (BuildContext context) =>
-                            <PopupMenuEntry<String>>[
-                              PopupMenuItem<String>(
-                                value: 'profile',
-                                child: Row(
-                                  children: [
-                                    SvgPicture.asset(
-                                      "assets/icons/ic_user.svg",
-                                      colorFilter: const ColorFilter.mode(
-                                        Color(0xFF1C2520),
-                                        BlendMode.srcIn,
-                                      ),
-                                      width: 21,
-                                      height: 21,
-                                    ),
-                                    const SizedBox(width: 10),
-                                    const Text(
-                                      'Thông tin người dùng',
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        color: Color(0xFF1C2520),
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const PopupMenuDivider(),
-                              const PopupMenuItem<String>(
-                                value: 'logout',
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      Icons.logout,
-                                      size: 21,
-                                      color: Colors.redAccent,
-                                    ),
-                                    SizedBox(width: 10),
-                                    Text(
-                                      'Đăng xuất',
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        color: Colors.redAccent,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
+                      child: InkWell(
+                        onTap: () => context.push('/profile'),
                         child: CircleAvatar(
                           radius: 21,
                           backgroundColor: const Color(0xFFE7EDD9),
                           child: Text(
-                            initials,
+                            initials ?? '',
                             style: Theme.of(context).textTheme.titleLarge
                                 ?.copyWith(
                                   fontSize: 13,

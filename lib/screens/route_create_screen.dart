@@ -242,13 +242,19 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
               ),
             ),
           ),
-          bottomNavigationBar: Padding(
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 30),
-            child: ItemBottomButton(
-              text: isEditMode ? 'Lưu thay đổi' : 'Tạo lộ trình',
-              isLoading: isLoading,
-              onTap: _onSave,
-            ),
+          bottomNavigationBar: BlocBuilder<RouteCubit, RouteState>(
+            builder: (context, routeState) {
+              final isLoading = routeState.actionStatus == RouteStatus.loading;
+
+              return Padding(
+                padding: const EdgeInsets.fromLTRB(20, 20, 20, 30),
+                child: ItemBottomButton(
+                  text: isEditMode ? 'Lưu thay đổi' : 'Tạo lộ trình',
+                  isLoading: isLoading,
+                  onTap: isLoading ? null : _onSave,
+                ),
+              );
+            },
           ),
         );
       },

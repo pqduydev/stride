@@ -11,6 +11,10 @@ class ItemCustomTextField extends StatefulWidget {
   final Iterable<String>? autofillHints;
   final bool autocorrect;
   final bool enableSuggestions;
+  final bool readOnly;
+  final int maxLines;
+  final double height;
+  final int backgroundColor;
 
   const ItemCustomTextField({
     super.key,
@@ -24,6 +28,10 @@ class ItemCustomTextField extends StatefulWidget {
     this.autofillHints,
     this.autocorrect = true,
     this.enableSuggestions = true,
+    this.readOnly = false,
+    this.maxLines = 1,
+    this.height = 76.15,
+    this.backgroundColor = 0xFFFFFFFF,
   });
 
   @override
@@ -60,13 +68,13 @@ class _ItemCustomTextFieldState extends State<ItemCustomTextField> {
               onTap: () => _focusNode.requestFocus(),
               behavior: HitTestBehavior.opaque,
               child: Container(
-                height: 76.15,
+                height: widget.height,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 15,
                   vertical: 12,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Color(widget.backgroundColor),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
                     color: hasError
@@ -93,6 +101,8 @@ class _ItemCustomTextFieldState extends State<ItemCustomTextField> {
                       children: [
                         Expanded(
                           child: TextField(
+                            maxLines: widget.maxLines,
+                            readOnly: widget.readOnly,
                             focusNode: _focusNode,
                             controller: widget.controller,
                             autofillHints: widget.autofillHints,

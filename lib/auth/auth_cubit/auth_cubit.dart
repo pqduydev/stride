@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stride/auth/auth_cubit/auth_state.dart';
+import 'package:stride/model/user_model.dart';
 import 'package:stride/repository/auth_repository.dart';
 import 'package:stride/services/api_exception.dart';
 
@@ -67,21 +68,21 @@ class AuthCubit extends Cubit<AuthState> {
     emit(state.copyWith(status: AuthStatus.loading, clearErrorMessage: true));
 
     try {
-      final user = await _authRepository.login(
-        username: username,
-        password: password,
-      );
-
-      if (isClosed) return;
+      await _authRepository.login(username: username, password: password);
 
       if (isClosed) {
         return; // Khi người dùng thoát màn hình trong khi đợi response
       }
 
+      // Gọi API lấy đầy đủ thông tin người dùng
+      final fullUser = await _authRepository.getUser();
+
+      if (isClosed) return;
+
       emit(
         state.copyWith(
           status: AuthStatus.authenticated,
-          user: user,
+          user: fullUser,
           clearErrorMessage: true,
         ),
       );
@@ -183,5 +184,11 @@ class AuthCubit extends Cubit<AuthState> {
 
   void resetStatus() {
     emit(state.copyWith(status: AuthStatus.initial, clearErrorMessage: true));
+  }
+
+  /** Hiện đang được gọi từ personal_information_screen 
+  để đồng bộ dữ liệu sau khi cập nhật */
+  void updateUserInMemory(UserModel updatedUser) {
+    emit(state.copyWith(user: updatedUser));
   }
 }

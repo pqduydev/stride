@@ -124,7 +124,7 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(20),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: .start,
                 children: [
                   const Text(
                     "Một mục tiêu, một hành trình mới.",

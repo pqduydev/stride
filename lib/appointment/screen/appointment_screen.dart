@@ -104,7 +104,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 20),
             sliver: SliverToBoxAdapter(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: .start,
                 children: [
                   ItemDropdown(
                     onItemChanged: (item) {
@@ -144,7 +144,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                 child: Container(
                   color: Color(0xFFF7F8FA),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: .spaceBetween,
                     children: [
                       Text(
                         _formatVietnameseHeaderDate(_selectedDate),
@@ -159,7 +159,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                         Container(
                           width: 79,
                           height: 25,
-                          alignment: Alignment.center,
+                          alignment: .center,
                           decoration: BoxDecoration(
                             color: const Color(0xFFEEF4E5),
                             borderRadius: BorderRadius.circular(7),
@@ -247,13 +247,13 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
         border: Border.all(color: const Color(0xFFE8ECE8), width: 1),
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: .spaceBetween,
         children: [
           Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: .start,
             children: [
               Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: .start,
                 children: [
                   SvgPicture.asset(
                     'assets/icons/ic_dumbbell.svg',
@@ -262,7 +262,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                   ),
                   const SizedBox(width: 12),
                   Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: .start,
                     children: [
                       Text(
                         item.title,

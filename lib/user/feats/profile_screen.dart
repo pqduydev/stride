@@ -25,52 +25,59 @@ class ProfileScreen extends StatelessWidget {
               builder: (context, authState) {
                 final user = authState.user;
                 final initials = user?.displayInitials;
-
                 final name = user?.displayName;
 
                 return Row(
                   crossAxisAlignment: .center,
                   children: [
+                    // Avatar với kích thước cố định
                     Container(
                       width: 76,
                       height: 76,
-                      margin: EdgeInsets.only(right: 20),
+                      margin: const EdgeInsets.only(right: 20),
                       alignment: .center,
                       decoration: BoxDecoration(
-                        color: Color(0xFFEEF4E5),
+                        color: const Color(0xFFEEF4E5),
                         borderRadius: BorderRadius.circular(38),
                       ),
                       child: Text(
                         initials ?? '',
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Color(0xFF526C30),
                           fontSize: 23,
-                          fontWeight: .w700,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
                     ),
 
-                    Column(
-                      crossAxisAlignment: .start,
-                      children: [
-                        Text(
-                          name ?? '',
-                          style: TextStyle(
-                            color: Color(0xFF1C2520),
-                            fontSize: 25,
-                            fontWeight: .w700,
+                    // Bọc Column vào Expanded để ép chiều rộng không vượt quá màn hình
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: .start,
+                        children: [
+                          Text(
+                            name ?? '',
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              color: Color(0xFF1C2520),
+                              fontSize: 25,
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 5),
-                        Text(
-                          user?.email ?? '',
-                          style: TextStyle(
-                            color: Color(0xFF768079),
-                            fontSize: 13,
-                            fontWeight: .w400,
+                          const SizedBox(height: 5),
+                          Text(
+                            user?.email ?? '',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              color: Color(0xFF768079),
+                              fontSize: 13,
+                              fontWeight: FontWeight.w400,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ],
                 );

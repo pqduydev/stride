@@ -61,7 +61,7 @@ class _ItemCustomTextFieldState extends State<ItemCustomTextField> {
         final hasError = field.hasError;
 
         return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: .start,
           mainAxisSize: MainAxisSize.min,
           children: [
             GestureDetector(
@@ -84,8 +84,8 @@ class _ItemCustomTextFieldState extends State<ItemCustomTextField> {
                   ),
                 ),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: .start,
+                  mainAxisAlignment: .center,
                   children: [
                     Text(
                       widget.label,
@@ -97,7 +97,7 @@ class _ItemCustomTextFieldState extends State<ItemCustomTextField> {
                     ),
                     const SizedBox(height: 4),
                     Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
+                      crossAxisAlignment: .center,
                       children: [
                         Expanded(
                           child: TextField(

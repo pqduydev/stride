@@ -78,7 +78,7 @@ class _ItemDateTimeState extends State<ItemDateTime> {
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: .start,
       children: [
         Text(
           widget.label,

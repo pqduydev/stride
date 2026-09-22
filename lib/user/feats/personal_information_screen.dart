@@ -211,7 +211,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
               bottom: 40,
             ),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: .start,
               children: [
                 const Text(
                   'Thông tin giúp nhắc hẹn và gợi ý phù hợp.',
@@ -239,7 +239,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                                 top: 35,
                                 bottom: 40,
                               ),
-                              alignment: Alignment.center,
+                              alignment: .center,
                               decoration: BoxDecoration(
                                 color: const Color(0xFFEEF4E5),
                                 borderRadius: BorderRadius.circular(38),

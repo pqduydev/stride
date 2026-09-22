@@ -28,7 +28,7 @@ class ItemBottomButton extends StatelessWidget {
       child: Container(
         width: double.infinity,
         height: 50,
-        alignment: Alignment.center,
+        alignment: .center,
         decoration: BoxDecoration(
           color: Color(color!),
           borderRadius: BorderRadius.circular(13),

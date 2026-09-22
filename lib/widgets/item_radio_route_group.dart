@@ -21,11 +21,11 @@ class ItemRadioRouteGroup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: .start,
       children: [
         // Tiêu đề và dấu hiệu nhận biết cuộn ngang
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: .spaceBetween,
           children: [
             const Text(
               "Nhóm mục tiêu",
@@ -86,7 +86,7 @@ class ItemRadioRouteGroup extends StatelessWidget {
                         width: 1,
                       ),
                     ),
-                    alignment: Alignment.center,
+                    alignment: .center,
                     child: Text(
                       label,
                       style: TextStyle(

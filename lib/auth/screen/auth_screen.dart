@@ -165,7 +165,7 @@ class _AuthViewState extends State<AuthView> {
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(20),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: .start,
               children: [
                 Text(
                   _isLogin
@@ -388,7 +388,7 @@ class _AuthViewState extends State<AuthView> {
                 ],
                 if (_isLogin)
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
+                    mainAxisAlignment: .end,
                     children: [
                       Container(
                         padding: const EdgeInsets.fromLTRB(0, 10, 35, 35),
@@ -408,7 +408,7 @@ class _AuthViewState extends State<AuthView> {
                   )
                 else
                   Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: .start,
                     children: [
                       const SizedBox(height: 15),
                       const Text(
@@ -460,7 +460,7 @@ class _AuthViewState extends State<AuthView> {
                 ),
                 if (_isLogin)
                   Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                    crossAxisAlignment: .center,
                     children: [
                       const SizedBox(height: 30),
                       const Text(
@@ -515,7 +515,7 @@ class _AuthViewState extends State<AuthView> {
                 ),
                 const SizedBox(height: 35),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: .center,
                   children: [
                     GestureDetector(
                       onTap: () {

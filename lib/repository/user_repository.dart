@@ -8,7 +8,7 @@ import 'package:stride/services/api_exception.dart';
 class UserRepository {
   final Dio _dio;
 
-  UserRepository({required Dio dio}) : _dio = dio;
+  UserRepository({required this._dio});
 
   Future<UserModel> updateProfile(Map<String, dynamic> updateData) async {
     try {

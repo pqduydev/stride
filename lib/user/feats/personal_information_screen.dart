@@ -157,6 +157,21 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
       changedFields['bio'] = currentBio;
     }
 
+    // Kiểm tra người dùng có thay đổi thông tin chưa
+    if (changedFields.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Không có thông tin nào thay đổi.',
+            style: TextStyle(color: Color(0xFFFFFFFF)),
+          ),
+          backgroundColor: Colors.orangeAccent,
+        ),
+      );
+
+      return;
+    }
+
     context.read<UserCubit>().updateProfile(changedFields);
   }
 

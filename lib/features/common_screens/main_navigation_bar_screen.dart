@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:stride/appointment/screen/appointment_screen.dart';
-import 'package:stride/screens/appointment_reminder_screen.dart';
-import 'package:stride/screens/diary_screen.dart';
-import 'package:stride/route/screen/my_route_screen.dart';
+import 'package:stride/features/appointment/screens/appointment_screen.dart';
+import 'package:stride/features/appointment/screens/appointment_reminder_screen.dart';
+import 'package:stride/features/common_screens/diary_screen.dart';
+import 'package:stride/features/route/screens/my_route_screen.dart';
 
 class MainNavigationBarScreen extends StatefulWidget {
   const MainNavigationBarScreen({super.key});

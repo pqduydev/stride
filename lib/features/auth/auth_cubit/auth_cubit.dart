@@ -1,6 +1,8 @@
+// ignore_for_file: slash_for_doc_comments
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:stride/auth/auth_cubit/auth_state.dart';
+import 'package:stride/features/auth/auth_cubit/auth_state.dart';
 import 'package:stride/model/user_model.dart';
 import 'package:stride/repository/auth_repository.dart';
 import 'package:stride/services/api_exception.dart';

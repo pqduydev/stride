@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:stride/auth/auth_cubit/auth_cubit.dart';
-import 'package:stride/auth/auth_cubit/auth_state.dart';
-import 'package:stride/route/route_cubit/route_cubit.dart';
-import 'package:stride/route/route_cubit/route_state.dart';
+import 'package:stride/features/auth/auth_cubit/auth_cubit.dart';
+import 'package:stride/features/auth/auth_cubit/auth_state.dart';
+import 'package:stride/features/route/route_cubit/route_cubit.dart';
+import 'package:stride/features/route/route_cubit/route_state.dart';
 import 'package:stride/widgets/item_card_switch.dart';
 
 class MyRouteScreen extends StatefulWidget {

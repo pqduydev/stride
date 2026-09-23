@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:stride/auth/auth_cubit/auth_cubit.dart';
-import 'package:stride/auth/auth_cubit/auth_state.dart';
+import 'package:stride/features/auth/auth_cubit/auth_cubit.dart';
+import 'package:stride/features/auth/auth_cubit/auth_state.dart';
 import 'package:stride/widgets/appbar_custom.dart';
 import 'package:stride/widgets/item_app_bar_title.dart';
 

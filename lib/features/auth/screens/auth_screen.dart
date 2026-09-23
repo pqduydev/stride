@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:stride/auth/auth_cubit/auth_cubit.dart';
-import 'package:stride/auth/auth_cubit/auth_state.dart';
+import 'package:stride/features/auth/auth_cubit/auth_cubit.dart';
+import 'package:stride/features/auth/auth_cubit/auth_state.dart';
 import 'package:stride/widgets/item_custom_text_field.dart';
 import 'package:stride/core/utils/instant_obscure_controller.dart';
 import 'package:stride/widgets/appbar_custom.dart';
@@ -412,7 +412,7 @@ class _AuthViewState extends State<AuthView> {
                     children: [
                       const SizedBox(height: 15),
                       const Text(
-                        "Dùng ít nhất 12 ký tự cho mật khẩu.",
+                        "Dùng ít nhất 6 ký tự cho mật khẩu.",
                         style: TextStyle(
                           color: Color(0xFF768079),
                           fontSize: 12,

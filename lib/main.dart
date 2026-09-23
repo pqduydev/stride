@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:stride/auth/auth_cubit/auth_cubit.dart';
+import 'package:stride/features/auth/auth_cubit/auth_cubit.dart';
 import 'package:stride/navigator/app_router.dart';
 import 'package:stride/repository/auth_repository.dart';
 import 'package:stride/repository/route_repository.dart';
 import 'package:stride/repository/user_repository.dart';
-import 'package:stride/route/route_cubit/route_cubit.dart';
+import 'package:stride/features/route/route_cubit/route_cubit.dart';
 import 'package:stride/services/dio_client.dart';
-import 'package:stride/user/user_cubit/user_cubit.dart';
+import 'package:stride/features/user/user_cubit/user_cubit.dart';
 
 void main() {
   runApp(const MyApp());

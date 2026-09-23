@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:stride/model/route_model.dart';
-import 'package:stride/route/route_cubit/route_state.dart';
+import 'package:stride/features/route/route_cubit/route_state.dart';
 import 'package:stride/repository/route_repository.dart';
 import 'package:stride/services/api_exception.dart';
 

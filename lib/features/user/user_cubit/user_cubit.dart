@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:stride/repository/user_repository.dart';
 import 'package:stride/services/api_exception.dart';
-import 'package:stride/user/user_cubit/user_state.dart';
+import 'package:stride/features/user/user_cubit/user_state.dart';
 
 class UserCubit extends Cubit<UserState> {
   final UserRepository _userRepository;

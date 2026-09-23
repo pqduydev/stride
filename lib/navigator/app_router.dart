@@ -39,7 +39,7 @@ class AppRouter {
       final location = state.matchedLocation;
 
       // Khi đang ở trạng thái ban đầu -> Giữ ở Splash
-      if (authStatus == AuthStatus.initial) {
+      if (authStatus == AuthStatus.initial && location == '/splash') {
         return '/splash';
       }
 

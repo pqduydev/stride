@@ -36,25 +36,24 @@ class AuthCubit extends Cubit<AuthState> {
       try {
         final updateInfo = await _authRepository.getUser();
 
+        if (isClosed) return;
+
         // Đợi nốt 1s
         await minDelay;
 
         emit(
           state.copyWith(status: AuthStatus.authenticated, user: updateInfo),
         );
-      } on ApiException catch (e) {
+      } catch (_) {
+        // Kiểm tra trước khi emit trong catch
+        if (isClosed) return;
+
+        // Khi token khởi tạo hết hạn hoặc lỗi API -> Đưa về unauthenticated và dọn sạch error message
         emit(
           state.copyWith(
-            status: AuthStatus.failure,
-            errorMessage: e.message,
-            fieldErrors: e.fieldErrors,
-          ),
-        );
-      } catch (e) {
-        emit(
-          state.copyWith(
-            status: AuthStatus.failure,
-            errorMessage: 'Đã xãy ra lỗi không xác định',
+            status: AuthStatus.unauthenticated,
+            fieldErrors: {},
+            clearErrorMessage: true,
           ),
         );
       }
@@ -100,7 +99,7 @@ class AuthCubit extends Cubit<AuthState> {
       emit(
         state.copyWith(
           status: AuthStatus.failure,
-          errorMessage: 'Đã xãy ra lỗi không xác định',
+          errorMessage: 'Đã xảy ra lỗi không xác định',
         ),
       );
     }
@@ -143,7 +142,7 @@ class AuthCubit extends Cubit<AuthState> {
       emit(
         state.copyWith(
           status: AuthStatus.failure,
-          errorMessage: 'Đã xãy ra lỗi không xác định',
+          errorMessage: 'Đã xảy ra lỗi không xác định',
         ),
       );
     }
@@ -174,7 +173,7 @@ class AuthCubit extends Cubit<AuthState> {
       emit(
         state.copyWith(
           status: AuthStatus.failure,
-          errorMessage: 'Đã xãy ra lỗi không xác định',
+          errorMessage: 'Đã xảy ra lỗi không xác định',
         ),
       );
     }

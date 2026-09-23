@@ -15,7 +15,7 @@ class AuthCubit extends Cubit<AuthState> {
   void resetErrors() {
     emit(
       state.copyWith(
-        status: AuthStatus.initial,
+        status: AuthStatus.unauthenticated,
         fieldErrors: {},
         clearErrorMessage: true,
       ),

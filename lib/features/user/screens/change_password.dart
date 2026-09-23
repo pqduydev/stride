@@ -112,7 +112,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                       width: 100,
                       height: 100,
                       margin: const EdgeInsets.only(top: 80, bottom: 50),
-                      alignment: Alignment.center,
+                      alignment: .center,
                       decoration: BoxDecoration(
                         color: const Color(0xFFEEF4E5),
                         borderRadius: BorderRadius.circular(50),

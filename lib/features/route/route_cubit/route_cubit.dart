@@ -116,4 +116,42 @@ class RouteCubit extends Cubit<RouteState> {
       );
     }
   }
+
+  // Xóa lộ trình
+  Future<void> deleteRoute(int id) async {
+    emit(
+      state.copyWith(
+        actionStatus: RouteStatus.loading,
+        clearErrorMessage: true,
+      ),
+    );
+
+    try {
+      await _routeRepository.deleteRoute(id);
+      if (isClosed) return;
+
+      emit(
+        state.copyWith(
+          actionStatus: RouteStatus.success,
+          clearErrorMessage: true,
+        ),
+      );
+
+      await loadRoutes(); // Tải lại danh sách sau khi sửa
+    } on ApiException catch (e) {
+      emit(
+        state.copyWith(
+          actionStatus: RouteStatus.failure,
+          errorMessage: e.message,
+        ),
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(
+          actionStatus: RouteStatus.failure,
+          errorMessage: 'Không thể xóa lộ trình. Vui lòng thử lại.',
+        ),
+      );
+    }
+  }
 }

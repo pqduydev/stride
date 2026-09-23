@@ -67,4 +67,14 @@ class RouteRepository {
       throw ApiException(message: 'Đã có lỗi xảy ra, vui lòng thử lại');
     }
   }
+
+  Future<void> deleteRoute(int id) async {
+    try {
+      await _dio.delete('v1/roadmaps/$id/');
+    } on DioException catch (e) {
+      throw ApiException.fromDioException(e);
+    } catch (e) {
+      throw ApiException(message: 'Đã có lỗi xảy ra, vui lòng thử lại');
+    }
+  }
 }

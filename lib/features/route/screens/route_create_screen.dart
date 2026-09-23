@@ -77,6 +77,47 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
     isEditMode ? cubit.updateRoute(route) : cubit.addRoute(route);
   }
 
+  String _formatDuration(DateTime start, DateTime end) {
+    // Chỉ lấy ngày, tháng, năm
+    final startDateOnly = DateTime(start.year, start.month, start.day);
+    final endDateOnly = DateTime(end.year, end.month, end.day);
+
+    if (endDateOnly.isBefore(startDateOnly)) return '0 ngày';
+
+    final totalDays = endDateOnly.difference(startDateOnly).inDays;
+
+    // 1. Dưới 1 tuần (< 7 ngày)
+    if (totalDays < 7) {
+      return '$totalDays ngày';
+    }
+
+    // 2. Từ 1 tuần đến dưới 1 tháng (7 -> 29 ngày)
+    if (totalDays < 30) {
+      final weeks = totalDays ~/ 7;
+      final remDays = totalDays % 7;
+      if (remDays == 0) return '$weeks tuần';
+      return '$weeks tuần $remDays ngày';
+    }
+
+    // 3. Từ 1 tháng đến dưới 1 năm (30 -> 364 ngày) -> Chỉ lấy tháng và tuần
+    if (totalDays < 365) {
+      final months = totalDays ~/ 30;
+      final remAfterMonths = totalDays % 30;
+      final weeks = remAfterMonths ~/ 7;
+
+      if (weeks == 0) return '$months tháng';
+      return '$months tháng $weeks tuần';
+    }
+
+    // 4. Từ 1 năm trở lên (>= 365 ngày) -> Chỉ lấy năm và tháng
+    final years = totalDays ~/ 365;
+    final remAfterYears = totalDays % 365;
+    final months = remAfterYears ~/ 30;
+
+    if (months == 0) return '$years năm';
+    return '$years năm $months tháng';
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<RouteCubit, RouteState>(
@@ -159,14 +200,15 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
                       return null;
                     },
                   ),
-                  const SizedBox(height: 10),
+
                   ItemRadioRouteGroup(
                     selectedGoalKey: _selectedGoal,
                     onGoalChanged: (goalEnum) {
                       setState(() => _selectedGoal = goalEnum);
                     },
                   ),
-                  const SizedBox(height: 20),
+
+                  const SizedBox(height: 18),
                   Row(
                     children: [
                       Expanded(
@@ -204,7 +246,47 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 20),
+
+                  const SizedBox(height: 10),
+                  Container(
+                    constraints: const BoxConstraints(minHeight: 35),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
+                    alignment: .centerLeft,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFEEF4E5),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      children: [
+                        const Text(
+                          'Thời lượng: ',
+                          style: TextStyle(
+                            color: Color(0xFF768079),
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(width: 5),
+                        Expanded(
+                          child: Text(
+                            _formatDuration(_startDate, _endDate),
+                            style: const TextStyle(
+                              color: Color(0xFF202C25),
+                              fontSize: 15,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 18),
                   const Text(
                     "Mô tả mục tiêu",
                     style: TextStyle(

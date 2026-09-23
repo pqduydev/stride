@@ -6,6 +6,7 @@ import 'package:stride/features/auth/auth_cubit/auth_cubit.dart';
 import 'package:stride/features/auth/auth_cubit/auth_state.dart';
 import 'package:stride/features/route/route_cubit/route_cubit.dart';
 import 'package:stride/features/route/route_cubit/route_state.dart';
+import 'package:stride/model/route_model.dart';
 import 'package:stride/widgets/item_card_switch.dart';
 
 class MyRouteScreen extends StatefulWidget {
@@ -23,14 +24,170 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
     context.read<RouteCubit>().loadRoutes();
   }
 
+  void _showDeleteConfirmDialog(BuildContext context, RouteModel route) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          backgroundColor: Colors.white,
+          elevation: 0,
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFFDE8E8),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.delete_outline_rounded,
+                    color: Color(0xFFE53935),
+                    size: 24,
+                  ),
+                ),
+                const SizedBox(height: 16),
+
+                const Text(
+                  'Xóa lộ trình',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFF1C2520),
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 8),
+
+                RichText(
+                  textAlign: TextAlign.center,
+                  text: TextSpan(
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: Color(0xFF768079),
+                      height: 1.4,
+                    ),
+                    children: [
+                      const TextSpan(text: 'Bạn có chắc muốn xóa lộ trình '),
+                      TextSpan(
+                        text: '"${route.title}"',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w700,
+                          color: Color(0xFF1C2520),
+                        ),
+                      ),
+                      const TextSpan(
+                        text: ' ? Thao tác này không thể hoàn tác.',
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 24),
+
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.pop(dialogContext),
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          side: const BorderSide(color: Color(0xFFE8ECE8)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: const Text(
+                          'Hủy',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF768079),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(dialogContext);
+                          context.read<RouteCubit>().deleteRoute(route.id!);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          backgroundColor: const Color(0xFFE53935),
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: const Text(
+                          'Xóa',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return BlocListener<AuthCubit, AuthState>(
-      listener: (context, authState) {
-        if (authState.status == AuthStatus.authenticated) {
-          context.read<RouteCubit>().loadRoutes();
-        }
-      },
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<AuthCubit, AuthState>(
+          listener: (context, authState) {
+            if (authState.status == AuthStatus.authenticated) {
+              context.read<RouteCubit>().loadRoutes();
+            }
+          },
+        ),
+        BlocListener<RouteCubit, RouteState>(
+          listenWhen: (previous, current) =>
+              previous.actionStatus != current.actionStatus &&
+              (current.actionStatus == RouteStatus.success ||
+                  current.actionStatus == RouteStatus.failure),
+          listener: (context, state) {
+            if (state.actionStatus == RouteStatus.success) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text(
+                    'Xóa lộ trình thành công',
+                    style: TextStyle(color: Color(0xFF526C30)),
+                  ),
+                  backgroundColor: Color(0xFFEEF4E5),
+                  duration: Duration(seconds: 2),
+                ),
+              );
+            } else if (state.actionStatus == RouteStatus.failure) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(state.errorMessage ?? 'Xóa lộ trình thất bại'),
+                  backgroundColor: Colors.redAccent,
+                  duration: const Duration(seconds: 2),
+                ),
+              );
+            }
+          },
+        ),
+      ],
       child: Scaffold(
         appBar: AppBar(
           forceMaterialTransparency: true,
@@ -74,7 +231,6 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                     final user = authState.user;
                     final initials = user?.displayInitials;
 
-                    // Bọc PopupMenuButton để custom bỏ hiệu ứng overlay khi nhấn
                     return Theme(
                       data: Theme.of(context).copyWith(
                         splashColor: Colors.transparent,
@@ -236,29 +392,58 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                         borderRadius: BorderRadius.circular(19),
                         clipBehavior: Clip.antiAlias,
                         child: ListView.builder(
+                          padding: EdgeInsets.zero,
                           itemCount: routeState.routes.length,
                           itemExtent: 50,
                           physics: const BouncingScrollPhysics(),
                           itemBuilder: (context, index) {
                             final route = routeState.routes[index];
                             final isEven = index % 2 == 0;
-                            return ListTile(
-                              tileColor: isEven
+
+                            return Container(
+                              color: isEven
                                   ? const Color(0xFFEEF4E5)
                                   : Colors.white,
-                              dense: true,
-                              title: Text(
-                                route.title,
-                                style: const TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w400,
-                                  color: Color(0xFF1C2520),
+                              child: InkWell(
+                                onTap: () =>
+                                    context.push("/route_edit", extra: route),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment: .spaceBetween,
+                                    crossAxisAlignment: .center,
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          route.title,
+                                          style: const TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w400,
+                                            color: Color(0xFF1C2520),
+                                          ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+
+                                      const SizedBox(width: 8),
+
+                                      InkWell(
+                                        onTap: () => _showDeleteConfirmDialog(
+                                          context,
+                                          route,
+                                        ),
+                                        child: const Icon(
+                                          Icons.delete_outline_outlined,
+                                          color: Color(0xFF768079),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
                               ),
-                              onTap: () =>
-                                  context.push("/route_edit", extra: route),
                             );
                           },
                         ),

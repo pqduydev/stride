@@ -155,6 +155,21 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
 
+            const SizedBox(height: 50),
+            Center(
+              child: InkWell(
+                onTap: () => context.push('/profile/change_password'),
+                child: Text(
+                  'Đổi mật khẩu',
+                  style: TextStyle(
+                    color: Color(0xFF526C30),
+                    fontSize: 14,
+                    fontWeight: .w700,
+                  ),
+                ),
+              ),
+            ),
+
             const SizedBox(height: 40),
             Center(
               child: InkWell(
@@ -163,8 +178,8 @@ class ProfileScreen extends StatelessWidget {
                   'Đăng xuất',
                   style: TextStyle(
                     color: Color(0xFF526C30),
-                    fontSize: 13,
-                    fontWeight: .w600,
+                    fontSize: 14,
+                    fontWeight: .w700,
                   ),
                 ),
               ),

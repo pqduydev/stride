@@ -108,8 +108,6 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
         }
       },
       builder: (context, state) {
-        final isLoading = state.actionStatus == RouteStatus.loading;
-
         return Scaffold(
           appBar: PreferredSize(
             preferredSize: const Size.fromHeight(kToolbarHeight),
@@ -242,6 +240,7 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
               ),
             ),
           ),
+
           bottomNavigationBar: BlocBuilder<RouteCubit, RouteState>(
             builder: (context, routeState) {
               final isLoading = routeState.actionStatus == RouteStatus.loading;

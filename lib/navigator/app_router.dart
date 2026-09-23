@@ -16,6 +16,7 @@ import 'package:stride/screens/login_with_google_screen.dart';
 import 'package:stride/screens/login_with_phone_number_screen.dart';
 import 'package:stride/screens/main_navigation_bar_screen.dart';
 import 'package:stride/screens/privacy_information_screen.dart';
+import 'package:stride/user/feats/change_password.dart';
 import 'package:stride/user/feats/personal_information_screen.dart';
 import 'package:stride/user/feats/profile_screen.dart';
 import 'package:stride/screens/route_create_screen.dart';
@@ -183,6 +184,10 @@ class AppRouter {
           GoRoute(
             path: "personal_information",
             builder: (context, state) => const PersonalInformationScreen(),
+          ),
+          GoRoute(
+            path: "change_password",
+            builder: (context, state) => const ChangePassword(),
           ),
         ],
       ),

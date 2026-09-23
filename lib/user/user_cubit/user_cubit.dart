@@ -12,6 +12,16 @@ class UserCubit extends Cubit<UserState> {
     emit(state.copyWith(status: UserStatus.initial, clearErrorMessage: true));
   }
 
+  void resetErrors() {
+    emit(
+      state.copyWith(
+        status: UserStatus.initial,
+        fieldErrors: {},
+        clearErrorMessage: true,
+      ),
+    );
+  }
+
   Future<void> updateProfile(Map<String, dynamic> changedFields) async {
     // Nếu không có trường nào thay đổi thì không call API
     if (changedFields.isEmpty) {
@@ -27,6 +37,33 @@ class UserCubit extends Cubit<UserState> {
       if (isClosed) return;
 
       emit(state.copyWith(status: UserStatus.success, user: updatedUser));
+    } on ApiException catch (e) {
+      emit(
+        state.copyWith(
+          status: UserStatus.failure,
+          errorMessage: e.message,
+          fieldErrors: e.fieldErrors,
+        ),
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(
+          status: UserStatus.failure,
+          errorMessage: 'Đã xảy ra lỗi không xác định',
+        ),
+      );
+    }
+  }
+
+  Future<void> changePassword(Map<String, dynamic> updatePassword) async {
+    emit(state.copyWith(status: UserStatus.loading, clearErrorMessage: true));
+
+    try {
+      await _userRepository.changePassword(updatePassword);
+
+      if (isClosed) return;
+
+      emit(state.copyWith(status: UserStatus.success, clearErrorMessage: true));
     } on ApiException catch (e) {
       emit(
         state.copyWith(

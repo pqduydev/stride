@@ -27,4 +27,14 @@ class UserRepository {
       throw ApiException(message: e.toString());
     }
   }
+
+  Future<void> changePassword(Map<String, dynamic> updatePassword) async {
+    try {
+      await _dio.post('/v1/auth/change-password/', data: updatePassword);
+    } on DioException catch (e) {
+      throw ApiException.fromDioException(e);
+    } catch (e) {
+      throw ApiException(message: e.toString());
+    }
+  }
 }

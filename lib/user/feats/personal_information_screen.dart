@@ -310,6 +310,18 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                                 // Nếu ban đầu rỗng sẵn -> Hợp lệ
                                 return null;
                               }
+
+                              final fieldErrors = context
+                                  .read<AuthCubit>()
+                                  .state
+                                  .fieldErrors;
+                              if (fieldErrors != null &&
+                                  fieldErrors.containsKey('last_name')) {
+                                final errors = fieldErrors['last_name'];
+                                if (errors is List && errors.isNotEmpty) {
+                                  return errors[0];
+                                }
+                              }
                               return null;
                             },
                           ),
@@ -336,6 +348,18 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                                 }
                                 // Nếu ban đầu rỗng sẵn -> Hợp lệ
                                 return null;
+                              }
+
+                              final fieldErrors = context
+                                  .read<AuthCubit>()
+                                  .state
+                                  .fieldErrors;
+                              if (fieldErrors != null &&
+                                  fieldErrors.containsKey('first_name')) {
+                                final errors = fieldErrors['first_name'];
+                                if (errors is List && errors.isNotEmpty) {
+                                  return errors[0];
+                                }
                               }
                               return null;
                             },
@@ -371,6 +395,18 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                               if (!emailRegex.hasMatch(currentValue)) {
                                 return 'Email không đúng định dạng';
                               }
+
+                              final fieldErrors = context
+                                  .read<AuthCubit>()
+                                  .state
+                                  .fieldErrors;
+                              if (fieldErrors != null &&
+                                  fieldErrors.containsKey('email')) {
+                                final errors = fieldErrors['email'];
+                                if (errors is List && errors.isNotEmpty) {
+                                  return errors[0];
+                                }
+                              }
                               return null;
                             },
                           ),
@@ -402,6 +438,18 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                               final phoneRegex = RegExp(r'^[35789]\d{8}$');
                               if (!phoneRegex.hasMatch(currentValue)) {
                                 return 'Số điện thoại không hợp lệ';
+                              }
+
+                              final fieldErrors = context
+                                  .read<AuthCubit>()
+                                  .state
+                                  .fieldErrors;
+                              if (fieldErrors != null &&
+                                  fieldErrors.containsKey('phone')) {
+                                final errors = fieldErrors['phone'];
+                                if (errors is List && errors.isNotEmpty) {
+                                  return errors[0];
+                                }
                               }
                               return null;
                             },
@@ -449,6 +497,18 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                                     if (double.tryParse(currentValue) == null) {
                                       return 'Phải là số';
                                     }
+
+                                    final fieldErrors = context
+                                        .read<AuthCubit>()
+                                        .state
+                                        .fieldErrors;
+                                    if (fieldErrors != null &&
+                                        fieldErrors.containsKey('height_cm')) {
+                                      final errors = fieldErrors['height_cm'];
+                                      if (errors is List && errors.isNotEmpty) {
+                                        return errors[0];
+                                      }
+                                    }
                                     return null;
                                   },
                                 ),
@@ -482,6 +542,18 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                                     if (double.tryParse(currentValue) == null) {
                                       return 'Phải là số';
                                     }
+
+                                    final fieldErrors = context
+                                        .read<AuthCubit>()
+                                        .state
+                                        .fieldErrors;
+                                    if (fieldErrors != null &&
+                                        fieldErrors.containsKey('weight_kg')) {
+                                      final errors = fieldErrors['weight_kg'];
+                                      if (errors is List && errors.isNotEmpty) {
+                                        return errors[0];
+                                      }
+                                    }
                                     return null;
                                   },
                                 ),
@@ -497,6 +569,20 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                             textInputAction: TextInputAction.done,
                             height: 120,
                             maxLines: 3,
+                            validator: (_) {
+                              final fieldErrors = context
+                                  .read<AuthCubit>()
+                                  .state
+                                  .fieldErrors;
+                              if (fieldErrors != null &&
+                                  fieldErrors.containsKey('bio')) {
+                                final errors = fieldErrors['bio'];
+                                if (errors is List && errors.isNotEmpty) {
+                                  return errors[0];
+                                }
+                              }
+                              return null;
+                            },
                           ),
                         ],
                       ),

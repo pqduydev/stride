@@ -53,14 +53,22 @@ class DioClient {
                 );
 
                 if (response.statusCode == 200) {
-                  final newAccessToken = response.data['access'];
+                  final newAccessToken = response.data;
 
                   // Lưu token mới
-                  await prefs.setString('access_token', newAccessToken);
+                  await prefs.setString(
+                    'access_token',
+                    newAccessToken['access'],
+                  );
+                  // Lưu refresh token mới
+                  await prefs.setString(
+                    'refresh_token',
+                    newAccessToken['refresh'],
+                  );
 
                   // Cập nhật Header cho request bị lỗi ban đầu
                   error.requestOptions.headers['Authorization'] =
-                      'Bearer $newAccessToken';
+                      'Bearer ${newAccessToken['access']}';
 
                   // Thử lại request ban đầu với Token mới
                   final clonedRequest = await instance.fetch(

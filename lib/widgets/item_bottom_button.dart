@@ -4,20 +4,20 @@ class ItemBottomButton extends StatelessWidget {
   final String text;
   final VoidCallback? onTap;
   final bool isLoading;
-  final int? color;
-  final int? textColor;
-  final double? borderWidth;
-  final int? borderColor;
+  final Color backgroundColor;
+  final Color textColor;
+  final double borderWidth;
+  final Color borderColor;
 
   const ItemBottomButton({
     super.key,
     required this.text,
     this.onTap,
     this.isLoading = false,
-    this.color = 0xFFD2F36B,
-    this.textColor = 0xFF1C2520,
-    this.borderWidth,
-    this.borderColor,
+    this.backgroundColor = const Color(0xFFD2F36B),
+    this.textColor = const Color(0xFF1C2520),
+    this.borderWidth = 0,
+    this.borderColor = Colors.transparent,
   });
 
   @override
@@ -28,15 +28,13 @@ class ItemBottomButton extends StatelessWidget {
       child: Container(
         width: double.infinity,
         height: 50,
-        alignment: .center,
+        alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: Color(color!),
+          color: backgroundColor, // Gọn gàng và an toàn tuyệt đối
           borderRadius: BorderRadius.circular(13),
           border: Border.all(
-            color: borderColor != null
-                ? Color(borderColor!)
-                : Colors.transparent,
-            width: borderWidth ?? 0,
+            color: borderColor,
+            width: borderWidth,
             style: BorderStyle.solid,
           ),
         ),
@@ -45,7 +43,7 @@ class ItemBottomButton extends StatelessWidget {
             : Text(
                 text,
                 style: TextStyle(
-                  color: Color(textColor!),
+                  color: textColor,
                   fontSize: 15,
                   fontWeight: FontWeight.w700,
                 ),

@@ -6,7 +6,7 @@ import 'package:stride/features/auth/auth_cubit/auth_cubit.dart';
 import 'package:stride/features/auth/auth_cubit/auth_state.dart';
 import 'package:stride/features/route/route_cubit/route_cubit.dart';
 import 'package:stride/features/route/route_cubit/route_state.dart';
-import 'package:stride/model/route_model.dart';
+import 'package:stride/features/route/widgets/route_card_item.dart';
 import 'package:stride/widgets/item_card_switch.dart';
 
 class MyRouteScreen extends StatefulWidget {
@@ -24,170 +24,37 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
     context.read<RouteCubit>().loadRoutes();
   }
 
-  void _showDeleteConfirmDialog(BuildContext context, RouteModel route) {
-    showDialog(
-      context: context,
-      builder: (dialogContext) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          backgroundColor: Colors.white,
-          elevation: 0,
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 48,
-                  height: 48,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFFFDE8E8),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.delete_outline_rounded,
-                    color: Color(0xFFE53935),
-                    size: 24,
-                  ),
-                ),
-                const SizedBox(height: 16),
+  String _formatRouteDateRange(String start, String end) {
+    try {
+      final startDate = DateTime.parse(start);
+      final endDate = DateTime.parse(end);
 
-                const Text(
-                  'Xóa lộ trình',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    color: Color(0xFF1C2520),
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 8),
+      // Thêm 0 trước ngày, tháng là hàng đơn vị
+      final startDayMonth =
+          "${startDate.day.toString().padLeft(2, '0')}/${startDate.month.toString().padLeft(2, '0')}";
+      final endDayMonth =
+          "${endDate.day.toString().padLeft(2, '0')}/${endDate.month.toString().padLeft(2, '0')}";
 
-                RichText(
-                  textAlign: TextAlign.center,
-                  text: TextSpan(
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: Color(0xFF768079),
-                      height: 1.4,
-                    ),
-                    children: [
-                      const TextSpan(text: 'Bạn có chắc muốn xóa lộ trình '),
-                      TextSpan(
-                        text: '"${route.title}"',
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w700,
-                          color: Color(0xFF1C2520),
-                        ),
-                      ),
-                      const TextSpan(
-                        text: ' ? Thao tác này không thể hoàn tác.',
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 24),
-
-                Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: () => Navigator.pop(dialogContext),
-                        style: OutlinedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          side: const BorderSide(color: Color(0xFFE8ECE8)),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        child: const Text(
-                          'Hủy',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xFF768079),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.pop(dialogContext);
-                          context.read<RouteCubit>().deleteRoute(route.id!);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          backgroundColor: const Color(0xFFE53935),
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        child: const Text(
-                          'Xóa',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
+      // Kiểm tra ngày bắt đầu và kết thúc có trong cùng năm
+      if (startDate.year == endDate.year) {
+        return "$startDayMonth - $endDayMonth/${endDate.year}";
+      } else {
+        return "$startDayMonth/${startDate.year} - $endDayMonth/${endDate.year}";
+      }
+    } catch (e) {
+      // Trả về chuỗi gốc nếu parse lỗi để tránh crash app
+      return "$start - $end";
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocListener(
-      listeners: [
-        BlocListener<AuthCubit, AuthState>(
-          listener: (context, authState) {
-            if (authState.status == AuthStatus.authenticated) {
-              context.read<RouteCubit>().loadRoutes();
-            }
-          },
-        ),
-        BlocListener<RouteCubit, RouteState>(
-          listenWhen: (previous, current) =>
-              previous.actionStatus != current.actionStatus &&
-              (current.actionStatus == RouteStatus.success ||
-                  current.actionStatus == RouteStatus.failure),
-          listener: (context, state) {
-            if (state.actionStatus == RouteStatus.success) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text(
-                    'Xóa lộ trình thành công',
-                    style: TextStyle(color: Color(0xFF526C30)),
-                  ),
-                  backgroundColor: Color(0xFFEEF4E5),
-                  duration: Duration(seconds: 2),
-                ),
-              );
-            } else if (state.actionStatus == RouteStatus.failure) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.errorMessage ?? 'Xóa lộ trình thất bại'),
-                  backgroundColor: Colors.redAccent,
-                  duration: const Duration(seconds: 2),
-                ),
-              );
-            }
-          },
-        ),
-      ],
+    return BlocListener<AuthCubit, AuthState>(
+      listener: (context, authState) {
+        if (authState.status == AuthStatus.authenticated) {
+          context.read<RouteCubit>().loadRoutes();
+        }
+      },
       child: Scaffold(
         appBar: AppBar(
           forceMaterialTransparency: true,
@@ -318,16 +185,11 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
 
+                const SizedBox(height: 16),
                 // Danh sách lộ trình
-                Container(
-                  height: 150,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: const Color(0xFFE8ECE8)),
-                    color: Colors.white,
-                  ),
+                SizedBox(
+                  height: 255,
                   child: BlocBuilder<RouteCubit, RouteState>(
                     builder: (context, routeState) {
                       if (routeState.listStatus == RouteStatus.loading ||
@@ -337,310 +199,82 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
 
                       if (routeState.listStatus == RouteStatus.failure) {
                         return Center(
-                          child: Padding(
-                            padding: const EdgeInsets.all(24.0),
-                            child: Column(
-                              mainAxisAlignment: .center,
-                              children: [
-                                Text(
-                                  routeState.errorMessage ?? 'Có lỗi xảy ra',
-                                  textAlign: TextAlign.center,
-                                  style: const TextStyle(
-                                    color: Color(0xFFE57373),
-                                    fontSize: 14,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                routeState.errorMessage ?? 'Có lỗi xảy ra',
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  color: Color(0xFFE57373),
+                                  fontSize: 14,
+                                ),
+                              ),
+                              const SizedBox(height: 5),
+                              ElevatedButton.icon(
+                                onPressed: () =>
+                                    context.read<RouteCubit>().loadRoutes(),
+                                icon: const Icon(
+                                  Icons.refresh_rounded,
+                                  size: 18,
+                                ),
+                                label: const Text("Thử lại"),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFF1C2520),
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
                                   ),
                                 ),
-                                const SizedBox(height: 5),
-                                ElevatedButton.icon(
-                                  onPressed: () {
-                                    context.read<RouteCubit>().loadRoutes();
-                                  },
-                                  icon: const Icon(
-                                    Icons.refresh_rounded,
-                                    size: 18,
-                                  ),
-                                  label: const Text("Thử lại"),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color(0xFF1C2520),
-                                    foregroundColor: Colors.white,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         );
                       }
 
                       // Danh sách lộ trình trống
                       if (routeState.routes.isEmpty) {
-                        return const Center(
-                          child: Text(
-                            "Bạn chưa có lộ trình tập luyện nào.",
-                            style: TextStyle(
-                              color: Color(0xFF768079),
-                              fontSize: 14,
+                        return Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(color: const Color(0xFFE8ECE8)),
+                            color: Colors.white,
+                          ),
+                          child: const Center(
+                            child: Text(
+                              "Bạn chưa có lộ trình tập luyện nào.",
+                              style: TextStyle(
+                                color: Color(0xFF768079),
+                                fontSize: 14,
+                              ),
                             ),
                           ),
                         );
                       }
 
-                      return Material(
-                        color: Colors.transparent,
-                        borderRadius: BorderRadius.circular(19),
-                        clipBehavior: Clip.antiAlias,
-                        child: ListView.builder(
-                          padding: EdgeInsets.zero,
-                          itemCount: routeState.routes.length,
-                          itemExtent: 50,
-                          physics: const BouncingScrollPhysics(),
-                          itemBuilder: (context, index) {
-                            final route = routeState.routes[index];
-                            final isEven = index % 2 == 0;
+                      // Hiển thị danh sách cuộn ngang
+                      return ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        clipBehavior: Clip.none,
+                        itemCount: routeState.routes.length,
+                        separatorBuilder: (context, index) =>
+                            const SizedBox(width: 15),
+                        itemBuilder: (context, index) {
+                          final route = routeState.routes[index];
+                          final formattedDate = _formatRouteDateRange(
+                            route.startDate,
+                            route.endDate,
+                          );
 
-                            return Container(
-                              color: isEven
-                                  ? const Color(0xFFEEF4E5)
-                                  : Colors.white,
-                              child: InkWell(
-                                onTap: () =>
-                                    context.push("/route_edit", extra: route),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment: .spaceBetween,
-                                    crossAxisAlignment: .center,
-                                    children: [
-                                      Expanded(
-                                        child: Text(
-                                          route.title,
-                                          style: const TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w400,
-                                            color: Color(0xFF1C2520),
-                                          ),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-
-                                      const SizedBox(width: 8),
-
-                                      InkWell(
-                                        onTap: () => _showDeleteConfirmDialog(
-                                          context,
-                                          route,
-                                        ),
-                                        child: const Icon(
-                                          Icons.delete_outline_outlined,
-                                          color: Color(0xFF768079),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                        ),
+                          return RouteCardItem(
+                            route: route,
+                            formattedDate: formattedDate,
+                          );
+                        },
                       );
                     },
                   ),
                 ),
-                // Container(
-                //   decoration: BoxDecoration(
-                //     color: Colors.white,
-                //     borderRadius: BorderRadius.all(Radius.circular(20)),
-                //     border: Border.all(
-                //       color: const Color(0xFFE8ECE8),
-                //       width: 1,
-                //       style: BorderStyle.solid,
-                //     ),
-                //   ),
-                //   child: InkWell(
-                //     onTap: () => context.push("/route_details"),
-                //     child: Column(
-                //       children: [
-                //         Container(
-                //           width: double.infinity,
-                //           height: 140,
-                //           decoration: BoxDecoration(
-                //             image: const DecorationImage(
-                //               image: AssetImage(
-                //                 'assets/images/img_background.jpg',
-                //               ),
-                //               fit: BoxFit.cover,
-                //             ),
-                //             borderRadius: const BorderRadius.all(
-                //               Radius.circular(20),
-                //             ),
-                //           ),
-                //           child: Container(
-                //             decoration: BoxDecoration(
-                //               color: Color(0xFF202C25).withValues(alpha: 0.64),
-                //               borderRadius: const BorderRadius.all(
-                //                 Radius.circular(20),
-                //               ),
-                //             ),
-                //             child: Padding(
-                //               padding: EdgeInsets.symmetric(
-                //                 horizontal: 20,
-                //                 vertical: 20,
-                //               ),
-                //               child: Column(
-                //                 crossAxisAlignment: .start,
-                //                 mainAxisAlignment: .spaceBetween,
-                //                 children: [
-                //                   Container(
-                //                     width: 151,
-                //                     height: 25,
-                //                     alignment: .center,
-                //                     padding: EdgeInsets.only(left: 10),
-                //                     decoration: const BoxDecoration(
-                //                       color: Color(0xFFD2F36B),
-                //                       borderRadius: BorderRadius.all(
-                //                         Radius.circular(6),
-                //                       ),
-                //                     ),
-                //                     child: Text(
-                //                       "MỤC TIÊU 3 THÁNG",
-                //                       style: Theme.of(context)
-                //                           .textTheme
-                //                           .titleLarge
-                //                           ?.copyWith(
-                //                             fontSize: 11,
-                //                             fontWeight: FontWeight.w600,
-                //                             color: Color(0xFF1C2520),
-                //                           ),
-                //                     ),
-                //                   ),
-                //                   const SizedBox(height: 15),
-                //                   SizedBox(
-                //                     child: Column(
-                //                       crossAxisAlignment: .start,
-                //                       children: [
-                //                         Text(
-                //                           "Tập luyện bền bỉ",
-                //                           style: Theme.of(context)
-                //                               .textTheme
-                //                               .titleLarge
-                //                               ?.copyWith(
-                //                                 color: Color(0xFFFFFFFF),
-                //                                 fontSize: 25,
-                //                                 fontWeight: FontWeight.w700,
-                //                               ),
-                //                         ),
-                //                         const SizedBox(height: 5),
-                //                         Text(
-                //                           "17/08 - 17/11/2026",
-                //                           style: Theme.of(context)
-                //                               .textTheme
-                //                               .labelSmall
-                //                               ?.copyWith(
-                //                                 color: Color(0xFFE4EBE3),
-                //                                 fontSize: 12,
-                //                                 fontWeight: FontWeight.w400,
-                //                               ),
-                //                         ),
-                //                       ],
-                //                     ),
-                //                   ),
-                //                 ],
-                //               ),
-                //             ),
-                //           ),
-                //         ),
-                //         Padding(
-                //           padding: EdgeInsets.symmetric(
-                //             horizontal: 20,
-                //             vertical: 20,
-                //           ),
-                //           child: Column(
-                //             crossAxisAlignment: .start,
-                //             children: [
-                //               Row(
-                //                 mainAxisAlignment: .spaceBetween,
-                //                 crossAxisAlignment: .center,
-                //                 children: [
-                //                   Text(
-                //                     "Đã hoàn thành",
-                //                     style: Theme.of(context).textTheme.labelSmall
-                //                         ?.copyWith(
-                //                           color: Color(0xFF768079),
-                //                           fontSize: 13,
-                //                           fontWeight: FontWeight.w400,
-                //                         ),
-                //                   ),
-                //                   Text(
-                //                     "12 / 40 buổi",
-                //                     style: Theme.of(context).textTheme.labelSmall
-                //                         ?.copyWith(
-                //                           color: Color(0xFF1C2520),
-                //                           fontSize: 14,
-                //                           fontWeight: FontWeight.w700,
-                //                         ),
-                //                   ),
-                //                 ],
-                //               ),
-                //               const SizedBox(height: 13),
-                //               Container(
-                //                 height: 7,
-                //                 width: double.infinity,
-                //                 decoration: BoxDecoration(
-                //                   color: Color(0xFFE8ECE8),
-                //                   borderRadius: BorderRadius.all(
-                //                     Radius.circular(5),
-                //                   ),
-                //                 ),
-                //                 child: FractionallySizedBox(
-                //                   alignment: .centerLeft,
-                //                   widthFactor: 0.37,
-                //                   child: Container(
-                //                     decoration: BoxDecoration(
-                //                       color: Color(0xFF526C30),
-                //                       borderRadius: BorderRadius.all(
-                //                         Radius.circular(5),
-                //                       ),
-                //                     ),
-                //                   ),
-                //                 ),
-                //               ),
-                //               const SizedBox(height: 13),
-                //               Row(
-                //                 mainAxisAlignment: .spaceBetween,
-                //                 crossAxisAlignment: .center,
-                //                 children: [
-                //                   Text(
-                //                     "Tuần 5",
-                //                     style: Theme.of(context).textTheme.labelSmall
-                //                         ?.copyWith(
-                //                           color: Color(0xFF768079),
-                //                           fontSize: 13,
-                //                           fontWeight: FontWeight.w400,
-                //                         ),
-                //                   ),
-                //                   Text(
-                //                     "30%",
-                //                     style: Theme.of(context).textTheme.labelSmall
-                //                         ?.copyWith(
-                //                           color: Color(0xFF526C30),
-                //                           fontSize: 14,
-                //                           fontWeight: FontWeight.w700,
-                //                         ),
-                //                   ),
-                //                 ],
-                //               ),
-                //             ],
-                //           ),
-                //         ),
-                //       ],
-                //     ),
-                //   ),
-                // ),
 
                 const SizedBox(height: 30),
                 Column(

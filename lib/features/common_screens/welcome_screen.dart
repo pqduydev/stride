@@ -227,9 +227,9 @@ class WelcomeScreen extends StatelessWidget {
               const SizedBox(height: 15),
               ItemBottomButton(
                 text: 'Đã có tài khoản? Đăng nhập',
-                color: 0xFFFFFFFF,
-                textColor: 0xFF526C30,
-                borderColor: 0xFFE8ECE8,
+                backgroundColor: Color(0xFFFFFFFF),
+                textColor: Color(0xFF526C30),
+                borderColor: Color(0xFFE8ECE8),
                 borderWidth: 1,
                 onTap: () => context.push('/login'),
               ),

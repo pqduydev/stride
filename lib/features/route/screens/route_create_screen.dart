@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:stride/core/utils/time_utils.dart';
 import 'package:stride/model/route_model.dart';
 import 'package:stride/features/route/route_cubit/route_cubit.dart';
 import 'package:stride/features/route/route_cubit/route_state.dart';
@@ -20,6 +21,8 @@ class RouteCreateScreen extends StatefulWidget {
   State<RouteCreateScreen> createState() => _RouteCreateScreenState();
 }
 
+enum FormAction { none, saving, deleting }
+
 class _RouteCreateScreenState extends State<RouteCreateScreen> {
   final _formKey = GlobalKey<FormState>();
 
@@ -31,6 +34,8 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
   DateTime _endDate = DateTime.now().add(const Duration(days: 1));
 
   bool get isEditMode => widget.routeToEdit != null;
+
+  FormAction _currentAction = FormAction.none;
 
   @override
   void initState() {
@@ -72,50 +77,137 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
       isActive: true,
     );
 
+    setState(() => _currentAction = FormAction.saving);
     final cubit = context.read<RouteCubit>();
-
     isEditMode ? cubit.updateRoute(route) : cubit.addRoute(route);
   }
 
-  String _formatDuration(DateTime start, DateTime end) {
-    // Chỉ lấy ngày, tháng, năm
-    final startDateOnly = DateTime(start.year, start.month, start.day);
-    final endDateOnly = DateTime(end.year, end.month, end.day);
+  void _showDeleteConfirmDialog(BuildContext context, RouteModel route) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          backgroundColor: Colors.white,
+          elevation: 0,
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFFDE8E8),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.delete_outline_rounded,
+                    color: Color(0xFFE53935),
+                    size: 24,
+                  ),
+                ),
+                const SizedBox(height: 16),
 
-    if (endDateOnly.isBefore(startDateOnly)) return '0 ngày';
+                const Text(
+                  'Xóa lộ trình',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFF1C2520),
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 8),
 
-    final totalDays = endDateOnly.difference(startDateOnly).inDays;
+                RichText(
+                  textAlign: TextAlign.center,
+                  text: TextSpan(
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: Color(0xFF768079),
+                      height: 1.4,
+                    ),
+                    children: [
+                      const TextSpan(text: 'Bạn có chắc muốn xóa lộ trình '),
+                      TextSpan(
+                        text: '"${route.title}"',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w700,
+                          color: Color(0xFF1C2520),
+                        ),
+                      ),
+                      const TextSpan(
+                        text: ' ? Thao tác này không thể hoàn tác.',
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 24),
 
-    // 1. Dưới 1 tuần (< 7 ngày)
-    if (totalDays < 7) {
-      return '$totalDays ngày';
-    }
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.pop(dialogContext),
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          side: const BorderSide(color: Color(0xFFE8ECE8)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: const Text(
+                          'Hủy',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF768079),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
 
-    // 2. Từ 1 tuần đến dưới 1 tháng (7 -> 29 ngày)
-    if (totalDays < 30) {
-      final weeks = totalDays ~/ 7;
-      final remDays = totalDays % 7;
-      if (remDays == 0) return '$weeks tuần';
-      return '$weeks tuần $remDays ngày';
-    }
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          final cubit = context.read<RouteCubit>();
 
-    // 3. Từ 1 tháng đến dưới 1 năm (30 -> 364 ngày) -> Chỉ lấy tháng và tuần
-    if (totalDays < 365) {
-      final months = totalDays ~/ 30;
-      final remAfterMonths = totalDays % 30;
-      final weeks = remAfterMonths ~/ 7;
+                          Navigator.pop(dialogContext);
+                          setState(() => _currentAction = FormAction.deleting);
 
-      if (weeks == 0) return '$months tháng';
-      return '$months tháng $weeks tuần';
-    }
-
-    // 4. Từ 1 năm trở lên (>= 365 ngày) -> Chỉ lấy năm và tháng
-    final years = totalDays ~/ 365;
-    final remAfterYears = totalDays % 365;
-    final months = remAfterYears ~/ 30;
-
-    if (months == 0) return '$years năm';
-    return '$years năm $months tháng';
+                          cubit.deleteRoute(route.id!);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          backgroundColor: const Color(0xFFE53935),
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: const Text(
+                          'Xóa',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -127,6 +219,8 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
               current.actionStatus == RouteStatus.failure),
       listener: (context, state) {
         if (state.actionStatus == RouteStatus.failure) {
+          setState(() => _currentAction = FormAction.none);
+
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(state.errorMessage ?? 'Đã xảy ra lỗi'),
@@ -134,12 +228,18 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
             ),
           );
         } else if (state.actionStatus == RouteStatus.success) {
+          String message = 'Tạo lộ trình thành công';
+
+          if (_currentAction == FormAction.deleting) {
+            message = 'Xóa lộ trình thành công';
+          } else if (_currentAction == FormAction.saving && isEditMode) {
+            message = 'Cập nhật lộ trình thành công';
+          }
+
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                isEditMode
-                    ? 'Cập nhật lộ trình thành công'
-                    : 'Tạo lộ trình thành công',
+                message,
                 style: const TextStyle(color: Color(0xFF526C30)),
               ),
               backgroundColor: const Color(0xFFEEF4E5),
@@ -272,7 +372,7 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
                         const SizedBox(width: 5),
                         Expanded(
                           child: Text(
-                            _formatDuration(_startDate, _endDate),
+                            TimeUtils.formatDuration(_startDate, _endDate),
                             style: const TextStyle(
                               color: Color(0xFF202C25),
                               fontSize: 15,
@@ -325,14 +425,40 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
 
           bottomNavigationBar: BlocBuilder<RouteCubit, RouteState>(
             builder: (context, routeState) {
-              final isLoading = routeState.actionStatus == RouteStatus.loading;
+              final isGlobalLoading =
+                  routeState.actionStatus == RouteStatus.loading;
+
+              final isSaving =
+                  isGlobalLoading && _currentAction == FormAction.saving;
+              final isDeleting =
+                  isGlobalLoading && _currentAction == FormAction.deleting;
 
               return Padding(
                 padding: const EdgeInsets.fromLTRB(20, 20, 20, 30),
-                child: ItemBottomButton(
-                  text: isEditMode ? 'Lưu thay đổi' : 'Tạo lộ trình',
-                  isLoading: isLoading,
-                  onTap: isLoading ? null : _onSave,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (isEditMode) ...[
+                      ItemBottomButton(
+                        text: 'Xoá lộ trình',
+                        backgroundColor: Color(0xFFFF5252),
+                        isLoading: isDeleting,
+                        onTap: isGlobalLoading
+                            ? null
+                            : () => _showDeleteConfirmDialog(
+                                context,
+                                widget.routeToEdit!,
+                              ),
+                      ),
+                      const SizedBox(height: 20),
+                    ],
+
+                    ItemBottomButton(
+                      text: isEditMode ? 'Lưu thay đổi' : 'Tạo lộ trình',
+                      isLoading: isSaving,
+                      onTap: isGlobalLoading ? null : _onSave,
+                    ),
+                  ],
                 ),
               );
             },

@@ -92,7 +92,12 @@ class AuthCubit extends Cubit<AuthState> {
         state.copyWith(
           status: AuthStatus.failure,
           errorMessage: e.message,
-          fieldErrors: e.fieldErrors,
+          fieldErrors: e.statusCode == 401
+              ? {
+                  "username": ["Tên đăng nhập hoặc mật khẩu không chính xác"],
+                  "password": ["Tên đăng nhập hoặc mật khẩu không chính xác"],
+                }
+              : null,
         ),
       );
     } catch (e) {

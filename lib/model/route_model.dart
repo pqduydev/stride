@@ -1,3 +1,4 @@
+import 'package:stride/core/utils/time_utils.dart';
 import 'package:stride/model/phase_model.dart';
 
 class RouteModel {
@@ -59,5 +60,15 @@ class RouteModel {
       isActive: isActive ?? this.isActive,
       phases: phases ?? this.phases,
     );
+  }
+
+  String get durationText {
+    try {
+      final start = DateTime.parse(startDate);
+      final end = DateTime.parse(endDate);
+      return TimeUtils.formatDuration(start, end);
+    } catch (e) {
+      return '0 ngày';
+    }
   }
 }

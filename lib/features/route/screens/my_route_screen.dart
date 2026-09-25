@@ -277,6 +277,25 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                 ),
 
                 const SizedBox(height: 30),
+
+                InkWell(
+                  onTap: () => context.push("/add_image"),
+                  child: Container(
+                    width: 100,
+                    height: 40,
+                    alignment: .center,
+                    decoration: BoxDecoration(
+                      color: Color(0xFFD2F36B),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Text(
+                      'Thêm ảnh',
+                      style: TextStyle(fontSize: 15, fontWeight: .w500),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 30),
                 Column(
                   children: [
                     Row(
@@ -292,7 +311,7 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                               ),
                         ),
                         InkWell(
-                          onTap: () => context.push("/add_image"),
+                          onTap: () {},
                           child: Text(
                             "Xem lịch",
                             style: Theme.of(context).textTheme.titleLarge

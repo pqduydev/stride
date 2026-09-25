@@ -24,10 +24,14 @@ class DioClient {
         // Queued... dừng request lỗi và khóa các request khác
         // Tự động thêm Access Token vào mọi Request đi
         onRequest: (options, handler) async {
-          final prefs = await SharedPreferences.getInstance();
-          final token = prefs.getString('access_token');
-          if (token != null) {
-            options.headers['Authorization'] = 'Bearer $token';
+          // Chỉ gắn token cho request tới server của BE
+          final apiHost = Uri.parse(instance.options.baseUrl).host;
+          if (options.uri.host == apiHost) {
+            final prefs = await SharedPreferences.getInstance();
+            final token = prefs.getString('access_token');
+            if (token != null) {
+              options.headers['Authorization'] = 'Bearer $token';
+            }
           }
           return handler.next(options);
         },
@@ -70,10 +74,18 @@ class DioClient {
                   error.requestOptions.headers['Authorization'] =
                       'Bearer ${newAccessToken['access']}';
 
+                  // ← THÊM: FormData chỉ gửi được 1 lần → tạo bản sao để gửi lại
+                  final data = error.requestOptions.data;
+                  // Kiểm tra có phải dạng multipart/form-data (tệp) không?
+                  if (data is FormData) {
+                    error.requestOptions.data = data.clone();
+                  }
+
                   // Thử lại request ban đầu với Token mới
                   final clonedRequest = await instance.fetch(
                     error.requestOptions,
                   );
+
                   return handler.resolve(
                     clonedRequest,
                   ); // Trả kết quả thành công về cho App

@@ -48,6 +48,13 @@ class ApiException implements Exception {
     String message = 'Vui lòng kiểm tra lại thông tin nhập vào.';
     Map<String, dynamic>? fieldErrors;
 
+    if (statusCode == 413) {
+      return ApiException(
+        message: 'Tệp quá lớn. Bạn hãy chọn tệp khác.',
+        statusCode: statusCode,
+      );
+    }
+
     if (data is Map<String, dynamic>) {
       fieldErrors = data;
 

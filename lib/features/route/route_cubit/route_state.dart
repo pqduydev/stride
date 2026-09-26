@@ -8,12 +8,14 @@ class RouteState extends Equatable {
   final RouteStatus actionStatus;
   final List<RouteModel> routes;
   final String? errorMessage;
+  final Map<String, dynamic>? fieldErrors;
 
   const RouteState({
     this.listStatus = RouteStatus.initial,
     this.actionStatus = RouteStatus.initial,
     this.routes = const [],
     this.errorMessage,
+    this.fieldErrors,
   });
 
   RouteState copyWith({
@@ -22,6 +24,7 @@ class RouteState extends Equatable {
     List<RouteModel>? routes,
     String? errorMessage,
     bool clearErrorMessage = false,
+    Map<String, dynamic>? fieldErrors,
   }) {
     return RouteState(
       listStatus: listStatus ?? this.listStatus,
@@ -30,9 +33,16 @@ class RouteState extends Equatable {
       errorMessage: clearErrorMessage
           ? null
           : errorMessage ?? this.errorMessage,
+      fieldErrors: fieldErrors ?? this.fieldErrors,
     );
   }
 
   @override
-  List<Object?> get props => [listStatus, actionStatus, routes, errorMessage];
+  List<Object?> get props => [
+    listStatus,
+    actionStatus,
+    routes,
+    errorMessage,
+    fieldErrors,
+  ];
 }

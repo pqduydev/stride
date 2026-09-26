@@ -40,7 +40,10 @@ class _ChangePasswordState extends State<ChangePassword> {
 
     for (var controller in controllers) {
       controller.addListener(() {
-        if (context.read<UserCubit>().state.status == UserStatus.failure) {
+        final state = context.read<UserCubit>().state;
+        // Xóa ngay nếu đang có lỗi API hoặc trạng thái failure
+        if (state.status == UserStatus.failure ||
+            (state.fieldErrors?.isNotEmpty ?? false)) {
           context.read<UserCubit>().resetErrors();
         }
       });
@@ -56,6 +59,13 @@ class _ChangePasswordState extends State<ChangePassword> {
   }
 
   void _submit() {
+    final cubit = context.read<UserCubit>();
+
+    if (cubit.state.status == UserStatus.failure ||
+        (cubit.state.fieldErrors?.isNotEmpty ?? false)) {
+      cubit.resetErrors();
+    }
+
     if (!_formKey.currentState!.validate()) return;
 
     context.read<UserCubit>().changePassword({
@@ -100,188 +110,205 @@ class _ChangePasswordState extends State<ChangePassword> {
             context.pop();
           }
         },
-        child: Form(
-          key: _formKey,
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.only(top: 15, left: 20, right: 20),
-              child: Column(
-                children: [
-                  Center(
-                    child: Container(
-                      width: 100,
-                      height: 100,
-                      margin: const EdgeInsets.only(top: 80, bottom: 50),
-                      alignment: .center,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFEEF4E5),
-                        borderRadius: BorderRadius.circular(50),
-                      ),
-                      child: SvgPicture.asset(
-                        'assets/icons/ic_lock_green.svg',
-                        width: 44,
-                        height: 44,
-                      ),
+        child: BlocBuilder<UserCubit, UserState>(
+          builder: (context, state) {
+            final isLoading = state.status == UserStatus.loading;
+
+            return AbsorbPointer(
+              absorbing: isLoading,
+              child: Form(
+                key: _formKey,
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                      top: 15,
+                      left: 20,
+                      right: 20,
+                    ),
+                    child: Column(
+                      children: [
+                        Center(
+                          child: Container(
+                            width: 100,
+                            height: 100,
+                            margin: const EdgeInsets.only(top: 80, bottom: 50),
+                            alignment: .center,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFEEF4E5),
+                              borderRadius: BorderRadius.circular(50),
+                            ),
+                            child: SvgPicture.asset(
+                              'assets/icons/ic_lock_green.svg',
+                              width: 44,
+                              height: 44,
+                            ),
+                          ),
+                        ),
+
+                        // 1. Mật khẩu cũ
+                        ItemCustomTextField(
+                          label: 'Mật khẩu cũ',
+                          controller: _oldPasswordController,
+                          textInputAction: TextInputAction.next,
+                          suffixIcon: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _obscureOldPassword = !_obscureOldPassword;
+                                _oldPasswordController.isObscured =
+                                    _obscureOldPassword;
+                              });
+                            },
+                            child: Icon(
+                              _obscureOldPassword
+                                  ? Icons.visibility_off
+                                  : Icons.visibility,
+                              color: const Color(0xFF768079),
+                              size: 19,
+                            ),
+                          ),
+                          autocorrect: false,
+                          enableSuggestions: false,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Vui lòng nhập mật khẩu cũ';
+                            }
+                            if (value.length < 6) {
+                              return 'Mật khẩu phải có ít nhất 6 ký tự';
+                            }
+                            final fieldErrors = context
+                                .read<UserCubit>()
+                                .state
+                                .fieldErrors;
+                            if (fieldErrors != null &&
+                                fieldErrors.containsKey('old_password')) {
+                              final errors = fieldErrors['old_password'];
+                              if (errors is List && errors.isNotEmpty) {
+                                return errors[0];
+                              }
+                            }
+                            return null;
+                          },
+                        ),
+
+                        const SizedBox(height: 20),
+
+                        // 2. Mật khẩu mới
+                        ItemCustomTextField(
+                          label: 'Mật khẩu mới',
+                          controller: _newPasswordController,
+                          textInputAction: TextInputAction.next,
+                          suffixIcon: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _obscureNewPassword = !_obscureNewPassword;
+                                _newPasswordController.isObscured =
+                                    _obscureNewPassword;
+                              });
+                            },
+                            child: Icon(
+                              _obscureNewPassword
+                                  ? Icons.visibility_off
+                                  : Icons.visibility,
+                              color: const Color(0xFF768079),
+                              size: 19,
+                            ),
+                          ),
+                          autocorrect: false,
+                          enableSuggestions: false,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Vui lòng nhập mật khẩu mới';
+                            }
+                            if (value.length < 6) {
+                              return 'Mật khẩu phải có ít nhất 6 ký tự';
+                            }
+
+                            final oldPassword = _oldPasswordController.text;
+                            if (oldPassword.isNotEmpty &&
+                                _newPasswordController.text == oldPassword) {
+                              return 'Mật khẩu mới phải khác mật khẩu cũ';
+                            }
+
+                            final fieldErrors = context
+                                .read<UserCubit>()
+                                .state
+                                .fieldErrors;
+                            if (fieldErrors != null &&
+                                fieldErrors.containsKey('new_password')) {
+                              final errors = fieldErrors['new_password'];
+                              if (errors is List && errors.isNotEmpty) {
+                                return errors[0];
+                              }
+                            }
+                            return null;
+                          },
+                        ),
+
+                        const SizedBox(height: 20),
+
+                        // 3. Xác nhận mật khẩu mới
+                        ItemCustomTextField(
+                          label: 'Xác nhận mật khẩu mới',
+                          controller: _newPasswordConfirmController,
+                          textInputAction: TextInputAction.done,
+                          suffixIcon: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _obscureConfirmNewPassword =
+                                    !_obscureConfirmNewPassword;
+                                _newPasswordConfirmController.isObscured =
+                                    _obscureConfirmNewPassword;
+                              });
+                            },
+                            child: Icon(
+                              _obscureConfirmNewPassword
+                                  ? Icons.visibility_off
+                                  : Icons.visibility,
+                              color: const Color(0xFF768079),
+                              size: 19,
+                            ),
+                          ),
+                          autocorrect: false,
+                          enableSuggestions: false,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Vui lòng xác nhận mật khẩu mới';
+                            }
+                            if (value.length < 6) {
+                              return 'Mật khẩu phải có ít nhất 6 ký tự';
+                            }
+
+                            final newPassword = _newPasswordController.text;
+                            if (newPassword.isNotEmpty &&
+                                _newPasswordConfirmController.text !=
+                                    newPassword) {
+                              return 'Mật khẩu mới không trùng khớp';
+                            }
+
+                            final fieldErrors = context
+                                .read<UserCubit>()
+                                .state
+                                .fieldErrors;
+                            if (fieldErrors != null &&
+                                fieldErrors.containsKey(
+                                  'new_password_confirm',
+                                )) {
+                              final errors =
+                                  fieldErrors['new_password_confirm'];
+                              if (errors is List && errors.isNotEmpty) {
+                                return errors[0];
+                              }
+                            }
+                            return null;
+                          },
+                        ),
+                      ],
                     ),
                   ),
-
-                  // 1. Mật khẩu cũ
-                  ItemCustomTextField(
-                    label: 'Mật khẩu cũ',
-                    controller: _oldPasswordController,
-                    textInputAction: TextInputAction.next,
-                    suffixIcon: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _obscureOldPassword = !_obscureOldPassword;
-                          _oldPasswordController.isObscured =
-                              _obscureOldPassword;
-                        });
-                      },
-                      child: Icon(
-                        _obscureOldPassword
-                            ? Icons.visibility_off
-                            : Icons.visibility,
-                        color: const Color(0xFF768079),
-                        size: 19,
-                      ),
-                    ),
-                    autocorrect: false,
-                    enableSuggestions: false,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Vui lòng nhập mật khẩu cũ';
-                      }
-                      if (value.length < 6) {
-                        return 'Mật khẩu phải có ít nhất 6 ký tự';
-                      }
-                      final fieldErrors = context
-                          .read<UserCubit>()
-                          .state
-                          .fieldErrors;
-                      if (fieldErrors != null &&
-                          fieldErrors.containsKey('old_password')) {
-                        final errors = fieldErrors['old_password'];
-                        if (errors is List && errors.isNotEmpty) {
-                          return errors[0];
-                        }
-                      }
-                      return null;
-                    },
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  // 2. Mật khẩu mới
-                  ItemCustomTextField(
-                    label: 'Mật khẩu mới',
-                    controller: _newPasswordController,
-                    textInputAction: TextInputAction.next,
-                    suffixIcon: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _obscureNewPassword = !_obscureNewPassword;
-                          _newPasswordController.isObscured =
-                              _obscureNewPassword;
-                        });
-                      },
-                      child: Icon(
-                        _obscureNewPassword
-                            ? Icons.visibility_off
-                            : Icons.visibility,
-                        color: const Color(0xFF768079),
-                        size: 19,
-                      ),
-                    ),
-                    autocorrect: false,
-                    enableSuggestions: false,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Vui lòng nhập mật khẩu mới';
-                      }
-                      if (value.length < 6) {
-                        return 'Mật khẩu phải có ít nhất 6 ký tự';
-                      }
-
-                      final oldPassword = _oldPasswordController.text;
-                      if (oldPassword.isNotEmpty &&
-                          _newPasswordController.text == oldPassword) {
-                        return 'Mật khẩu mới phải khác mật khẩu cũ';
-                      }
-
-                      final fieldErrors = context
-                          .read<UserCubit>()
-                          .state
-                          .fieldErrors;
-                      if (fieldErrors != null &&
-                          fieldErrors.containsKey('new_password')) {
-                        final errors = fieldErrors['new_password'];
-                        if (errors is List && errors.isNotEmpty) {
-                          return errors[0];
-                        }
-                      }
-                      return null;
-                    },
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  // 3. Xác nhận mật khẩu mới
-                  ItemCustomTextField(
-                    label: 'Xác nhận mật khẩu mới',
-                    controller: _newPasswordConfirmController,
-                    textInputAction: TextInputAction.done,
-                    suffixIcon: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _obscureConfirmNewPassword =
-                              !_obscureConfirmNewPassword;
-                          _newPasswordConfirmController.isObscured =
-                              _obscureConfirmNewPassword;
-                        });
-                      },
-                      child: Icon(
-                        _obscureConfirmNewPassword
-                            ? Icons.visibility_off
-                            : Icons.visibility,
-                        color: const Color(0xFF768079),
-                        size: 19,
-                      ),
-                    ),
-                    autocorrect: false,
-                    enableSuggestions: false,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Vui lòng xác nhận mật khẩu mới';
-                      }
-                      if (value.length < 6) {
-                        return 'Mật khẩu phải có ít nhất 6 ký tự';
-                      }
-
-                      final newPassword = _newPasswordController.text;
-                      if (newPassword.isNotEmpty &&
-                          _newPasswordConfirmController.text != newPassword) {
-                        return 'Mật khẩu mới không trùng khớp';
-                      }
-
-                      final fieldErrors = context
-                          .read<UserCubit>()
-                          .state
-                          .fieldErrors;
-                      if (fieldErrors != null &&
-                          fieldErrors.containsKey('new_password_confirm')) {
-                        final errors = fieldErrors['new_password_confirm'];
-                        if (errors is List && errors.isNotEmpty) {
-                          return errors[0];
-                        }
-                      }
-                      return null;
-                    },
-                  ),
-                ],
+                ),
               ),
-            ),
-          ),
+            );
+          },
         ),
       ),
       bottomNavigationBar: BlocBuilder<UserCubit, UserState>(

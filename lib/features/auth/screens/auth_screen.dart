@@ -61,7 +61,10 @@ class _AuthViewState extends State<AuthView> {
 
     for (var controller in controllers) {
       controller.addListener(() {
-        if (context.read<AuthCubit>().state.status == AuthStatus.failure) {
+        final state = context.read<AuthCubit>().state;
+        // Nếu có lỗi server (fieldErrors) hoặc errorMessage, lập tức xóa khi gõ
+        if (state.status == AuthStatus.failure ||
+            (state.fieldErrors?.isNotEmpty ?? false)) {
           context.read<AuthCubit>().resetErrors();
         }
       });
@@ -80,9 +83,16 @@ class _AuthViewState extends State<AuthView> {
   }
 
   void _submit() {
+    final cubit = context.read<AuthCubit>();
+
+    // Xóa sạch lỗi server cũ trước khi kiểm tra Form
+    if (cubit.state.status == AuthStatus.failure ||
+        cubit.state.fieldErrors != null) {
+      cubit.resetErrors();
+    }
+
     if (!_formKey.currentState!.validate()) return;
 
-    final cubit = context.read<AuthCubit>();
     if (_isLogin) {
       cubit.login(
         username: _usernameController.text,
@@ -160,403 +170,418 @@ class _AuthViewState extends State<AuthView> {
             context.read<AuthCubit>().resetStatus();
           }
         },
-        child: Form(
-          key: _formKey,
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: .start,
-              children: [
-                Text(
-                  _isLogin
-                      ? "Chào mừng bạn trở lại. Tiếp tục hành trình nhé!"
-                      : "Bắt đầu hành trình của riêng bạn.",
-                  style: const TextStyle(
-                    color: Color(0xFF768079),
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-                const SizedBox(height: 30),
-                if (!_isLogin) ...[
-                  Row(
-                    children: [
-                      Expanded(
-                        child: ItemCustomTextField(
-                          label: 'Họ',
-                          controller: _lastNameController,
-                          validator: (value) {
-                            if (value == null || value.trim().isEmpty) {
-                              return 'Vui lòng nhập họ';
-                            }
-                            final fieldErrors = context
-                                .read<AuthCubit>()
-                                .state
-                                .fieldErrors;
-                            if (fieldErrors != null &&
-                                fieldErrors.containsKey('last_name')) {
-                              final errors = fieldErrors['last_name'];
-                              if (errors is List && errors.isNotEmpty) {
-                                return errors[0];
-                              }
-                            }
-                            return null;
-                          },
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: ItemCustomTextField(
-                          label: 'Tên',
-                          controller: _firstNameController,
-                          validator: (value) {
-                            if (value == null || value.trim().isEmpty) {
-                              return 'Vui lòng nhập tên';
-                            }
-                            final fieldErrors = context
-                                .read<AuthCubit>()
-                                .state
-                                .fieldErrors;
-                            if (fieldErrors != null &&
-                                fieldErrors.containsKey('first_name')) {
-                              final errors = fieldErrors['first_name'];
-                              if (errors is List && errors.isNotEmpty) {
-                                return errors[0];
-                              }
-                            }
-                            return null;
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 3),
-                ],
-                ItemCustomTextField(
-                  label: 'Tên đăng nhập',
-                  controller: _usernameController,
-                  suffixIcon: SvgPicture.asset(
-                    "assets/icons/ic_user.svg",
-                    width: 19,
-                    height: 19,
-                  ),
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Vui lòng nhập tên đăng nhập';
-                    }
-                    final usernameRegex = RegExp(r'^[a-zA-Z0-9_]{3,20}$');
-                    if (!usernameRegex.hasMatch(value.trim())) {
-                      return 'Username từ 3-20 ký tự, chỉ gồm chữ, số và dấu _';
-                    }
-                    final fieldErrors = context
-                        .read<AuthCubit>()
-                        .state
-                        .fieldErrors;
-                    if (fieldErrors != null &&
-                        fieldErrors.containsKey('username')) {
-                      final errors = fieldErrors['username'];
-                      if (errors is List && errors.isNotEmpty) return errors[0];
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 3),
-                if (!_isLogin) ...[
-                  ItemCustomTextField(
-                    label: 'Email',
-                    controller: _mailController,
-                    suffixIcon: SvgPicture.asset(
-                      "assets/icons/ic_mail.svg",
-                      width: 19,
-                      height: 19,
-                    ),
-                    keyboardType: TextInputType.emailAddress,
-                    validator: (value) {
-                      if (value == null || value.trim().isEmpty) {
-                        return 'Vui lòng nhập email';
-                      }
-                      final emailRegex = RegExp(
-                        r'^[a-z0-9_\-\.]+@([a-z0-9\-]+\.)+[a-z]{2,4}$',
-                      );
-                      if (!emailRegex.hasMatch(value.trim())) {
-                        return 'Email không đúng định dạng';
-                      }
-                      final fieldErrors = context
-                          .read<AuthCubit>()
-                          .state
-                          .fieldErrors;
-                      if (fieldErrors != null &&
-                          fieldErrors.containsKey('email')) {
-                        final errors = fieldErrors['email'];
-                        if (errors is List && errors.isNotEmpty) {
-                          return errors[0];
-                        }
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 3),
-                ],
-                ItemCustomTextField(
-                  label: 'Mật khẩu',
-                  controller: _passwordController,
-                  suffixIcon: GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        _obscurePassword = !_obscurePassword;
-                        _passwordController.isObscured = _obscurePassword;
-                      });
-                    },
-                    child: Icon(
-                      _obscurePassword
-                          ? Icons.visibility_off
-                          : Icons.visibility,
-                      color: const Color(0xFF768079),
-                      size: 19,
-                    ),
-                  ),
-                  keyboardType: TextInputType.text,
-                  textInputAction: TextInputAction.done,
-                  autocorrect: false,
-                  enableSuggestions: false,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Vui lòng nhập mật khẩu';
-                    }
-                    if (value.length < 6) {
-                      return 'Mật khẩu phải có ít nhất 6 ký tự';
-                    }
-                    final fieldErrors = context
-                        .read<AuthCubit>()
-                        .state
-                        .fieldErrors;
-                    if (fieldErrors != null &&
-                        fieldErrors.containsKey('password')) {
-                      final errors = fieldErrors['password'];
-                      if (errors is List && errors.isNotEmpty) return errors[0];
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 3),
-                if (!_isLogin) ...[
-                  ItemCustomTextField(
-                    label: 'Xác nhận mật khẩu',
-                    controller: _passwordConfirmController,
-                    suffixIcon: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _obscureConfirmPassword = !_obscureConfirmPassword;
-                          _passwordConfirmController.isObscured =
-                              _obscureConfirmPassword;
-                        });
-                      },
-                      child: Icon(
-                        _obscureConfirmPassword
-                            ? Icons.visibility_off
-                            : Icons.visibility,
-                        color: const Color(0xFF768079),
-                        size: 19,
-                      ),
-                    ),
-                    keyboardType: TextInputType.text,
-                    textInputAction: TextInputAction.done,
-                    autocorrect: false,
-                    enableSuggestions: false,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Vui lòng xác nhận mật khẩu';
-                      }
-                      if (value != _passwordController.text) {
-                        return 'Mật khẩu xác nhận không khớp';
-                      }
-                      final fieldErrors = context
-                          .read<AuthCubit>()
-                          .state
-                          .fieldErrors;
-                      if (fieldErrors != null &&
-                          fieldErrors.containsKey('password_confirm')) {
-                        final errors = fieldErrors['password_confirm'];
-                        if (errors is List && errors.isNotEmpty) {
-                          return errors[0];
-                        }
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 3),
-                ],
-                if (_isLogin)
-                  Row(
-                    mainAxisAlignment: .end,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.fromLTRB(0, 10, 35, 35),
-                        child: InkWell(
-                          onTap: () => context.push('/login/forget_password'),
-                          child: Text(
-                            "Quên mật khẩu?",
-                            style: TextStyle(
-                              color: Color(0xFF526C30),
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  )
-                else
-                  Column(
+        child: BlocBuilder<AuthCubit, AuthState>(
+          builder: (context, state) {
+            final isLoading = state.status == AuthStatus.loading;
+
+            return AbsorbPointer(
+              absorbing: isLoading, // Khóa toàn bộ tương tác chuột/bàn phím nếu đang loading
+              child: Form(
+                key: _formKey,
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
                     crossAxisAlignment: .start,
                     children: [
-                      const SizedBox(height: 15),
-                      const Text(
-                        "Dùng ít nhất 6 ký tự cho mật khẩu.",
-                        style: TextStyle(
+                      Text(
+                        _isLogin
+                            ? "Chào mừng bạn trở lại. Tiếp tục hành trình nhé!"
+                            : "Bắt đầu hành trình của riêng bạn.",
+                        style: const TextStyle(
                           color: Color(0xFF768079),
-                          fontSize: 12,
+                          fontSize: 14,
                           fontWeight: FontWeight.w400,
                         ),
                       ),
-                      const SizedBox(height: 25),
-                      const Text(
-                        "Khi tạo tài khoản, bạn đồng ý với",
-                        style: TextStyle(
-                          color: Color(0xFF768079),
-                          fontSize: 12,
-                          fontWeight: FontWeight.w400,
+                      const SizedBox(height: 30),
+                      if (!_isLogin) ...[
+                        Row(
+                          children: [
+                            Expanded(
+                              child: ItemCustomTextField(
+                                label: 'Họ',
+                                controller: _lastNameController,
+                                validator: (value) {
+                                  if (value == null || value.trim().isEmpty) {
+                                    return 'Vui lòng nhập họ';
+                                  }
+                                  final fieldErrors = context
+                                      .read<AuthCubit>()
+                                      .state
+                                      .fieldErrors;
+                                  if (fieldErrors != null &&
+                                      fieldErrors.containsKey('last_name')) {
+                                    final errors = fieldErrors['last_name'];
+                                    if (errors is List && errors.isNotEmpty) {
+                                      return errors[0];
+                                    }
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: ItemCustomTextField(
+                                label: 'Tên',
+                                controller: _firstNameController,
+                                validator: (value) {
+                                  if (value == null || value.trim().isEmpty) {
+                                    return 'Vui lòng nhập tên';
+                                  }
+                                  final fieldErrors = context
+                                      .read<AuthCubit>()
+                                      .state
+                                      .fieldErrors;
+                                  if (fieldErrors != null &&
+                                      fieldErrors.containsKey('first_name')) {
+                                    final errors = fieldErrors['first_name'];
+                                    if (errors is List && errors.isNotEmpty) {
+                                      return errors[0];
+                                    }
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ),
+                          ],
                         ),
+                        const SizedBox(height: 3),
+                      ],
+                      ItemCustomTextField(
+                        label: 'Tên đăng nhập',
+                        controller: _usernameController,
+                        suffixIcon: SvgPicture.asset(
+                          "assets/icons/ic_user.svg",
+                          width: 19,
+                          height: 19,
+                        ),
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return 'Vui lòng nhập tên đăng nhập';
+                          }
+                          final usernameRegex = RegExp(r'^[a-zA-Z0-9_]{3,20}$');
+                          if (!usernameRegex.hasMatch(value.trim())) {
+                            return 'Username từ 3-20 ký tự, chỉ gồm chữ, số và dấu _';
+                          }
+                          final fieldErrors = context
+                              .read<AuthCubit>()
+                              .state
+                              .fieldErrors;
+                          if (fieldErrors != null &&
+                              fieldErrors.containsKey('username')) {
+                            final errors = fieldErrors['username'];
+                            if (errors is List && errors.isNotEmpty)
+                              return errors[0];
+                          }
+                          return null;
+                        },
                       ),
-                      const SizedBox(height: 8),
-                      InkWell(
-                        onTap: () => context.push('/register/privacy'),
-                        child: const Text(
-                          "Điều khoản sử dụng và Quyền riêng tư.",
-                          style: TextStyle(
-                            color: Color(0xFF526C30),
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
+                      const SizedBox(height: 3),
+                      if (!_isLogin) ...[
+                        ItemCustomTextField(
+                          label: 'Email',
+                          controller: _mailController,
+                          suffixIcon: SvgPicture.asset(
+                            "assets/icons/ic_mail.svg",
+                            width: 19,
+                            height: 19,
+                          ),
+                          keyboardType: TextInputType.emailAddress,
+                          validator: (value) {
+                            if (value == null || value.trim().isEmpty) {
+                              return 'Vui lòng nhập email';
+                            }
+                            final emailRegex = RegExp(
+                              r'^[a-z0-9_\-\.]+@([a-z0-9\-]+\.)+[a-z]{2,4}$',
+                            );
+                            if (!emailRegex.hasMatch(value.trim())) {
+                              return 'Email không đúng định dạng';
+                            }
+                            final fieldErrors = context
+                                .read<AuthCubit>()
+                                .state
+                                .fieldErrors;
+                            if (fieldErrors != null &&
+                                fieldErrors.containsKey('email')) {
+                              final errors = fieldErrors['email'];
+                              if (errors is List && errors.isNotEmpty) {
+                                return errors[0];
+                              }
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 3),
+                      ],
+                      ItemCustomTextField(
+                        label: 'Mật khẩu',
+                        controller: _passwordController,
+                        suffixIcon: GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _obscurePassword = !_obscurePassword;
+                              _passwordController.isObscured = _obscurePassword;
+                            });
+                          },
+                          child: Icon(
+                            _obscurePassword
+                                ? Icons.visibility_off
+                                : Icons.visibility,
+                            color: const Color(0xFF768079),
+                            size: 19,
                           ),
                         ),
+                        keyboardType: TextInputType.text,
+                        textInputAction: TextInputAction.done,
+                        autocorrect: false,
+                        enableSuggestions: false,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Vui lòng nhập mật khẩu';
+                          }
+                          if (value.length < 6) {
+                            return 'Mật khẩu phải có ít nhất 6 ký tự';
+                          }
+                          final fieldErrors = context
+                              .read<AuthCubit>()
+                              .state
+                              .fieldErrors;
+                          if (fieldErrors != null &&
+                              fieldErrors.containsKey('password')) {
+                            final errors = fieldErrors['password'];
+                            if (errors is List && errors.isNotEmpty)
+                              return errors[0];
+                          }
+                          return null;
+                        },
                       ),
-                      const SizedBox(height: 40),
-                    ],
-                  ),
-                BlocBuilder<AuthCubit, AuthState>(
-                  builder: (context, state) {
-                    if (state.status == AuthStatus.loading) {
-                      return const Center(
-                        child: CircularProgressIndicator(
-                          color: Color(0xFF526C30),
+                      const SizedBox(height: 3),
+                      if (!_isLogin) ...[
+                        ItemCustomTextField(
+                          label: 'Xác nhận mật khẩu',
+                          controller: _passwordConfirmController,
+                          suffixIcon: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _obscureConfirmPassword =
+                                    !_obscureConfirmPassword;
+                                _passwordConfirmController.isObscured =
+                                    _obscureConfirmPassword;
+                              });
+                            },
+                            child: Icon(
+                              _obscureConfirmPassword
+                                  ? Icons.visibility_off
+                                  : Icons.visibility,
+                              color: const Color(0xFF768079),
+                              size: 19,
+                            ),
+                          ),
+                          keyboardType: TextInputType.text,
+                          textInputAction: TextInputAction.done,
+                          autocorrect: false,
+                          enableSuggestions: false,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Vui lòng xác nhận mật khẩu';
+                            }
+                            if (value != _passwordController.text) {
+                              return 'Mật khẩu xác nhận không khớp';
+                            }
+                            final fieldErrors = context
+                                .read<AuthCubit>()
+                                .state
+                                .fieldErrors;
+                            if (fieldErrors != null &&
+                                fieldErrors.containsKey('password_confirm')) {
+                              final errors = fieldErrors['password_confirm'];
+                              if (errors is List && errors.isNotEmpty) {
+                                return errors[0];
+                              }
+                            }
+                            return null;
+                          },
                         ),
-                      );
-                    }
-                    return ItemBottomButton(
-                      text: _isLogin ? "Đăng nhập" : "Tạo tài khoản bằng email",
-                      onTap: _submit,
-                    );
-                  },
-                ),
-                if (_isLogin)
-                  Column(
-                    crossAxisAlignment: .center,
-                    children: [
-                      const SizedBox(height: 30),
-                      const Text(
-                        "HOẶC TIẾP TỤC BẰNG",
-                        style: TextStyle(
-                          color: Color(0xFF768079),
-                          fontSize: 13.5,
-                          fontWeight: FontWeight.w600,
+                        const SizedBox(height: 3),
+                      ],
+                      if (_isLogin)
+                        Row(
+                          mainAxisAlignment: .end,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.fromLTRB(0, 10, 35, 35),
+                              child: InkWell(
+                                onTap: () =>
+                                    context.push('/login/forget_password'),
+                                child: Text(
+                                  "Quên mật khẩu?",
+                                  style: TextStyle(
+                                    color: Color(0xFF526C30),
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
+                      else
+                        Column(
+                          crossAxisAlignment: .start,
+                          children: [
+                            const SizedBox(height: 15),
+                            const Text(
+                              "Dùng ít nhất 6 ký tự cho mật khẩu.",
+                              style: TextStyle(
+                                color: Color(0xFF768079),
+                                fontSize: 12,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                            const SizedBox(height: 25),
+                            const Text(
+                              "Khi tạo tài khoản, bạn đồng ý với",
+                              style: TextStyle(
+                                color: Color(0xFF768079),
+                                fontSize: 12,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            InkWell(
+                              onTap: () => context.push('/register/privacy'),
+                              child: const Text(
+                                "Điều khoản sử dụng và Quyền riêng tư.",
+                                style: TextStyle(
+                                  color: Color(0xFF526C30),
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 40),
+                          ],
                         ),
-                      ),
-                      const SizedBox(height: 30),
+
+                      if (isLoading)
+                        const Center(
+                          child: CircularProgressIndicator(
+                            color: Color(0xFF526C30),
+                          ),
+                        )
+                      else
+                        ItemBottomButton(
+                          text: _isLogin
+                              ? "Đăng nhập"
+                              : "Tạo tài khoản bằng email",
+                          onTap: _submit,
+                        ),
+
+                      if (_isLogin)
+                        Column(
+                          crossAxisAlignment: .center,
+                          children: [
+                            const SizedBox(height: 30),
+                            const Text(
+                              "HOẶC TIẾP TỤC BẰNG",
+                              style: TextStyle(
+                                color: Color(0xFF768079),
+                                fontSize: 13.5,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(height: 30),
+                            ItemSocialButton(
+                              text: 'Số điện thoại',
+                              fontWeight: FontWeight.w700,
+                              backgroundColor: const Color(0xFFFFFFFF),
+                              textColor: const Color(0xFF526C30),
+                              icon: SvgPicture.asset(
+                                "assets/icons/ic_phone.svg",
+                                width: 20,
+                                height: 20,
+                              ),
+                              borderColor: const Color(0xFFE8ECE8),
+                              onTap: () => context.push(
+                                '/login/login_with_phone_number',
+                              ),
+                            ),
+                          ],
+                        ),
+                      const SizedBox(height: 15),
                       ItemSocialButton(
-                        text: 'Số điện thoại',
-                        fontWeight: FontWeight.w700,
+                        text: 'Tiếp tục với Google',
                         backgroundColor: const Color(0xFFFFFFFF),
-                        textColor: const Color(0xFF526C30),
+                        textColor: const Color(0xFF1F1F1F),
                         icon: SvgPicture.asset(
-                          "assets/icons/ic_phone.svg",
+                          "assets/icons/ic_google.svg",
                           width: 20,
                           height: 20,
                         ),
-                        borderColor: const Color(0xFFE8ECE8),
+                        borderColor: const Color(0xFF747775),
                         onTap: () =>
-                            context.push('/login/login_with_phone_number'),
+                            context.push('/register/login_with_google'),
+                      ),
+                      const SizedBox(height: 15),
+                      ItemSocialButton(
+                        text: 'Tiếp tục với Apple',
+                        backgroundColor: const Color(0xFF000000),
+                        textColor: const Color(0xFFFFFFFF),
+                        icon: SvgPicture.asset(
+                          "assets/icons/ic_apple.svg",
+                          width: 20,
+                          height: 20,
+                        ),
+                        onTap: () => context.push('/register/login_with_apple'),
+                      ),
+                      const SizedBox(height: 35),
+                      Row(
+                        mainAxisAlignment: .center,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _isLogin = !_isLogin;
+                                _formKey.currentState?.reset();
+                              });
+
+                              _usernameController.clear();
+                              _mailController.clear();
+                              _passwordController.clear();
+                              _passwordConfirmController.clear();
+                              _firstNameController.clear();
+                              _lastNameController.clear();
+
+                              // Đặt lại trạng thái icon
+                              _obscurePassword = true;
+                              _obscureConfirmPassword = true;
+
+                              // Cập nhật trạng thái cho controller
+                              _passwordController.isObscured = true;
+                              _passwordConfirmController.isObscured = true;
+
+                              context.read<AuthCubit>().resetStatus();
+                            },
+                            child: Text(
+                              _isLogin
+                                  ? "Chưa có tài khoản? Đăng ký"
+                                  : "Đã có tài khoản? Đăng nhập",
+                              style: const TextStyle(
+                                color: Color(0xFF526C30),
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                const SizedBox(height: 15),
-                ItemSocialButton(
-                  text: 'Tiếp tục với Google',
-                  backgroundColor: const Color(0xFFFFFFFF),
-                  textColor: const Color(0xFF1F1F1F),
-                  icon: SvgPicture.asset(
-                    "assets/icons/ic_google.svg",
-                    width: 20,
-                    height: 20,
-                  ),
-                  borderColor: const Color(0xFF747775),
-                  onTap: () => context.push('/register/login_with_google'),
                 ),
-                const SizedBox(height: 15),
-                ItemSocialButton(
-                  text: 'Tiếp tục với Apple',
-                  backgroundColor: const Color(0xFF000000),
-                  textColor: const Color(0xFFFFFFFF),
-                  icon: SvgPicture.asset(
-                    "assets/icons/ic_apple.svg",
-                    width: 20,
-                    height: 20,
-                  ),
-                  onTap: () => context.push('/register/login_with_apple'),
-                ),
-                const SizedBox(height: 35),
-                Row(
-                  mainAxisAlignment: .center,
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _isLogin = !_isLogin;
-                          _formKey.currentState?.reset();
-                        });
-
-                        _usernameController.clear();
-                        _mailController.clear();
-                        _passwordController.clear();
-                        _passwordConfirmController.clear();
-                        _firstNameController.clear();
-                        _lastNameController.clear();
-
-                        // Đặt lại trạng thái icon
-                        _obscurePassword = true;
-                        _obscureConfirmPassword = true;
-
-                        // Cập nhật trạng thái cho controller
-                        _passwordController.isObscured = true;
-                        _passwordConfirmController.isObscured = true;
-
-                        context.read<AuthCubit>().resetStatus();
-                      },
-                      child: Text(
-                        _isLogin
-                            ? "Chưa có tài khoản? Đăng ký"
-                            : "Đã có tài khoản? Đăng nhập",
-                        style: const TextStyle(
-                          color: Color(0xFF526C30),
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         ),
       ),
     );

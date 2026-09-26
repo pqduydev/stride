@@ -9,6 +9,16 @@ class RouteCubit extends Cubit<RouteState> {
 
   RouteCubit(this._routeRepository) : super(RouteState());
 
+  void resetErrors() {
+    emit(
+      state.copyWith(
+        actionStatus: RouteStatus.initial,
+        fieldErrors: {},
+        clearErrorMessage: true,
+      ),
+    );
+  }
+
   Future<void> loadRoutes() async {
     emit(
       state.copyWith(listStatus: RouteStatus.loading, clearErrorMessage: true),
@@ -67,6 +77,7 @@ class RouteCubit extends Cubit<RouteState> {
         state.copyWith(
           actionStatus: RouteStatus.failure,
           errorMessage: e.message,
+          fieldErrors: e.fieldErrors,
         ),
       );
     } catch (e) {
@@ -105,6 +116,7 @@ class RouteCubit extends Cubit<RouteState> {
         state.copyWith(
           actionStatus: RouteStatus.failure,
           errorMessage: e.message,
+          fieldErrors: e.fieldErrors,
         ),
       );
     } catch (e) {

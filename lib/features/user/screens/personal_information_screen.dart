@@ -77,6 +77,26 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
     _bioController = TextEditingController(text: user?.bio ?? '');
 
     _selectedDateOfBirth = user?.dateOfBirth;
+
+    final controllers = [
+      _lastNameController,
+      _firstNameController,
+      _emailController,
+      _phoneController,
+      _heightController,
+      _weightController,
+      _bioController,
+    ];
+
+    for (var controller in controllers) {
+      controller.addListener(() {
+        final state = context.read<UserCubit>().state;
+        if (state.status == UserStatus.failure ||
+            (state.fieldErrors?.isNotEmpty ?? false)) {
+          context.read<UserCubit>().resetErrors();
+        }
+      });
+    }
   }
 
   @override
@@ -94,6 +114,13 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
   }
 
   void _submit() {
+    final userCubit = context.read<UserCubit>();
+
+    if (userCubit.state.status == UserStatus.failure ||
+        (userCubit.state.fieldErrors?.isNotEmpty ?? false)) {
+      userCubit.resetErrors();
+    }
+
     if (!_formKey.currentState!.validate()) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -237,354 +264,379 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                   ),
                 ),
 
-                BlocBuilder<AuthCubit, AuthState>(
-                  builder: (context, authState) {
-                    final user = authState.user;
+                BlocBuilder<UserCubit, UserState>(
+                  builder: (context, userState) {
+                    final isLoading = userState.status == UserStatus.loading;
+                    final user = userState.user;
                     final initials = user?.displayInitials;
 
-                    return Form(
-                      key: _formKey,
-                      child: Column(
-                        children: [
-                          Center(
-                            child: Container(
-                              width: 74,
-                              height: 74,
-                              margin: const EdgeInsets.only(
-                                top: 35,
-                                bottom: 40,
-                              ),
-                              alignment: .center,
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFEEF4E5),
-                                borderRadius: BorderRadius.circular(38),
-                              ),
-                              child: Text(
-                                initials ?? '',
-                                style: const TextStyle(
-                                  color: Color(0xFF526C30),
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.w700,
+                    return AbsorbPointer(
+                      absorbing: isLoading,
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          children: [
+                            Center(
+                              child: Container(
+                                width: 74,
+                                height: 74,
+                                margin: const EdgeInsets.only(
+                                  top: 35,
+                                  bottom: 40,
+                                ),
+                                alignment: .center,
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFEEF4E5),
+                                  borderRadius: BorderRadius.circular(38),
+                                ),
+                                child: Text(
+                                  initials ?? '',
+                                  style: const TextStyle(
+                                    color: Color(0xFF526C30),
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.w700,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
 
-                          // Username
-                          ItemCustomTextField(
-                            label: 'Tên người dùng',
-                            controller: _usernameController,
-                            readOnly: true,
-                            backgroundColor: 0xFFEEF4E5,
-                          ),
-                          const SizedBox(height: 5),
-
-                          // Date Joined
-                          ItemCustomTextField(
-                            label: 'Ngày tham gia',
-                            controller: _dateJoinedController,
-                            readOnly: true,
-                            backgroundColor: 0xFFEEF4E5,
-                          ),
-                          const SizedBox(height: 5),
-
-                          // Last Name
-                          ItemCustomTextField(
-                            label: 'Họ',
-                            controller: _lastNameController,
-                            suffixIcon: SvgPicture.asset(
-                              "assets/icons/ic_user.svg",
-                              width: 19,
-                              height: 19,
+                            // Username
+                            ItemCustomTextField(
+                              label: 'Tên người dùng',
+                              controller: _usernameController,
+                              readOnly: true,
+                              backgroundColor: 0xFFEEF4E5,
                             ),
-                            validator: (_) {
-                              // Lấy dữ liệu hiện tại
-                              final currentValue = _lastNameController.text
-                                  .trim();
+                            const SizedBox(height: 5),
 
-                              if (currentValue.isEmpty) {
-                                // Nếu ban đầu có dữ liệu mà giờ xóa rỗng -> Lỗi
-                                if (_initialLastName.isNotEmpty) {
-                                  return 'Vui lòng không để trống họ';
-                                }
-                                // Nếu ban đầu rỗng sẵn -> Hợp lệ
-                                return null;
-                              }
-
-                              final fieldErrors = context
-                                  .read<AuthCubit>()
-                                  .state
-                                  .fieldErrors;
-                              if (fieldErrors != null &&
-                                  fieldErrors.containsKey('last_name')) {
-                                final errors = fieldErrors['last_name'];
-                                if (errors is List && errors.isNotEmpty) {
-                                  return errors[0];
-                                }
-                              }
-                              return null;
-                            },
-                          ),
-                          const SizedBox(height: 5),
-
-                          // First Name
-                          ItemCustomTextField(
-                            label: 'Tên',
-                            controller: _firstNameController,
-                            suffixIcon: SvgPicture.asset(
-                              "assets/icons/ic_user.svg",
-                              width: 19,
-                              height: 19,
+                            // Date Joined
+                            ItemCustomTextField(
+                              label: 'Ngày tham gia',
+                              controller: _dateJoinedController,
+                              readOnly: true,
+                              backgroundColor: 0xFFEEF4E5,
                             ),
-                            validator: (_) {
-                              // Lấy dữ liệu hiện tại
-                              final currentValue = _firstNameController.text
-                                  .trim();
+                            const SizedBox(height: 5),
 
-                              if (currentValue.isEmpty) {
-                                // Nếu ban đầu có dữ liệu mà giờ xóa rỗng -> Lỗi
-                                if (_initialFirstName.isNotEmpty) {
-                                  return 'Vui lòng không để trống tên';
+                            // Last Name
+                            ItemCustomTextField(
+                              label: 'Họ',
+                              controller: _lastNameController,
+                              suffixIcon: SvgPicture.asset(
+                                "assets/icons/ic_user.svg",
+                                width: 19,
+                                height: 19,
+                              ),
+                              validator: (_) {
+                                // Lấy dữ liệu hiện tại
+                                final currentValue = _lastNameController.text
+                                    .trim();
+
+                                if (currentValue.isEmpty) {
+                                  // Nếu ban đầu có dữ liệu mà giờ xóa rỗng -> Lỗi
+                                  if (_initialLastName.isNotEmpty) {
+                                    return 'Vui lòng không để trống họ';
+                                  }
+                                  // Nếu ban đầu rỗng sẵn -> Hợp lệ
+                                  return null;
                                 }
-                                // Nếu ban đầu rỗng sẵn -> Hợp lệ
+
+                                final fieldErrors = context
+                                    .read<UserCubit>()
+                                    .state
+                                    .fieldErrors;
+                                if (fieldErrors != null &&
+                                    fieldErrors.containsKey('last_name')) {
+                                  final errors = fieldErrors['last_name'];
+                                  if (errors is List && errors.isNotEmpty) {
+                                    return errors[0];
+                                  }
+                                }
                                 return null;
-                              }
-
-                              final fieldErrors = context
-                                  .read<AuthCubit>()
-                                  .state
-                                  .fieldErrors;
-                              if (fieldErrors != null &&
-                                  fieldErrors.containsKey('first_name')) {
-                                final errors = fieldErrors['first_name'];
-                                if (errors is List && errors.isNotEmpty) {
-                                  return errors[0];
-                                }
-                              }
-                              return null;
-                            },
-                          ),
-                          const SizedBox(height: 5),
-
-                          // Email
-                          ItemCustomTextField(
-                            label: 'Email liên hệ',
-                            controller: _emailController,
-                            suffixIcon: SvgPicture.asset(
-                              "assets/icons/ic_mail.svg",
-                              width: 19,
-                              height: 19,
+                              },
                             ),
-                            keyboardType: TextInputType.emailAddress,
-                            validator: (_) {
-                              // Lấy dữ liệu hiện tại
-                              final currentValue = _emailController.text.trim();
+                            const SizedBox(height: 5),
 
-                              if (currentValue.isEmpty) {
-                                // Nếu ban đầu có dữ liệu mà giờ xóa rỗng -> Lỗi
-                                if (_initialEmail.isNotEmpty) {
-                                  return 'Vui lòng không để trống email';
+                            // First Name
+                            ItemCustomTextField(
+                              label: 'Tên',
+                              controller: _firstNameController,
+                              suffixIcon: SvgPicture.asset(
+                                "assets/icons/ic_user.svg",
+                                width: 19,
+                                height: 19,
+                              ),
+                              validator: (_) {
+                                // Lấy dữ liệu hiện tại
+                                final currentValue = _firstNameController.text
+                                    .trim();
+
+                                if (currentValue.isEmpty) {
+                                  // Nếu ban đầu có dữ liệu mà giờ xóa rỗng -> Lỗi
+                                  if (_initialFirstName.isNotEmpty) {
+                                    return 'Vui lòng không để trống tên';
+                                  }
+                                  // Nếu ban đầu rỗng sẵn -> Hợp lệ
+                                  return null;
                                 }
-                                // Nếu ban đầu rỗng sẵn -> Hợp lệ
+
+                                final fieldErrors = context
+                                    .read<UserCubit>()
+                                    .state
+                                    .fieldErrors;
+                                if (fieldErrors != null &&
+                                    fieldErrors.containsKey('first_name')) {
+                                  final errors = fieldErrors['first_name'];
+                                  if (errors is List && errors.isNotEmpty) {
+                                    return errors[0];
+                                  }
+                                }
                                 return null;
-                              }
-
-                              final emailRegex = RegExp(
-                                r'^[a-z0-9_\-\.]+@([a-z0-9\-]+\.)+[a-z]{2,4}$',
-                              );
-                              if (!emailRegex.hasMatch(currentValue)) {
-                                return 'Email không đúng định dạng';
-                              }
-
-                              final fieldErrors = context
-                                  .read<AuthCubit>()
-                                  .state
-                                  .fieldErrors;
-                              if (fieldErrors != null &&
-                                  fieldErrors.containsKey('email')) {
-                                final errors = fieldErrors['email'];
-                                if (errors is List && errors.isNotEmpty) {
-                                  return errors[0];
-                                }
-                              }
-                              return null;
-                            },
-                          ),
-                          const SizedBox(height: 5),
-
-                          // Phone
-                          ItemCustomTextField(
-                            label: 'Số điện thoại (+84)',
-                            controller: _phoneController,
-                            suffixIcon: SvgPicture.asset(
-                              "assets/icons/ic_phone.svg",
-                              width: 19,
-                              height: 19,
+                              },
                             ),
-                            keyboardType: TextInputType.phone,
-                            validator: (_) {
-                              // Lấy dữ liệu hiện tại
-                              final currentValue = _phoneController.text.trim();
+                            const SizedBox(height: 5),
 
-                              if (currentValue.isEmpty) {
-                                // Nếu ban đầu có dữ liệu mà giờ xóa rỗng -> Lỗi
-                                if (_initialPhone.isNotEmpty) {
-                                  return 'Vui lòng không để trống số điện thoại';
+                            // Email
+                            ItemCustomTextField(
+                              label: 'Email liên hệ',
+                              controller: _emailController,
+                              suffixIcon: SvgPicture.asset(
+                                "assets/icons/ic_mail.svg",
+                                width: 19,
+                                height: 19,
+                              ),
+                              keyboardType: TextInputType.emailAddress,
+                              validator: (_) {
+                                // Lấy dữ liệu hiện tại
+                                final currentValue = _emailController.text
+                                    .trim();
+
+                                if (currentValue.isEmpty) {
+                                  // Nếu ban đầu có dữ liệu mà giờ xóa rỗng -> Lỗi
+                                  if (_initialEmail.isNotEmpty) {
+                                    return 'Vui lòng không để trống email';
+                                  }
+                                  // Nếu ban đầu rỗng sẵn -> Hợp lệ
+                                  return null;
                                 }
-                                // Nếu ban đầu rỗng sẵn -> Hợp lệ
+
+                                final emailRegex = RegExp(
+                                  r'^[a-z0-9_\-\.]+@([a-z0-9\-]+\.)+[a-z]{2,4}$',
+                                );
+                                if (!emailRegex.hasMatch(currentValue)) {
+                                  return 'Email không đúng định dạng';
+                                }
+
+                                final fieldErrors = context
+                                    .read<UserCubit>()
+                                    .state
+                                    .fieldErrors;
+                                if (fieldErrors != null &&
+                                    fieldErrors.containsKey('email')) {
+                                  final errors = fieldErrors['email'];
+                                  if (errors is List && errors.isNotEmpty) {
+                                    return errors[0];
+                                  }
+                                }
                                 return null;
-                              }
+                              },
+                            ),
+                            const SizedBox(height: 5),
 
-                              final phoneRegex = RegExp(r'^[35789]\d{8}$');
-                              if (!phoneRegex.hasMatch(currentValue)) {
-                                return 'Số điện thoại không hợp lệ';
-                              }
+                            // Phone
+                            ItemCustomTextField(
+                              label: 'Số điện thoại (+84)',
+                              controller: _phoneController,
+                              suffixIcon: SvgPicture.asset(
+                                "assets/icons/ic_phone.svg",
+                                width: 19,
+                                height: 19,
+                              ),
+                              keyboardType: TextInputType.phone,
+                              validator: (_) {
+                                // Lấy dữ liệu hiện tại
+                                final currentValue = _phoneController.text
+                                    .trim();
 
-                              final fieldErrors = context
-                                  .read<AuthCubit>()
-                                  .state
-                                  .fieldErrors;
-                              if (fieldErrors != null &&
-                                  fieldErrors.containsKey('phone')) {
-                                final errors = fieldErrors['phone'];
-                                if (errors is List && errors.isNotEmpty) {
-                                  return errors[0];
+                                if (currentValue.isEmpty) {
+                                  // Nếu ban đầu có dữ liệu mà giờ xóa rỗng -> Lỗi
+                                  if (_initialPhone.isNotEmpty) {
+                                    return 'Vui lòng không để trống số điện thoại';
+                                  }
+                                  // Nếu ban đầu rỗng sẵn -> Hợp lệ
+                                  return null;
                                 }
-                              }
-                              return null;
-                            },
-                          ),
 
-                          // Date of Birth
-                          ItemDateTime(
-                            label: 'Ngày sinh',
-                            initialDate: _selectedDateOfBirth,
-                            lastDate: maxAllowedDate,
-                            onDateSelected: (date) {
-                              _selectedDateOfBirth = date;
-                            },
-                          ),
+                                final phoneRegex = RegExp(r'^[35789]\d{8}$');
+                                if (!phoneRegex.hasMatch(currentValue)) {
+                                  return 'Số điện thoại không hợp lệ';
+                                }
 
-                          const SizedBox(height: 23),
+                                final fieldErrors = context
+                                    .read<UserCubit>()
+                                    .state
+                                    .fieldErrors;
+                                if (fieldErrors != null &&
+                                    fieldErrors.containsKey('phone')) {
+                                  final errors = fieldErrors['phone'];
+                                  if (errors is List && errors.isNotEmpty) {
+                                    return errors[0];
+                                  }
+                                }
+                                return null;
+                              },
+                            ),
 
-                          // Height & Weight
-                          Row(
-                            children: [
-                              Expanded(
-                                child: ItemCustomTextField(
-                                  label: 'Chiều cao (cm)',
-                                  controller: _heightController,
-                                  keyboardType:
-                                      const TextInputType.numberWithOptions(
-                                        decimal: true,
-                                      ),
-                                  validator: (_) {
-                                    // Lấy dữ liệu hiện tại
-                                    final currentValue = _heightController.text
-                                        .trim();
+                            // Date of Birth
+                            ItemDateTime(
+                              label: 'Ngày sinh',
+                              initialDate: _selectedDateOfBirth,
+                              lastDate: maxAllowedDate,
+                              onDateSelected: (date) {
+                                setState(() {
+                                  _selectedDateOfBirth = date;
+                                });
 
-                                    // Kiểm tra rỗng khi ban đầu đã có dữ liệu
-                                    if (currentValue.isEmpty) {
-                                      // Nếu ban đầu có dữ liệu mà giờ xóa rỗng -> Lỗi
-                                      if (_initialHeight.isNotEmpty) {
-                                        return 'Vui lòng không để trống chiều cao';
+                                // Xóa lỗi nếu đang có lỗi API
+                                final state = context.read<UserCubit>().state;
+                                if (state.status == UserStatus.failure ||
+                                    (state.fieldErrors?.isNotEmpty ?? false)) {
+                                  context.read<UserCubit>().resetErrors();
+                                }
+                              },
+                            ),
+
+                            const SizedBox(height: 23),
+
+                            // Height & Weight
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: ItemCustomTextField(
+                                    label: 'Chiều cao (cm)',
+                                    controller: _heightController,
+                                    keyboardType:
+                                        const TextInputType.numberWithOptions(
+                                          decimal: true,
+                                        ),
+                                    validator: (_) {
+                                      // Lấy dữ liệu hiện tại
+                                      final currentValue = _heightController
+                                          .text
+                                          .trim();
+
+                                      // Kiểm tra rỗng khi ban đầu đã có dữ liệu
+                                      if (currentValue.isEmpty) {
+                                        // Nếu ban đầu có dữ liệu mà giờ xóa rỗng -> Lỗi
+                                        if (_initialHeight.isNotEmpty) {
+                                          return 'Vui lòng không để trống chiều cao';
+                                        }
+                                        // Nếu ban đầu rỗng sẵn -> Hợp lệ
+                                        return null;
                                       }
-                                      // Nếu ban đầu rỗng sẵn -> Hợp lệ
+
+                                      // Kiểm tra kiểu dữ liệu số
+                                      if (double.tryParse(currentValue) ==
+                                          null) {
+                                        return 'Phải là số';
+                                      }
+
+                                      final fieldErrors = context
+                                          .read<UserCubit>()
+                                          .state
+                                          .fieldErrors;
+                                      if (fieldErrors != null &&
+                                          fieldErrors.containsKey(
+                                            'height_cm',
+                                          )) {
+                                        final errors = fieldErrors['height_cm'];
+                                        if (errors is List &&
+                                            errors.isNotEmpty) {
+                                          return errors[0];
+                                        }
+                                      }
                                       return null;
-                                    }
-
-                                    // Kiểm tra kiểu dữ liệu số
-                                    if (double.tryParse(currentValue) == null) {
-                                      return 'Phải là số';
-                                    }
-
-                                    final fieldErrors = context
-                                        .read<AuthCubit>()
-                                        .state
-                                        .fieldErrors;
-                                    if (fieldErrors != null &&
-                                        fieldErrors.containsKey('height_cm')) {
-                                      final errors = fieldErrors['height_cm'];
-                                      if (errors is List && errors.isNotEmpty) {
-                                        return errors[0];
-                                      }
-                                    }
-                                    return null;
-                                  },
+                                    },
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(width: 16),
-                              Expanded(
-                                child: ItemCustomTextField(
-                                  label: 'Cân nặng (kg)',
-                                  controller: _weightController,
-                                  keyboardType:
-                                      const TextInputType.numberWithOptions(
-                                        decimal: true,
-                                      ),
-                                  validator: (_) {
-                                    // Lấy dữ liệu hiện tại
-                                    final currentValue = _weightController.text
-                                        .trim();
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  child: ItemCustomTextField(
+                                    label: 'Cân nặng (kg)',
+                                    controller: _weightController,
+                                    keyboardType:
+                                        const TextInputType.numberWithOptions(
+                                          decimal: true,
+                                        ),
+                                    validator: (_) {
+                                      // Lấy dữ liệu hiện tại
+                                      final currentValue = _weightController
+                                          .text
+                                          .trim();
 
-                                    // Kiểm tra rỗng khi ban đầu đã có dữ liệu
-                                    if (currentValue.isEmpty) {
-                                      // Nếu ban đầu có dữ liệu mà giờ xóa rỗng -> Lỗi
-                                      if (_initialWeight.isNotEmpty) {
-                                        return 'Vui lòng không để trống cân nặng';
+                                      // Kiểm tra rỗng khi ban đầu đã có dữ liệu
+                                      if (currentValue.isEmpty) {
+                                        // Nếu ban đầu có dữ liệu mà giờ xóa rỗng -> Lỗi
+                                        if (_initialWeight.isNotEmpty) {
+                                          return 'Vui lòng không để trống cân nặng';
+                                        }
+                                        // Nếu ban đầu rỗng sẵn -> Hợp lệ
+
+                                        return null;
                                       }
-                                      // Nếu ban đầu rỗng sẵn -> Hợp lệ
 
+                                      // Kiểm tra kiểu dữ liệu số
+                                      if (double.tryParse(currentValue) ==
+                                          null) {
+                                        return 'Phải là số';
+                                      }
+
+                                      final fieldErrors = context
+                                          .read<UserCubit>()
+                                          .state
+                                          .fieldErrors;
+                                      if (fieldErrors != null &&
+                                          fieldErrors.containsKey(
+                                            'weight_kg',
+                                          )) {
+                                        final errors = fieldErrors['weight_kg'];
+                                        if (errors is List &&
+                                            errors.isNotEmpty) {
+                                          return errors[0];
+                                        }
+                                      }
                                       return null;
-                                    }
-
-                                    // Kiểm tra kiểu dữ liệu số
-                                    if (double.tryParse(currentValue) == null) {
-                                      return 'Phải là số';
-                                    }
-
-                                    final fieldErrors = context
-                                        .read<AuthCubit>()
-                                        .state
-                                        .fieldErrors;
-                                    if (fieldErrors != null &&
-                                        fieldErrors.containsKey('weight_kg')) {
-                                      final errors = fieldErrors['weight_kg'];
-                                      if (errors is List && errors.isNotEmpty) {
-                                        return errors[0];
-                                      }
-                                    }
-                                    return null;
-                                  },
+                                    },
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 5),
+                              ],
+                            ),
+                            const SizedBox(height: 5),
 
-                          // Bio
-                          ItemCustomTextField(
-                            label: 'Tiểu sử',
-                            controller: _bioController,
-                            textInputAction: TextInputAction.done,
-                            height: 120,
-                            maxLines: 3,
-                            validator: (_) {
-                              final fieldErrors = context
-                                  .read<AuthCubit>()
-                                  .state
-                                  .fieldErrors;
-                              if (fieldErrors != null &&
-                                  fieldErrors.containsKey('bio')) {
-                                final errors = fieldErrors['bio'];
-                                if (errors is List && errors.isNotEmpty) {
-                                  return errors[0];
+                            // Bio
+                            ItemCustomTextField(
+                              label: 'Tiểu sử',
+                              controller: _bioController,
+                              textInputAction: TextInputAction.done,
+                              height: 120,
+                              maxLines: 3,
+                              validator: (_) {
+                                final fieldErrors = context
+                                    .read<UserCubit>()
+                                    .state
+                                    .fieldErrors;
+                                if (fieldErrors != null &&
+                                    fieldErrors.containsKey('bio')) {
+                                  final errors = fieldErrors['bio'];
+                                  if (errors is List && errors.isNotEmpty) {
+                                    return errors[0];
+                                  }
                                 }
-                              }
-                              return null;
-                            },
-                          ),
-                        ],
+                                return null;
+                              },
+                            ),
+                          ],
+                        ),
                       ),
                     );
                   },

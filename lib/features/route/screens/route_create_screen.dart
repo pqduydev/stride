@@ -43,11 +43,23 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
     if (isEditMode) {
       final route = widget.routeToEdit!;
       _titleController.text = route.title;
-      _descriptionController.text = route.description;
+      _descriptionController.text = route.description ?? '';
       _selectedGoal = route.goal;
 
       _startDate = DateTime.parse(route.startDate);
       _endDate = DateTime.parse(route.endDate);
+    }
+
+    final controllers = [_titleController, _descriptionController];
+
+    for (var controller in controllers) {
+      controller.addListener(() {
+        final state = context.read<RouteCubit>().state;
+        if (state.actionStatus == RouteStatus.failure ||
+            (state.fieldErrors?.isNotEmpty ?? false)) {
+          context.read<RouteCubit>().resetErrors();
+        }
+      });
     }
   }
 
@@ -59,6 +71,13 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
   }
 
   void _onSave() {
+    final cubit = context.read<RouteCubit>();
+
+    if (cubit.state.actionStatus == RouteStatus.failure ||
+        (cubit.state.fieldErrors?.isNotEmpty ?? false)) {
+      cubit.resetErrors();
+    }
+
     if (!_formKey.currentState!.validate()) {
       return;
     }
@@ -78,7 +97,6 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
     );
 
     setState(() => _currentAction = FormAction.saving);
-    final cubit = context.read<RouteCubit>();
     isEditMode ? cubit.updateRoute(route) : cubit.addRoute(route);
   }
 
@@ -258,167 +276,280 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
               ),
             ),
           ),
-          body: Form(
-            key: _formKey,
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: .start,
-                children: [
-                  const Text(
-                    "Một mục tiêu, một hành trình mới.",
-                    style: TextStyle(
-                      color: Color(0xFF768079),
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  const Text(
-                    "Tên lộ trình",
-                    style: TextStyle(
-                      color: Color(0xFF768079),
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  const SizedBox(height: 5),
-                  ItemTextField(
-                    hintText: 'Nhập tên lộ trình...',
-                    hintTextFontSize: 15,
-                    controller: _titleController,
-                    textColor: 0xFF1C2520,
-                    textFontSize: 15,
-                    textFontWeight: FontWeight.w500,
-                    borderColor: '0xFFE8ECE8',
-                    borderWidth: 1,
-                    borderStyle: 'solid',
-                    validator: (value) {
-                      if (value == null || value.trim().isEmpty) {
-                        return 'Vui lòng nhập tên lộ trình';
-                      }
-                      return null;
-                    },
-                  ),
-
-                  ItemRadioRouteGroup(
-                    selectedGoalKey: _selectedGoal,
-                    onGoalChanged: (goalEnum) {
-                      setState(() => _selectedGoal = goalEnum);
-                    },
-                  ),
-
-                  const SizedBox(height: 18),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: ItemDateTime(
-                          label: 'Ngày bắt đầu',
-                          initialDate: _startDate,
-                          firstDate:
-                              isEditMode && _startDate.isBefore(DateTime.now())
-                              ? _startDate
-                              : DateTime.now(),
-                          onDateSelected: (newDate) {
-                            setState(() {
-                              _startDate = newDate;
-                              if (_startDate.isAfter(_endDate)) {
-                                _endDate = _startDate.add(
-                                  const Duration(days: 1),
-                                );
-                              }
-                            });
-                          },
-                        ),
+          body: AbsorbPointer(
+            absorbing: state.actionStatus == RouteStatus.loading,
+            child: Form(
+              key: _formKey,
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: .start,
+                  children: [
+                    const Text(
+                      "Một mục tiêu, một hành trình mới.",
+                      style: TextStyle(
+                        color: Color(0xFF768079),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
                       ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: ItemDateTime(
-                          label: 'Ngày kết thúc',
-                          initialDate: _endDate,
-                          firstDate: _startDate.add(const Duration(days: 1)),
-                          onDateSelected: (newDate) {
-                            setState(() {
-                              _endDate = newDate;
-                            });
-                          },
-                        ),
+                    ),
+                    const SizedBox(height: 20),
+                    const Text(
+                      "Tên lộ trình",
+                      style: TextStyle(
+                        color: Color(0xFF768079),
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
                       ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 10),
-                  Container(
-                    constraints: const BoxConstraints(minHeight: 35),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
                     ),
-                    alignment: .centerLeft,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFEEF4E5),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Row(
-                      children: [
-                        const Text(
-                          'Thời lượng: ',
-                          style: TextStyle(
-                            color: Color(0xFF768079),
-                            fontSize: 13,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        const SizedBox(width: 5),
-                        Expanded(
-                          child: Text(
-                            TimeUtils.formatDuration(_startDate, _endDate),
-                            style: const TextStyle(
-                              color: Color(0xFF202C25),
-                              fontSize: 15,
-                              fontWeight: FontWeight.w500,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: 18),
-                  const Text(
-                    "Mô tả mục tiêu",
-                    style: TextStyle(
-                      color: Color(0xFF768079),
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  const SizedBox(height: 5),
-                  SizedBox(
-                    height: 90,
-                    child: ItemTextField(
-                      hintText: 'Nhập mô tả mục tiêu...',
-                      hintTextFontSize: 14,
-                      controller: _descriptionController,
+                    const SizedBox(height: 5),
+                    ItemTextField(
+                      hintText: 'Nhập tên lộ trình...',
+                      hintTextFontSize: 15,
+                      controller: _titleController,
                       textColor: 0xFF1C2520,
-                      textFontSize: 14,
-                      textFontWeight: FontWeight.w400,
+                      textFontSize: 15,
+                      textFontWeight: FontWeight.w500,
                       borderColor: '0xFFE8ECE8',
                       borderWidth: 1,
                       borderStyle: 'solid',
-                      maxLines: 3,
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
-                          return "Vui lòng nhập mô tả mục tiêu";
+                          return 'Vui lòng nhập tên lộ trình';
+                        }
+
+                        final fieldErrors = context
+                            .read<RouteCubit>()
+                            .state
+                            .fieldErrors;
+                        if (fieldErrors != null &&
+                            fieldErrors.containsKey('title')) {
+                          final errors = fieldErrors['title'];
+                          if (errors is List && errors.isNotEmpty) {
+                            return errors[0];
+                          }
                         }
                         return null;
                       },
                     ),
-                  ),
-                  const SizedBox(height: 24),
-                ],
+
+                    ItemRadioRouteGroup(
+                      selectedGoalKey: _selectedGoal,
+                      onGoalChanged: (goalEnum) {
+                        setState(() => _selectedGoal = goalEnum);
+
+                        if (state.actionStatus == RouteStatus.failure ||
+                            (state.fieldErrors?.isNotEmpty ?? false)) {
+                          context.read<RouteCubit>().resetErrors();
+                        }
+                      },
+                    ),
+
+                    // Chủ động hiển thị lỗi từ API cho ItemRadioRouteGroup (nếu có)
+                    if (state.fieldErrors != null &&
+                        state.fieldErrors!.containsKey('goal') &&
+                        (state.fieldErrors!['goal'] as List).isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(left: 12, top: 4),
+                        child: Text(
+                          (state.fieldErrors!['goal'] as List)[0],
+                          style: const TextStyle(
+                            color: Color(0xFFD32F2F),
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
+
+                    const SizedBox(height: 18),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ItemDateTime(
+                                label: 'Ngày bắt đầu',
+                                initialDate: _startDate,
+                                firstDate:
+                                    isEditMode &&
+                                        _startDate.isBefore(DateTime.now())
+                                    ? _startDate
+                                    : DateTime.now(),
+                                onDateSelected: (newDate) {
+                                  setState(() {
+                                    _startDate = newDate;
+                                    if (_startDate.isAfter(_endDate)) {
+                                      _endDate = _startDate.add(
+                                        const Duration(days: 1),
+                                      );
+                                    }
+                                  });
+
+                                  // Xóa lỗi API
+                                  if (state.actionStatus ==
+                                          RouteStatus.failure ||
+                                      (state.fieldErrors?.isNotEmpty ??
+                                          false)) {
+                                    context.read<RouteCubit>().resetErrors();
+                                  }
+                                },
+                              ),
+                              // Hiển thị lỗi API start_date
+                              if (state.fieldErrors != null &&
+                                  state.fieldErrors!.containsKey(
+                                    'start_date',
+                                  ) &&
+                                  (state.fieldErrors!['start_date'] as List)
+                                      .isNotEmpty)
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    left: 12,
+                                    top: 4,
+                                  ),
+                                  child: Text(
+                                    (state.fieldErrors!['start_date']
+                                        as List)[0],
+                                    style: const TextStyle(
+                                      color: Color(0xFFD32F2F),
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ItemDateTime(
+                                label: 'Ngày kết thúc',
+                                initialDate: _endDate,
+                                firstDate: _startDate.add(
+                                  const Duration(days: 1),
+                                ),
+                                onDateSelected: (newDate) {
+                                  setState(() {
+                                    _endDate = newDate;
+                                  });
+
+                                  // Xóa lỗi API
+                                  if (state.actionStatus ==
+                                          RouteStatus.failure ||
+                                      (state.fieldErrors?.isNotEmpty ??
+                                          false)) {
+                                    context.read<RouteCubit>().resetErrors();
+                                  }
+                                },
+                              ),
+                              // Hiển thị lỗi API end_date
+                              if (state.fieldErrors != null &&
+                                  state.fieldErrors!.containsKey('end_date') &&
+                                  (state.fieldErrors!['end_date'] as List)
+                                      .isNotEmpty)
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    left: 12,
+                                    top: 4,
+                                  ),
+                                  child: Text(
+                                    (state.fieldErrors!['end_date'] as List)[0],
+                                    style: const TextStyle(
+                                      color: Color(0xFFD32F2F),
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 10),
+                    Container(
+                      constraints: const BoxConstraints(minHeight: 35),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      alignment: .centerLeft,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFEEF4E5),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        children: [
+                          const Text(
+                            'Thời lượng: ',
+                            style: TextStyle(
+                              color: Color(0xFF768079),
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const SizedBox(width: 5),
+                          Expanded(
+                            child: Text(
+                              TimeUtils.formatDuration(_startDate, _endDate),
+                              style: const TextStyle(
+                                color: Color(0xFF202C25),
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: 18),
+                    const Text(
+                      "Mô tả mục tiêu",
+                      style: TextStyle(
+                        color: Color(0xFF768079),
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(height: 5),
+                    SizedBox(
+                      height: 90,
+                      child: ItemTextField(
+                        hintText: 'Nhập mô tả mục tiêu...',
+                        hintTextFontSize: 14,
+                        controller: _descriptionController,
+                        textColor: 0xFF1C2520,
+                        textFontSize: 14,
+                        textFontWeight: FontWeight.w400,
+                        borderColor: '0xFFE8ECE8',
+                        borderWidth: 1,
+                        borderStyle: 'solid',
+                        maxLines: 3,
+                        validator: (value) {
+                          final fieldErrors = context
+                              .read<RouteCubit>()
+                              .state
+                              .fieldErrors;
+                          if (fieldErrors != null &&
+                              fieldErrors.containsKey('description')) {
+                            final errors = fieldErrors['description'];
+                            if (errors is List && errors.isNotEmpty) {
+                              return errors[0];
+                            }
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                  ],
+                ),
               ),
             ),
           ),

@@ -4,7 +4,7 @@ import 'package:stride/model/phase_model.dart';
 class RouteModel {
   final int? id;
   final String title;
-  final String description;
+  final String? description;
   final String goal;
   final String startDate;
   final String endDate;
@@ -14,7 +14,7 @@ class RouteModel {
   RouteModel({
     this.id,
     required this.title,
-    required this.description,
+    this.description,
     required this.goal,
     required this.startDate,
     required this.endDate,
@@ -27,7 +27,7 @@ class RouteModel {
     return RouteModel(
       id: json['id'] as int,
       title: json['title'] as String? ?? '',
-      description: json['description'] as String? ?? '',
+      description: json['description'] as String?,
       goal: json['goal'] as String? ?? '',
       startDate: json['start_date'] as String? ?? '',
       endDate: json['end_date'] as String? ?? '',

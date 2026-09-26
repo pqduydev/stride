@@ -101,8 +101,19 @@ class _AddImageScreenState extends State<AddImageScreen> {
   // Hiện thông báo
   void _showMessage(String message) {
     if (!mounted) return;
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(message)));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          message,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        backgroundColor: Colors.redAccent,
+      ),
+    );
   }
 
   @override
@@ -127,15 +138,16 @@ class _AddImageScreenState extends State<AddImageScreen> {
                 ),
               ),
               const SizedBox(height: 20),
-              Container(
-                height: 61,
-                padding: EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFEEF4E5),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: InkWell(
-                  onTap: _takePhoto,
+
+              InkWell(
+                onTap: _takePhoto,
+                child: Container(
+                  height: 61,
+                  padding: EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFEEF4E5),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                   child: Row(
                     crossAxisAlignment: .center,
                     children: [

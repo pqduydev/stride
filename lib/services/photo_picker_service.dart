@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:stride/model/picked_media.dart';
 import 'package:stride/services/media_picker_exception.dart';
 
@@ -11,8 +12,31 @@ class PhotoPickerService {
   static const double _maxSide = 1920;
   static const int _quality = 80;
 
+  Future<void> _checkCameraPermission() async {
+    final status = await Permission.camera.status;
+
+    // Khi người dùng chọn "không nhắc lại" hoặc từ chối 2 lần
+    if (status.isPermanentlyDenied) {
+      await openAppSettings(); // Đẩy sang phần cài đặt ứng
+      throw MediaPickerException(
+        'Bạn đã tắt quyền Camera. Vui lòng bật lại trong Cài đặt ứng dụng.',
+      );
+    }
+
+    if (!status.isGranted && !status.isLimited) {
+      final result = await Permission.camera.request();
+      if (!result.isGranted && !result.isLimited) {
+        throw MediaPickerException('Ứng dụng cần quyền Camera để chụp ảnh.');
+      }
+    }
+  }
+
   /// Mở app Camera. Bấm huỷ → kết quả rỗng (không phải lỗi).
   Future<MediaPickResult> takePhoto() async {
+    // Xin quyền camera
+    await _checkCameraPermission();
+
+    // Chụp ảnh
     final file = await guardPicker(
       () => _picker.pickImage(
         source: ImageSource.camera,

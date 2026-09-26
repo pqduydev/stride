@@ -20,7 +20,7 @@ Future<T> guardPicker<T>(Future<T> Function() action) async {
         'Stride chưa được phép dùng camera. Hãy bật trong Cài đặt của máy.',
       'photo_access_denied' => 'Stride chưa được phép truy cập ảnh.',
       'no_available_camera' => 'Không tìm thấy camera trên thiết bị này.',
-      _ => 'Không mở được camera hoặc thư viện.',
+      _ => e.message ?? 'Không mở được camera hoặc thư viện.',
     });
   }
 }

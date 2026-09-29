@@ -271,8 +271,9 @@ class _AuthViewState extends State<AuthView> {
                           if (fieldErrors != null &&
                               fieldErrors.containsKey('username')) {
                             final errors = fieldErrors['username'];
-                            if (errors is List && errors.isNotEmpty)
+                            if (errors is List && errors.isNotEmpty) {
                               return errors[0];
+                            }
                           }
                           return null;
                         },
@@ -350,8 +351,9 @@ class _AuthViewState extends State<AuthView> {
                           if (fieldErrors != null &&
                               fieldErrors.containsKey('password')) {
                             final errors = fieldErrors['password'];
-                            if (errors is List && errors.isNotEmpty)
+                            if (errors is List && errors.isNotEmpty) {
                               return errors[0];
+                            }
                           }
                           return null;
                         },

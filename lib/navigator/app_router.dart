@@ -6,6 +6,8 @@ import 'package:stride/features/appointment/screens/appointment_screen.dart';
 import 'package:stride/features/auth/auth_cubit/auth_cubit.dart';
 import 'package:stride/features/auth/auth_cubit/auth_state.dart';
 import 'package:stride/features/auth/screens/auth_screen.dart';
+import 'package:stride/features/reminder/screens/reminder_saved_screen.dart';
+import 'package:stride/features/reminder/screens/reminder_settings_screen.dart';
 import 'package:stride/model/route_model.dart';
 import 'package:stride/features/route/screens/my_route_screen.dart';
 import 'package:stride/features/common_screens/add_image_screen.dart';
@@ -190,6 +192,14 @@ class AppRouter {
             builder: (context, state) => const ChangePassword(),
           ),
         ],
+      ),
+      GoRoute(
+        path: "/reminder_settings",
+        builder: (context, state) => const ReminderSettingsScreen(),
+      ),
+      GoRoute(
+        path: "/reminder_saved",
+        builder: (context, state) => const ReminderSavedScreen(),
       ),
     ],
   );

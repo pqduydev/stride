@@ -1,9 +1,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Khai báo quyền sử dụng phần cứng Camera -->
-    <uses-permission android:name="android.permission.CAMERA" />
-
-    <!-- Báo cho Google Play biết app có dùng camera nhưng không bắt buộc thiết bị phải có camera mới cho cài -->
-    <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <!-- Android 13+: quyền hiện thông báo -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <!-- Khôi phục lịch nhắc sau khi khởi động lại máy -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <!-- Hẹn giờ chính xác (Android 12+). Android 14+ mặc định không cấp, xem 7.3 -->
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
 
     <application
         android:label="stride"
@@ -31,6 +32,21 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
+        <!-- Nhận "chuông báo" từ AlarmManager để hiện thông báo đã hẹn -->
+        <receiver android:exported="false"
+            android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver" />
+        <!-- Đặt lại lịch nhắc sau khi khởi động lại máy / cập nhật app -->
+        <receiver android:exported="false"
+            android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
+            </intent-filter>
+        </receiver>
+
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data

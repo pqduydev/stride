@@ -4,7 +4,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:stride/features/auth/auth_cubit/auth_cubit.dart';
-import 'package:stride/features/auth/auth_cubit/auth_state.dart';
 import 'package:stride/features/user/user_cubit/user_cubit.dart';
 import 'package:stride/features/user/user_cubit/user_state.dart';
 import 'package:stride/widgets/item_custom_text_field.dart';

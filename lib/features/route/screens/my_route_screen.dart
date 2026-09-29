@@ -4,6 +4,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:stride/features/auth/auth_cubit/auth_cubit.dart';
 import 'package:stride/features/auth/auth_cubit/auth_state.dart';
+import 'package:stride/features/reminder/reminder_cubit/reminder_cubit.dart';
+import 'package:stride/features/reminder/reminder_cubit/reminder_state.dart';
 import 'package:stride/features/route/route_cubit/route_cubit.dart';
 import 'package:stride/features/route/route_cubit/route_state.dart';
 import 'package:stride/features/route/widgets/route_card_item.dart';
@@ -544,7 +546,19 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                   ],
                 ),
                 const SizedBox(height: 30),
-                const ItemCardSwitch(),
+
+                BlocBuilder<ReminderCubit, ReminderState>(
+                  buildWhen: (prev, curr) =>
+                      prev.settings.enabled != curr.settings.enabled,
+                  builder: (context, state) => ItemCardSwitch(
+                    value: state.settings.enabled,
+                    onChanged: (value) {
+                      final cubit = context.read<ReminderCubit>();
+                      cubit.setEnabled(value);
+                      cubit.save(); // bật/tắt nhanh, không cần vào màn cài đặt
+                    },
+                  ),
+                ),
               ],
             ),
           ),

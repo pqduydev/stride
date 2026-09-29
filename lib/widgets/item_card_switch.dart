@@ -1,27 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class ItemCardSwitch extends StatefulWidget {
-  const ItemCardSwitch({super.key});
+class ItemCardSwitch extends StatelessWidget {
+  final bool value;
+  final ValueChanged<bool>? onChanged;
 
-  @override
-  State<ItemCardSwitch> createState() => _ItemCardSwitchState();
-}
-
-class _ItemCardSwitchState extends State<ItemCardSwitch> {
-  late bool _statusButton; // Khai bao bien trang thai
-
-  @override
-  void initState() {
-    _statusButton = false; // Khoi tao gia tri ban dau cho bien trang thai
-    super.initState();
-  }
+  const ItemCardSwitch({super.key, required this.value, this.onChanged});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 80,
-      padding: EdgeInsets.all(20),
+      height: 70,
+      padding: EdgeInsets.all(15),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(14),
         color: Color(0xFFFFFFFF),
@@ -35,6 +25,10 @@ class _ItemCardSwitchState extends State<ItemCardSwitch> {
                 'assets/icons/ic_bell.svg',
                 width: 25,
                 height: 25,
+                colorFilter: ColorFilter.mode(
+                  Color(0xFF526C30),
+                  BlendMode.srcIn,
+                ),
               ),
               const SizedBox(width: 10),
               Column(
@@ -60,18 +54,20 @@ class _ItemCardSwitchState extends State<ItemCardSwitch> {
               ),
             ],
           ),
-          Switch(
-            value: _statusButton, // Set trang thai theo
-            onChanged: (bool value) {
-              // Bat su kien
-              setState(() {
-                _statusButton = value; // Doi trang thai, cap nhat giao dien
-              });
-            },
-            activeThumbColor: Color(0xFFFFFFFF),
-            activeTrackColor: Color(0xFFD2F36B),
-            inactiveThumbColor: Color(0xFF768079),
-            inactiveTrackColor: Color(0xFFF7F8FA),
+          SizedBox(
+            width: 52,
+            height: 40,
+            child: FittedBox(
+              fit: BoxFit.fill,
+              child: Switch(
+                value: value, // ← lấy từ ngoài
+                onChanged: onChanged, // ← báo ra ngoài
+                activeThumbColor: const Color(0xFFFFFFFF),
+                activeTrackColor: const Color(0xFFD2F36B),
+                inactiveThumbColor: const Color(0xFF768079),
+                inactiveTrackColor: const Color(0xFFF7F8FA),
+              ),
+            ),
           ),
         ],
       ),

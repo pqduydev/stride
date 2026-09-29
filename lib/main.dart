@@ -1,16 +1,28 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:stride/features/auth/auth_cubit/auth_cubit.dart';
+import 'package:stride/features/auth/auth_cubit/auth_state.dart';
+import 'package:stride/features/reminder/reminder_cubit/reminder_cubit.dart';
+import 'package:stride/features/reminder/reminder_scheduler.dart';
 import 'package:stride/navigator/app_router.dart';
 import 'package:stride/repository/auth_repository.dart';
+import 'package:stride/repository/reminder_settings_repository.dart';
 import 'package:stride/repository/route_repository.dart';
 import 'package:stride/repository/user_repository.dart';
 import 'package:stride/features/route/route_cubit/route_cubit.dart';
 import 'package:stride/services/dio_client.dart';
 import 'package:stride/features/user/user_cubit/user_cubit.dart';
+import 'package:stride/services/notification_router.dart';
+import 'package:stride/services/notification_service.dart';
 
-void main() {
+Future<void> main() async {
+  // Bắt buộc khi cần gọi plugin trước runApp
+  WidgetsFlutterBinding.ensureInitialized();
+  await NotificationService.instance.init();
+
   runApp(const MyApp());
 }
 
@@ -30,6 +42,12 @@ class _MyAppState extends State<MyApp> {
   late final RouteCubit _routeCubit;
   late final UserCubit _userCubit;
   late final AppRouter _appRouter;
+  late final ReminderCubit _reminderCubit;
+
+  StreamSubscription<Map<String, dynamic>>? _tapSub;
+
+  StreamSubscription<AuthState>? _authSub;
+  AuthStatus? _lastAuthStatus;
 
   @override
   void initState() {
@@ -49,6 +67,20 @@ class _MyAppState extends State<MyApp> {
     _routeCubit = RouteCubit(_routeRepository);
     _userCubit = UserCubit(_userRepository);
     _appRouter = AppRouter(_authCubit);
+
+    _reminderCubit = ReminderCubit(
+      ReminderSettingsRepository(),
+      ReminderScheduler(NotificationService.instance),
+    )..load();
+
+    _tapSub = NotificationService.instance.onTap.listen((data) {
+      // Chưa đăng nhập thì không mở màn nào (router sẽ đá về Welcome)
+      if (_authCubit.state.status == AuthStatus.authenticated) {
+        openFromNotification(_appRouter.router, data);
+      }
+    });
+
+    _authSub = _authCubit.stream.listen(_onAuthChanged);
   }
 
   @override
@@ -56,7 +88,22 @@ class _MyAppState extends State<MyApp> {
     _authCubit.close();
     _routeCubit.close();
     _userCubit.close();
+    _reminderCubit.close();
+    _tapSub?.cancel();
+    _authSub?.cancel();
     super.dispose();
+  }
+
+  void _onAuthChanged(AuthState state) {
+    // AuthCubit emit cả khi chỉ đổi user (updateUserInMemory) → chỉ xử lý khi status đổi
+    if (state.status == _lastAuthStatus) return;
+    _lastAuthStatus = state.status;
+
+    if (state.status == AuthStatus.authenticated) {
+      _reminderCubit.load(); // prefs có thể vừa đổi do đổi tài khoản
+    } else if (state.status == AuthStatus.unauthenticated) {
+      NotificationService.instance.cancelAll();
+    }
   }
 
   @override
@@ -72,6 +119,7 @@ class _MyAppState extends State<MyApp> {
           BlocProvider.value(value: _authCubit),
           BlocProvider.value(value: _routeCubit),
           BlocProvider.value(value: _userCubit),
+          BlocProvider.value(value: _reminderCubit),
         ],
         child: MaterialApp.router(
           title: 'Stride App',

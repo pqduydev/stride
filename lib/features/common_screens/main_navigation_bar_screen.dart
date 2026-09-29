@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:stride/features/appointment/screens/appointment_screen.dart';
-import 'package:stride/features/appointment/screens/appointment_reminder_screen.dart';
 import 'package:stride/features/common_screens/diary_screen.dart';
+import 'package:stride/features/reminder/screens/reminder_settings_screen.dart';
 import 'package:stride/features/route/screens/my_route_screen.dart';
+import 'package:stride/services/notification_router.dart';
+import 'package:stride/services/notification_service.dart';
 
 class MainNavigationBarScreen extends StatefulWidget {
   const MainNavigationBarScreen({super.key});
@@ -20,7 +23,7 @@ class _MainNavigationBarScreenState extends State<MainNavigationBarScreen> {
     MyRouteScreen(),
     AppointmentScreen(),
     DiaryScreen(),
-    AppointmentReminderScreen(),
+    ReminderSettingsScreen(),
   ];
 
   final _itemList = [
@@ -34,6 +37,13 @@ class _MainNavigationBarScreenState extends State<MainNavigationBarScreen> {
   void initState() {
     _selectedIndex = 0;
     super.initState();
+    // Chờ màn vẽ xong khung hình đầu tiên rồi mới điều hướng
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final data = NotificationService.instance.consumeLaunchData();
+      if (data != null && mounted) {
+        openFromNotification(GoRouter.of(context), data);
+      }
+    });
   }
 
   void _onTabTapped(int index) {

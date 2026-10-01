@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
@@ -86,10 +87,25 @@ class NotificationService {
     }
   }
 
-  /// Android 13+: hiện hộp thoại xin quyền. Android cũ: trả về thông báo có đang bật không.
-  Future<bool> requestPermission() async {
-    final granted = await _android?.requestNotificationsPermission();
-    return granted ?? false;
+  Future<void> requestPermission() async {
+    final status = await Permission.notification.status;
+
+    // Khi người dùng chọn "không nhắc lại" hoặc từ chối 2 lần
+    if (status.isPermanentlyDenied) {
+      await openAppSettings(); // Đẩy sang phần cài đặt ứng
+      throw Exception(
+        'Bạn chưa cho phép Stride gửi thông báo. Hãy bật trong cài đặt của máy.',
+      );
+    }
+
+    if (!status.isGranted) {
+      final result = await Permission.notification.request();
+      if (!result.isGranted) {
+        throw Exception('Ứng dụng cần quyền để thông báo.');
+      }
+    }
+
+    return;
   }
 
   NotificationDetails get _details => NotificationDetails(

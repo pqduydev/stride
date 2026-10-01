@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:stride/features/reminder/reminder_cubit/reminder_state.dart';
 import 'package:stride/features/reminder/reminder_scheduler.dart';
 import 'package:stride/model/reminder_settings.dart';
@@ -55,7 +56,7 @@ class ReminderCubit extends Cubit<ReminderState> {
   Future<void> save({String? message}) async {
     final settings = state.settings;
 
-    if (settings.enabled && settings.weekdays.isEmpty) {
+    if (settings.weekdays.isEmpty) {
       emit(
         state.copyWith(
           status: ReminderStatus.failure,
@@ -74,16 +75,7 @@ class ReminderCubit extends Cubit<ReminderState> {
     );
 
     try {
-      if (settings.enabled && !await _scheduler.ensurePermission()) {
-        if (isClosed) return;
-        emit(
-          state.copyWith(
-            status: ReminderStatus.failure,
-            errorMessage: 'Bạn chưa cho phép Stride gửi thông báo. Hãy bật trong Cài đặt của máy.',
-          ),
-        );
-        return;
-      }
+      if (settings.enabled) await _scheduler.ensurePermission();
 
       await _repository.save(settings);
       await _scheduler.apply(settings);
@@ -95,12 +87,12 @@ class ReminderCubit extends Cubit<ReminderState> {
           successMessage: message ?? 'Lưu nhắc hẹn thành công',
         ),
       );
-    } catch (_) {
+    } catch (e) {
       if (isClosed) return;
       emit(
         state.copyWith(
           status: ReminderStatus.failure,
-          errorMessage: 'Không lưu được nhắc hẹn. Bạn hãy thử lại.',
+          errorMessage: e.toString().split(': ').last,
         ),
       );
     }

@@ -10,7 +10,7 @@ class ReminderScheduler {
   // id 101..107: mỗi NGÀY TẬP trong tuần một thông báo lặp lại
   static const _weeklyBaseId = 100;
 
-  Future<bool> ensurePermission() => _notifications.requestPermission();
+  Future<void> ensurePermission() => _notifications.requestPermission();
 
   Future<void> apply(ReminderSettings settings) async {
     // 1. Luôn huỷ hết lịch cũ trước → không sót thông báo của ngày vừa bỏ chọn

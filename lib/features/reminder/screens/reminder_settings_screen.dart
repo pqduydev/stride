@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:stride/core/utils/reminder_time_calculator.dart';
 import 'package:stride/features/reminder/reminder_cubit/reminder_cubit.dart';
 import 'package:stride/features/reminder/reminder_cubit/reminder_state.dart';
+import 'package:stride/widgets/appbar_custom.dart';
+import 'package:stride/widgets/item_app_bar_title.dart' show ItemAppBarTitle;
+import 'package:stride/widgets/item_bottom_button.dart';
 import 'package:stride/widgets/item_card_switch.dart';
 
 class ReminderSettingsScreen extends StatefulWidget {
@@ -34,7 +38,10 @@ class _ReminderSettingsScreenState extends State<ReminderSettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Nhắc giờ tập')),
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: AppbarCustom(title: ItemAppBarTitle(data: 'Nhắc giờ tập')),
+      ),
       body: BlocConsumer<ReminderCubit, ReminderState>(
         listenWhen: (prev, curr) => prev.status != curr.status,
         listener: (context, state) {
@@ -85,7 +92,7 @@ class _ReminderSettingsScreenState extends State<ReminderSettingsScreen> {
           final isSaving = state.status == ReminderStatus.saving;
 
           return ListView(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
             children: [
               ItemCardSwitch(
                 value: settings.enabled,
@@ -94,61 +101,150 @@ class _ReminderSettingsScreenState extends State<ReminderSettingsScreen> {
               const SizedBox(height: 24),
 
               // GIỜ TẬP
-              const Text('GIỜ TẬP'),
-              InkWell(
-                onTap: () async {
-                  final picked = await showTimePicker(
-                    context: context,
-                    initialTime: TimeOfDay(
-                      hour: settings.hour,
-                      minute: settings.minute,
-                    ),
-                  );
-                  if (picked != null) cubit.setTime(picked.hour, picked.minute);
-                },
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  child: Text(
-                    '${_two(settings.hour)} : ${_two(settings.minute)}',
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 48,
-                      fontWeight: FontWeight.w700,
+              const Text(
+                'GIỜ TẬP',
+                style: TextStyle(
+                  color: Color(0xFF768079),
+                  fontSize: 12,
+                  fontWeight: .w600,
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.only(top: 15, bottom: 25),
+                decoration: BoxDecoration(
+                  color: Color(0xFFFFFFFF),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: Color(0xFFE8ECE8),
+                    width: 1,
+                    style: BorderStyle.solid,
+                  ),
+                ),
+                child: InkWell(
+                  onTap: () async {
+                    final picked = await showTimePicker(
+                      context: context,
+                      initialTime: TimeOfDay(
+                        hour: settings.hour,
+                        minute: settings.minute,
+                      ),
+                    );
+                    if (picked != null) {
+                      cubit.setTime(picked.hour, picked.minute);
+                    }
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    child: Text(
+                      '${_two(settings.hour)} : ${_two(settings.minute)}',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 48,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                   ),
                 ),
               ),
 
               // LẶP LẠI MỖI TUẦN
-              const Text('Lặp lại mỗi tuần'),
+              const Text(
+                'Lặp lại mỗi tuần',
+                style: TextStyle(
+                  color: Color(0xFF1C2520),
+                  fontSize: 15,
+                  fontWeight: .w600,
+                ),
+              ),
               const SizedBox(height: 8),
               Wrap(
                 spacing: 8,
                 children: [
                   for (final entry in _weekdayLabels.entries)
                     ChoiceChip(
+                      showCheckmark: false,
+
+                      backgroundColor: Color(0xFFFFFFFF),
+                      selectedColor: Color(0xFF1C2520),
+
                       label: Text(entry.value),
+                      labelStyle: TextStyle(
+                        color: settings.weekdays.contains(entry.key)
+                            ? Color(0xFFFFFFFF)
+                            : Color(0xFF768079),
+                        fontWeight: FontWeight.w500,
+                      ),
+
                       selected: settings.weekdays.contains(entry.key),
                       onSelected: (_) => cubit.toggleWeekday(entry.key),
+
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+
+                      side: BorderSide(
+                        color: settings.weekdays.contains(entry.key)
+                            ? Colors.transparent
+                            : Color(0xFFE8ECE8),
+                        width: 1,
+                      ),
                     ),
                 ],
               ),
               const SizedBox(height: 24),
 
               // NHẮC TRƯỚC
-              const Text('Nhắc trước'),
-              DropdownButton<int>(
-                value: settings.minutesBefore,
-                isExpanded: true,
-                items: [
-                  for (final m in _minutesOptions)
-                    DropdownMenuItem(value: m, child: Text(_minutesLabel(m))),
-                ],
-                onChanged: (m) {
-                  if (m != null) cubit.setMinutesBefore(m);
-                },
+              const Text(
+                'Nhắc trước',
+                style: TextStyle(
+                  color: Color(0xFF768079),
+                  fontSize: 13,
+                  fontWeight: .w500,
+                ),
               ),
-              const SizedBox(height: 24),
+              Container(
+                margin: EdgeInsets.only(top: 10, bottom: 30),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12.0,
+                  vertical: 2.0,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white, // Màu nền trắng
+                  borderRadius: BorderRadius.circular(12.0), // Bo góc mềm mại
+                  border: Border.all(
+                    color: Colors.grey.shade300, // Màu viền xám nhạt
+                    width: 1.0,
+                  ),
+                ),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<int>(
+                    value: settings.minutesBefore,
+                    isExpanded: true,
+                    icon: SvgPicture.asset(
+                      'assets/icons/ic_chevron_down.svg',
+                      width: 20,
+                      height: 20,
+                    ),
+                    items: [
+                      for (final m in _minutesOptions)
+                        DropdownMenuItem(
+                          value: m,
+                          child: Text(
+                            _minutesLabel(m),
+                            style: const TextStyle(
+                              fontSize: 15,
+                              color: Color(0xFF1C2520),
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                    ],
+                    onChanged: (m) {
+                      if (m != null) cubit.setMinutesBefore(m);
+                    },
+                  ),
+                ),
+              ),
 
               // LẦN TIẾP THEO / ĐANG TẠM TẮT
               Text(
@@ -157,18 +253,18 @@ class _ReminderSettingsScreenState extends State<ReminderSettingsScreen> {
                     : next == null
                     ? 'Chưa chọn ngày tập'
                     : 'Lần tiếp theo: ${_formatNext(next)}',
+                style: TextStyle(
+                  color: Color(0xFF526C30),
+                  fontSize: 12,
+                  fontWeight: .w500,
+                ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 20),
 
-              ElevatedButton(
-                onPressed: isSaving ? null : cubit.save,
-                child: isSaving
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Text('Lưu nhắc hẹn'),
+              ItemBottomButton(
+                text: 'Lưu nhắc hẹn',
+                isLoading: isSaving,
+                onTap: isSaving ? null : cubit.save,
               ),
             ],
           );

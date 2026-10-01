@@ -73,6 +73,10 @@ class NotificationService {
     return data;
   }
 
+  // Xử lý bấm thông báo khi app đang chạy nền hoặc tắt hẳn cho push FCM
+  void setLaunchData(Map<String, dynamic> data) => _launchData = data;
+  void emitTap(Map<String, dynamic> data) => _tapController.add(data);
+
   static Map<String, dynamic>? decodePayload(String? payload) {
     if (payload == null || payload.isEmpty) return null;
     try {

@@ -1,4 +1,4 @@
-package com.example.stride
+package com.gympath.stride
 
 import io.flutter.embedding.android.FlutterActivity
 

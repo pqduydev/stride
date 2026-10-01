@@ -10,6 +10,13 @@
         android:label="stride"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+
+        <!-- Tạo kênh thông báo cho thông báo nhắc hẹn, đồng thời đặt nó làm kênh thông báo mặc định -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="workout_reminder" />
+
+
         <activity
             android:name=".MainActivity"
             android:exported="true"

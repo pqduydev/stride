@@ -9,8 +9,11 @@ import 'package:stride/services/api_exception.dart';
 
 class AuthCubit extends Cubit<AuthState> {
   final AuthRepository _authRepository;
+  final Future<void> Function()? _beforeLogout;
 
-  AuthCubit(this._authRepository) : super(const AuthState());
+  AuthCubit(this._authRepository, {Future<void> Function()? beforeLogout})
+    : _beforeLogout = beforeLogout,
+      super(const AuthState());
 
   void resetErrors() {
     emit(
@@ -157,6 +160,9 @@ class AuthCubit extends Cubit<AuthState> {
     emit(state.copyWith(status: AuthStatus.loading, clearErrorMessage: true));
 
     try {
+      /* Gọi callback trước khi logout, Ví dụ thực hiện hủy FCM Device Token ở 
+      Backend (cần assess token) trước khi xoá access token ở local */
+      _beforeLogout?.call();
       await _authRepository.logout();
 
       if (isClosed) {

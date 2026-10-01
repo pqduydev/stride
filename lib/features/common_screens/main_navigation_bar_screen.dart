@@ -37,6 +37,8 @@ class _MainNavigationBarScreenState extends State<MainNavigationBarScreen> {
   void initState() {
     _selectedIndex = 0;
     super.initState();
+
+    // Bấm thông báo khi ứng dụng tắt hẳn
     // Chờ màn vẽ xong khung hình đầu tiên rồi mới điều hướng
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final data = NotificationService.instance.consumeLaunchData();

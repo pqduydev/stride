@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:stride/core/utils/reminder_time_calculator.dart';
 import 'package:stride/features/reminder/reminder_cubit/reminder_cubit.dart';
 import 'package:stride/features/reminder/reminder_cubit/reminder_state.dart';
-import 'package:stride/features/reminder/reminder_time_calculator.dart';
 import 'package:stride/widgets/item_card_switch.dart';
 
 class ReminderSettingsScreen extends StatefulWidget {

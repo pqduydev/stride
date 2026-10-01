@@ -1,4 +1,4 @@
-import 'package:stride/features/reminder/reminder_time_calculator.dart';
+import 'package:stride/core/utils/reminder_time_calculator.dart';
 import 'package:stride/model/reminder_settings.dart';
 import 'package:stride/services/notification_service.dart';
 
@@ -40,15 +40,15 @@ class ReminderScheduler {
         data: const {'type': 'workout_reminder'},
       );
 
-      // await _notifications.scheduleWeekly(
-      //   id: 200 + day, // ID đúng giờ
-      //   weekday: day,
-      //   hour: settings.hour,
-      //   minute: settings.minute,
-      //   title: 'Đến giờ tập rồi!',
-      //   body: 'Bắt đầu buổi tập hôm nay thôi nào!',
-      //   data: const {'type': 'workout_reminder'},
-      // );
+      await _notifications.scheduleWeekly(
+        id: 200 + day, // ID đúng giờ
+        weekday: day,
+        hour: settings.hour,
+        minute: settings.minute,
+        title: 'Đến giờ tập rồi!',
+        body: 'Bắt đầu buổi tập hôm nay thôi nào!',
+        data: const {'type': 'workout_reminder'},
+      );
     }
   }
 

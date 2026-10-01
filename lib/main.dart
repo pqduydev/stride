@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -7,8 +9,10 @@ import 'package:stride/features/auth/auth_cubit/auth_cubit.dart';
 import 'package:stride/features/auth/auth_cubit/auth_state.dart';
 import 'package:stride/features/reminder/reminder_cubit/reminder_cubit.dart';
 import 'package:stride/features/reminder/reminder_scheduler.dart';
+import 'package:stride/firebase_options.dart';
 import 'package:stride/navigator/app_router.dart';
 import 'package:stride/repository/auth_repository.dart';
+import 'package:stride/repository/device_token_repository.dart';
 import 'package:stride/repository/reminder_settings_repository.dart';
 import 'package:stride/repository/route_repository.dart';
 import 'package:stride/repository/user_repository.dart';
@@ -17,11 +21,19 @@ import 'package:stride/services/dio_client.dart';
 import 'package:stride/features/user/user_cubit/user_cubit.dart';
 import 'package:stride/services/notification_router.dart';
 import 'package:stride/services/notification_service.dart';
+import 'package:stride/services/push_service.dart';
 
 Future<void> main() async {
   // Bắt buộc khi cần gọi plugin trước runApp
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Xin các quyền về thông báo
   await NotificationService.instance.init();
+
+  // Kết nối Firebase bằng file firebase_options.dart
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  // Xử lý thông báo khi tắt/chạy nền
+  FirebaseMessaging.onBackgroundMessage(firebaseBackgroundHandler);
 
   runApp(const MyApp());
 }
@@ -43,6 +55,7 @@ class _MyAppState extends State<MyApp> {
   late final UserCubit _userCubit;
   late final AppRouter _appRouter;
   late final ReminderCubit _reminderCubit;
+  late final PushService _pushService;
 
   StreamSubscription<Map<String, dynamic>>? _tapSub;
 
@@ -57,13 +70,21 @@ class _MyAppState extends State<MyApp> {
     _authRepository = AuthRepository(dio: dio);
     _routeRepository = RouteRepository(dio: dio);
     _userRepository = UserRepository(dio: dio);
+    _pushService = PushService(DeviceTokenRepository(dio: dio));
+    _pushService.init();
 
+    // Khi Token hết hạn hoàn toàn
     DioClient.setupInterceptors(() {
-      // Khi Token hết hạn hoàn toàn, cập nhật AuthState về Unauthenticated
+      // Xóa FCM Token ở local (nếu có) để tránh gửi lên Backend khi đã logout
+      _pushService.deleteLocalToken();
+      // cập nhật AuthState về Unauthenticated
       _authCubit.forceLogout();
     });
 
-    _authCubit = AuthCubit(_authRepository)..checkAuthStatus();
+    _authCubit = AuthCubit(
+      _authRepository,
+      beforeLogout: _pushService.unregisterToken,
+    )..checkAuthStatus();
     _routeCubit = RouteCubit(_routeRepository);
     _userCubit = UserCubit(_userRepository);
     _appRouter = AppRouter(_authCubit);
@@ -73,6 +94,7 @@ class _MyAppState extends State<MyApp> {
       ReminderScheduler(NotificationService.instance),
     )..load();
 
+    // Bấm thông báo khi ứng dụng chạy nền
     _tapSub = NotificationService.instance.onTap.listen((data) {
       // Chưa đăng nhập thì không mở màn nào (router sẽ đá về Welcome)
       if (_authCubit.state.status == AuthStatus.authenticated) {
@@ -101,6 +123,7 @@ class _MyAppState extends State<MyApp> {
 
     if (state.status == AuthStatus.authenticated) {
       _reminderCubit.load(); // prefs có thể vừa đổi do đổi tài khoản
+      _pushService.syncToken(); // Đăng ký FCM Token với Backend khi đăng nhập/đăng nhập sẵn
     } else if (state.status == AuthStatus.unauthenticated) {
       NotificationService.instance.cancelAll();
     }

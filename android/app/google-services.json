@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "586829884983",
+    "project_id": "gympath-cf6d6",
+    "storage_bucket": "gympath-cf6d6.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:586829884983:android:e876813bc24c91530bd9b2",
+        "android_client_info": {
+          "package_name": "com.gympath.stride"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA001VG6P8eGvl_jBWSbPFZH6npAs8NksQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

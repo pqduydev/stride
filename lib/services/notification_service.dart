@@ -49,7 +49,7 @@ class NotificationService {
     // 2. Khởi tạo plugin
     await _plugin.initialize(
       settings: const InitializationSettings(
-        android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+        android: AndroidInitializationSettings('notification_icon'),
       ),
       onDidReceiveNotificationResponse: (response) {
         final data = decodePayload(response.payload);

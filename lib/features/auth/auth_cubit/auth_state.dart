@@ -15,12 +15,14 @@ class AuthState extends Equatable {
   final UserModel? user;
   final String? errorMessage;
   final Map<String, dynamic>? fieldErrors;
+  final bool hasSeenPermission;
 
   const AuthState({
     this.status = AuthStatus.initial,
     this.user,
     this.errorMessage,
     this.fieldErrors,
+    this.hasSeenPermission = false,
   });
 
   AuthState copyWith({
@@ -29,6 +31,7 @@ class AuthState extends Equatable {
     List<UserModel>? users,
     String? errorMessage,
     Map<String, dynamic>? fieldErrors,
+    bool? hasSeenPermission,
     bool clearErrorMessage = false,
   }) {
     return AuthState(
@@ -38,9 +41,16 @@ class AuthState extends Equatable {
           ? null
           : (errorMessage ?? this.errorMessage),
       fieldErrors: fieldErrors ?? this.fieldErrors,
+      hasSeenPermission: hasSeenPermission ?? this.hasSeenPermission,
     );
   }
 
   @override
-  List<Object?> get props => [status, user, errorMessage, fieldErrors];
+  List<Object?> get props => [
+    status,
+    user,
+    errorMessage,
+    fieldErrors,
+    hasSeenPermission,
+  ];
 }

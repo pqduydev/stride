@@ -6,6 +6,12 @@
     <!-- Hẹn giờ chính xác (Android 12+). Android 14+ mặc định không cấp, xem 7.3 -->
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
 
+    <!-- Khai báo quyền sử dụng phần cứng Camera -->
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <!-- Báo cho Google Play biết app có dùng camera nhưng không bắt buộc thiết bị phải có camera mới cho cài -->
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+
     <application
         android:label="stride"
         android:name="${applicationName}"

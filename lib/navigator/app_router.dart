@@ -6,6 +6,7 @@ import 'package:stride/features/appointment/screens/appointment_screen.dart';
 import 'package:stride/features/auth/auth_cubit/auth_cubit.dart';
 import 'package:stride/features/auth/auth_cubit/auth_state.dart';
 import 'package:stride/features/auth/screens/auth_screen.dart';
+import 'package:stride/features/common_screens/onboarding_permission_screen.dart';
 import 'package:stride/features/reminder/screens/reminder_saved_screen.dart';
 import 'package:stride/features/reminder/screens/reminder_settings_screen.dart';
 import 'package:stride/model/route_model.dart';
@@ -38,6 +39,7 @@ class AppRouter {
     refreshListenable: GoRouterRefreshStream(authCubit.stream),
     redirect: (context, state) {
       final authStatus = authCubit.state.status;
+      final hasSeenPermission = authCubit.state.hasSeenPermission;
       final location = state.matchedLocation;
 
       // Khi đang ở trạng thái ban đầu -> Giữ ở Splash
@@ -52,8 +54,18 @@ class AppRouter {
 
       /** ĐÃ ĐĂNG NHẬP */
       if (authStatus == AuthStatus.authenticated) {
-        // Nếu đang ở các trang auth/welcome/splash thì đẩy vào main_navigation_bar
-        if (isAuthRoute || location == '/splash') {
+        // Nếu ĐÃ ĐĂNG NHẬP mà CHƯA XEM màn hình xin quyền
+        if (!hasSeenPermission) {
+          if (location != '/onboarding_permission') {
+            return '/onboarding_permission';
+          }
+          return null;
+        }
+
+        // Nếu ĐÃ ĐĂNG NHẬP và ĐÃ XEM màn xin quyền rồi
+        if (isAuthRoute ||
+            location == '/splash' ||
+            location == '/onboarding_permission') {
           return '/main_navigation_bar';
         }
         return null;
@@ -201,6 +213,10 @@ class AppRouter {
         path: "/reminder_saved",
         builder: (context, state) => const ReminderSavedScreen(),
       ),
+      GoRoute(
+        path: "/onboarding_permission",
+        builder: (context, state) => OnboardingPermissionScreen(),
+      ),
     ],
   );
 }
@@ -211,12 +227,14 @@ class GoRouterRefreshStream extends ChangeNotifier {
   GoRouterRefreshStream(Stream<AuthState> stream) {
     notifyListeners();
     AuthStatus? lastStatus;
+    bool? lastHasSeenPermission;
 
     _subscription = stream.listen((state) {
-      // Chỉ thông báo cho GoRouter khi trạng thái xác thực (AuthStatus) thực sự thay đổi
-      // So sánh trạng thái cũ với trạng thái mới
-      if (state.status != lastStatus) {
+      // Báo cho GoRouter khi AuthStatus hoặc hasSeenPermission thay đổi
+      if (state.status != lastStatus ||
+          state.hasSeenPermission != lastHasSeenPermission) {
         lastStatus = state.status;
+        lastHasSeenPermission = state.hasSeenPermission;
         notifyListeners();
       }
     });

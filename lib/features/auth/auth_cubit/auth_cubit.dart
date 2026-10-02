@@ -1,6 +1,7 @@
 // ignore_for_file: slash_for_doc_comments
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stride/features/auth/auth_cubit/auth_state.dart';
 import 'package:stride/model/user_model.dart';
@@ -11,9 +12,10 @@ class AuthCubit extends Cubit<AuthState> {
   final AuthRepository _authRepository;
   final Future<void> Function()? _beforeLogout;
 
-  AuthCubit(this._authRepository, {Future<void> Function()? beforeLogout})
-    : _beforeLogout = beforeLogout,
-      super(const AuthState());
+  static const _keyHasSeenPermission = "has_seen_permission";
+
+  AuthCubit(this._authRepository, {this._beforeLogout})
+    : super(const AuthState());
 
   void resetErrors() {
     emit(
@@ -25,14 +27,34 @@ class AuthCubit extends Cubit<AuthState> {
     );
   }
 
+  // Kiểm tra & đồng bộ cờ xin quyền dựa trên cài đặt hệ điều hành
+  Future<bool> _resolvePermissionState(SharedPreferences prefs) async {
+    // 1. Lấy cờ từ SharedPreferences (Lúc này là false nếu vừa logout)
+    bool hasSeenPermission = prefs.getBool(_keyHasSeenPermission) ?? false;
+
+    // 2. Nếu cờ trong app đang là false, ta check thực tế hệ điều hành
+    if (!hasSeenPermission) {
+      final isCameraGranted = await Permission.camera.isGranted;
+      final isNotificationGranted = await Permission.notification.isGranted;
+
+      // Nếu OS đã cấp quyền từ lần xài trước, ta cập nhật lại cờ
+      if (isCameraGranted && isNotificationGranted) {
+        hasSeenPermission = true;
+        await prefs.setBool(_keyHasSeenPermission, true);
+      }
+    }
+    return hasSeenPermission;
+  }
+
   Future<void> checkAuthStatus() async {
     // Khởi tạo thời gian delay chạy song song call API
     final minDelay = Future.delayed(const Duration(seconds: 1));
-
     final prefs = await SharedPreferences.getInstance();
-
     final token = prefs.getString("access_token");
     final savedUser = await _authRepository.getSavedUser();
+
+    final hasSeenPermission = await _resolvePermissionState(prefs);
+
     if (isClosed) return;
 
     if (token != null && token.isNotEmpty && savedUser != null) {
@@ -45,7 +67,11 @@ class AuthCubit extends Cubit<AuthState> {
         await minDelay;
 
         emit(
-          state.copyWith(status: AuthStatus.authenticated, user: updateInfo),
+          state.copyWith(
+            status: AuthStatus.authenticated,
+            user: updateInfo,
+            hasSeenPermission: hasSeenPermission,
+          ),
         );
       } catch (_) {
         // Kiểm tra trước khi emit trong catch
@@ -57,12 +83,24 @@ class AuthCubit extends Cubit<AuthState> {
             status: AuthStatus.unauthenticated,
             fieldErrors: {},
             clearErrorMessage: true,
+            hasSeenPermission: hasSeenPermission,
           ),
         );
       }
     } else {
-      emit(state.copyWith(status: AuthStatus.unauthenticated));
+      emit(
+        state.copyWith(
+          status: AuthStatus.unauthenticated,
+          hasSeenPermission: hasSeenPermission,
+        ),
+      );
     }
+  }
+
+  // Đánh dấu đã hoàn thành bước xin quyền Onboarding
+  Future<void> completePermissionOnboarding() async {
+    await _authRepository.setHasSeenPermissionScreen(true);
+    emit(state.copyWith(hasSeenPermission: true));
   }
 
   Future<void> login({
@@ -83,11 +121,15 @@ class AuthCubit extends Cubit<AuthState> {
 
       if (isClosed) return;
 
+      final prefs = await SharedPreferences.getInstance();
+      final hasSeenPermission = await _resolvePermissionState(prefs);
+
       emit(
         state.copyWith(
           status: AuthStatus.authenticated,
           user: fullUser,
           clearErrorMessage: true,
+          hasSeenPermission: hasSeenPermission,
         ),
       );
     } on ApiException catch (e) {
@@ -170,8 +212,17 @@ class AuthCubit extends Cubit<AuthState> {
       }
 
       final prefs = await SharedPreferences.getInstance();
-      await prefs.clear();
-      emit(const AuthState(status: AuthStatus.unauthenticated));
+      await prefs.remove('access_token');
+      await prefs.remove('refresh_token');
+      await prefs.remove('user_data');
+      await prefs.remove(_keyHasSeenPermission);
+
+      emit(
+        const AuthState(
+          status: AuthStatus.unauthenticated,
+          hasSeenPermission: false,
+        ),
+      );
     } on ApiException catch (e) {
       emit(
         state.copyWith(
@@ -190,8 +241,19 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  void forceLogout() {
-    emit(const AuthState(status: AuthStatus.unauthenticated));
+  Future<void> forceLogout() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('access_token');
+    await prefs.remove('refresh_token');
+    await prefs.remove('user_data');
+    await prefs.remove(_keyHasSeenPermission);
+
+    emit(
+      const AuthState(
+        status: AuthStatus.unauthenticated,
+        hasSeenPermission: false,
+      ),
+    );
   }
 
   void resetStatus() {

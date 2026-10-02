@@ -1,5 +1,4 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:stride/features/reminder/reminder_cubit/reminder_state.dart';
 import 'package:stride/features/reminder/reminder_scheduler.dart';
 import 'package:stride/model/reminder_settings.dart';

@@ -11,6 +11,18 @@ class AuthRepository {
 
   AuthRepository({required this._dio});
 
+  // Lấy trạng thái đã xem màn hình xin quyền chưa
+  Future<bool> hasSeenPermissionScreen() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('has_seen_permission') ?? false;
+  }
+
+  // Đánh dấu đã xem màn hình xin quyền
+  Future<void> setHasSeenPermissionScreen(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('has_seen_permission', value);
+  }
+
   Future<UserModel> login({
     required String username,
     required String password,

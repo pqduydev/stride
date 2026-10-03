@@ -5,14 +5,14 @@ class ReminderSettings extends Equatable {
   final int hour; // giờ tập
   final int minute;
   final Set<int> weekdays; // DateTime.monday (1) ... DateTime.sunday (7)
-  final int minutesBefore; // 5, 15, 30, 60
+  final int minutesBefore; // 0, 5, 15, 30, 60
 
   const ReminderSettings({
     this.enabled = false,
     this.hour = 18,
     this.minute = 0,
     this.weekdays = const {},
-    this.minutesBefore = 5,
+    this.minutesBefore = 0,
   });
 
   ReminderSettings copyWith({
@@ -39,7 +39,7 @@ class ReminderSettings extends Equatable {
       weekdays: (json['weekdays'] as List<dynamic>? ?? const [])
           .map((e) => e as int)
           .toSet(),
-      minutesBefore: json['minutes_before'] as int? ?? 15,
+      minutesBefore: json['minutes_before'] as int? ?? 0,
     );
   }
 

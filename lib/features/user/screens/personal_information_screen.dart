@@ -266,7 +266,10 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                 BlocBuilder<UserCubit, UserState>(
                   builder: (context, userState) {
                     final isLoading = userState.status == UserStatus.loading;
-                    final user = userState.user;
+
+                    final user =
+                        userState.user ?? context.read<AuthCubit>().state.user;
+
                     final initials = user?.displayInitials;
 
                     return AbsorbPointer(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 class ItemTextField extends StatelessWidget {
   final int textColor;
@@ -42,74 +43,90 @@ class ItemTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
-      controller: controller,
+    return FormField<String>(
       validator: validator,
-      style: TextStyle(
-        color: Color(textColor),
-        fontSize: textFontSize,
-        fontWeight: textFontWeight,
-      ),
-      maxLines: maxLines,
-      decoration: InputDecoration(
-        hintText: hintText,
-        hintStyle: TextStyle(
-          color: Color(hintTextColor ?? 0xFF8E8E93),
-          fontSize: hintTextFontSize,
-          fontWeight: hintTextFontWeight ?? FontWeight.w500,
-        ),
-        filled: true,
-        fillColor: Color(
-          backgroundColor != null ? int.parse(backgroundColor!) : 0xFFFFFFFF,
-        ),
+      builder: (field) {
+        final hasError = field.hasError;
 
-        helperText: ' ',
-        helperStyle: const TextStyle(fontSize: 12, height: 1.2),
-
-        errorStyle: const TextStyle(
-          color: Colors.redAccent,
-          fontSize: 12,
-          height: 1.2,
-        ),
-
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(
-            color: Color(
-              borderColor != null ? int.parse(borderColor!) : 0xFF8E8E93,
-            ),
-            width: borderWidth ?? 1,
-            style: borderStyle == 'dashed'
-                ? BorderStyle.solid
-                : BorderStyle.solid,
-          ),
-
-          borderRadius: BorderRadius.circular(12),
-        ),
-
-        focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(
-            color: Color(
-              borderColor != null ? int.parse(borderColor!) : 0xFF8E8E93,
-            ),
-            width: borderWidth ?? 1,
-            style: borderStyle == 'dashed'
-                ? BorderStyle.solid
-                : BorderStyle.solid,
-          ),
-
-          borderRadius: BorderRadius.circular(12),
-        ),
-
-        errorBorder: OutlineInputBorder(
-          borderSide: const BorderSide(color: Colors.redAccent, width: 1),
-          borderRadius: BorderRadius.circular(12),
-        ),
-
-        focusedErrorBorder: OutlineInputBorder(
-          borderSide: const BorderSide(color: Colors.redAccent, width: 1),
-          borderRadius: BorderRadius.circular(12),
-        ),
-      ),
+        return TextField(
+              controller: controller,
+              readOnly: readOnly,
+              onTap: onTap,
+              onChanged: (value) => field.didChange(value),
+              style: TextStyle(
+                color: Color(textColor),
+                fontSize: textFontSize,
+                fontWeight: textFontWeight,
+              ),
+              maxLines: maxLines,
+              decoration: InputDecoration(
+                hintText: hintText,
+                hintStyle: TextStyle(
+                  color: Color(hintTextColor ?? 0xFF8E8E93),
+                  fontSize: hintTextFontSize,
+                  fontWeight: hintTextFontWeight ?? FontWeight.w500,
+                ),
+                filled: true,
+                fillColor: Color(
+                  backgroundColor != null
+                      ? int.parse(backgroundColor!)
+                      : 0xFFFFFFFF,
+                ),
+                helperText: ' ',
+                helperStyle: const TextStyle(fontSize: 12, height: 1.2),
+                errorText: hasError ? field.errorText : null,
+                errorStyle: const TextStyle(
+                  color: Colors.redAccent,
+                  fontSize: 12,
+                  height: 1.2,
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Color(
+                      borderColor != null
+                          ? int.parse(borderColor!)
+                          : 0xFF8E8E93,
+                    ),
+                    width: borderWidth ?? 1,
+                    style: borderStyle == 'dashed'
+                        ? BorderStyle.solid
+                        : BorderStyle.solid,
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Color(
+                      borderColor != null
+                          ? int.parse(borderColor!)
+                          : 0xFF8E8E93,
+                    ),
+                    width: borderWidth ?? 1,
+                    style: borderStyle == 'dashed'
+                        ? BorderStyle.solid
+                        : BorderStyle.solid,
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                errorBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(
+                    color: Colors.redAccent,
+                    width: 1,
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                focusedErrorBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(
+                    color: Colors.redAccent,
+                    width: 1,
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            )
+            .animate(key: ValueKey(field.errorText))
+            .shakeX(hz: 4, amount: hasError ? 4 : 0, duration: 400.ms);
+      },
     );
   }
 }

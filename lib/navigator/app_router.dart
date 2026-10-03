@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -95,23 +96,47 @@ class AppRouter {
     routes: [
       GoRoute(
         path: "/splash",
-        builder: (context, state) => const SplashScreen(),
+        pageBuilder: (context, state) {
+          return buildPageWithSlideTransition(
+            context: context,
+            state: state,
+            child: const SplashScreen(),
+          );
+        },
       ),
       GoRoute(
         path: "/welcome",
-        builder: (context, state) => const WelcomeScreen(),
+        pageBuilder: (context, state) {
+          return buildPageWithSlideTransition(
+            context: context,
+            state: state,
+            child: const WelcomeScreen(),
+          );
+        },
       ),
       GoRoute(
         path: "/login",
-        builder: (context, state) => const AuthScreen(isLogin: true),
+        pageBuilder: (context, state) {
+          return buildPageWithSlideTransition(
+            context: context,
+            state: state,
+            child: const AuthScreen(isLogin: true),
+          );
+        },
         routes: [
           GoRoute(
             path: "forget_password",
-            builder: (context, state) => const ForgetPasswordScreen(),
+            pageBuilder: (context, state) {
+              return buildPageWithSlideTransition(
+                context: context,
+                state: state,
+                child: const ForgetPasswordScreen(),
+              );
+            },
             routes: [
               GoRoute(
                 path: "check_email",
-                builder: (context, state) {
+                pageBuilder: (context, state) {
                   final data = state.extra as Map<String, dynamic>;
 
                   final appBarTitle = data['app_bar_title'] as String?;
@@ -120,12 +145,16 @@ class AppRouter {
                   final buttonTitle = data['button_title'] as String?;
                   final onTap = data['on_tap'] as VoidCallback?;
 
-                  return CheckScreen(
-                    appBarTitle: appBarTitle,
-                    title: title,
-                    info: info,
-                    buttonTitle: buttonTitle,
-                    onTap: onTap,
+                  return buildPageWithSlideTransition(
+                    context: context,
+                    state: state,
+                    child: CheckScreen(
+                      appBarTitle: appBarTitle,
+                      title: title,
+                      info: info,
+                      buttonTitle: buttonTitle,
+                      onTap: onTap,
+                    ),
                   );
                 },
               ),
@@ -134,88 +163,201 @@ class AppRouter {
 
           GoRoute(
             path: "login_with_phone_number",
-            builder: (context, state) => const LoginWithPhoneNumberScreen(),
+            pageBuilder: (context, state) {
+              return buildPageWithSlideTransition(
+                context: context,
+                state: state,
+                child: const LoginWithPhoneNumberScreen(),
+              );
+            },
           ),
         ],
       ),
       GoRoute(
         path: "/register",
-        builder: (context, state) => const AuthScreen(isLogin: false),
+        pageBuilder: (context, state) {
+          return buildPageWithSlideTransition(
+            context: context,
+            state: state,
+            child: const AuthScreen(isLogin: false),
+          );
+        },
         routes: [
           GoRoute(
             path: "privacy",
-            builder: (context, state) => const PrivacyInformationScreen(),
+            pageBuilder: (context, state) {
+              return buildPageWithSlideTransition(
+                context: context,
+                state: state,
+                child: const PrivacyInformationScreen(),
+              );
+            },
           ),
           GoRoute(
             path: "email_verification",
-            builder: (context, state) => const EmailVerificationScreen(),
+            pageBuilder: (context, state) {
+              return buildPageWithSlideTransition(
+                context: context,
+                state: state,
+                child: const EmailVerificationScreen(),
+              );
+            },
           ),
           GoRoute(
             path: "login_with_google",
-            builder: (context, state) => const LoginWithGooglesScreen(),
+            pageBuilder: (context, state) {
+              return buildPageWithSlideTransition(
+                context: context,
+                state: state,
+                child: const LoginWithGooglesScreen(),
+              );
+            },
           ),
           GoRoute(
             path: "login_with_apple",
-            builder: (context, state) => const LoginWithAppleScreen(),
+            pageBuilder: (context, state) {
+              return buildPageWithSlideTransition(
+                context: context,
+                state: state,
+                child: const LoginWithAppleScreen(),
+              );
+            },
           ),
         ],
       ),
       GoRoute(
         path: "/main_navigation_bar",
-        builder: (context, state) => const MainNavigationBarScreen(),
+        pageBuilder: (context, state) {
+          return buildPageWithSlideTransition(
+            context: context,
+            state: state,
+            child: const MainNavigationBarScreen(),
+          );
+        },
       ),
       GoRoute(
         path: "/my_route",
-        builder: (context, state) => const MyRouteScreen(),
+        pageBuilder: (context, state) {
+          return buildPageWithSlideTransition(
+            context: context,
+            state: state,
+            child: const MyRouteScreen(),
+          );
+        },
       ),
       GoRoute(
         path: "/route_details",
-        builder: (context, state) => const RouteDetailsScreen(),
+        pageBuilder: (context, state) {
+          return buildPageWithSlideTransition(
+            context: context,
+            state: state,
+            child: const RouteDetailsScreen(),
+          );
+        },
       ),
       GoRoute(
         path: "/route_create",
-        builder: (context, state) => const RouteCreateScreen(),
+        pageBuilder: (context, state) {
+          return buildPageWithSlideTransition(
+            context: context,
+            state: state,
+            child: const RouteCreateScreen(),
+          );
+        },
       ),
       GoRoute(
         path: "/route_edit",
-        builder: (context, state) {
+        pageBuilder: (context, state) {
           final routeToEdit = state.extra as RouteModel?;
-          return RouteCreateScreen(routeToEdit: routeToEdit);
+
+          return buildPageWithSlideTransition(
+            context: context,
+            state: state,
+            child: RouteCreateScreen(routeToEdit: routeToEdit),
+          );
         },
       ),
       GoRoute(
         path: "/add_image",
-        builder: (context, state) => const AddImageScreen(),
+        pageBuilder: (context, state) {
+          return buildPageWithSlideTransition(
+            context: context,
+            state: state,
+            child: const AddImageScreen(),
+          );
+        },
       ),
       GoRoute(
         path: "/appointment",
-        builder: (context, state) => const AppointmentScreen(),
+        pageBuilder: (context, state) {
+          return buildPageWithSlideTransition(
+            context: context,
+            state: state,
+            child: const AppointmentScreen(),
+          );
+        },
       ),
       GoRoute(
         path: "/profile",
-        builder: (context, state) => const ProfileScreen(),
+        pageBuilder: (context, state) {
+          return buildPageWithSlideTransition(
+            context: context,
+            state: state,
+            child: const ProfileScreen(),
+          );
+        },
         routes: [
           GoRoute(
             path: "personal_information",
-            builder: (context, state) => const PersonalInformationScreen(),
+            pageBuilder: (context, state) {
+              return buildPageWithSlideTransition(
+                context: context,
+                state: state,
+                child: const PersonalInformationScreen(),
+              );
+            },
           ),
           GoRoute(
             path: "change_password",
-            builder: (context, state) => const ChangePassword(),
+            pageBuilder: (context, state) {
+              return buildPageWithSlideTransition(
+                context: context,
+                state: state,
+                child: const ChangePassword(),
+              );
+            },
           ),
         ],
       ),
       GoRoute(
         path: "/reminder_settings",
-        builder: (context, state) => const ReminderSettingsScreen(),
+        pageBuilder: (context, state) {
+          return buildPageWithSlideTransition(
+            context: context,
+            state: state,
+            child: const ReminderSettingsScreen(),
+          );
+        },
       ),
       GoRoute(
         path: "/reminder_saved",
-        builder: (context, state) => const ReminderSavedScreen(),
+        pageBuilder: (context, state) {
+          return buildPageWithSlideTransition(
+            context: context,
+            state: state,
+            child: const ReminderSavedScreen(),
+          );
+        },
       ),
       GoRoute(
         path: "/onboarding_permission",
-        builder: (context, state) => OnboardingPermissionScreen(),
+        pageBuilder: (context, state) {
+          return buildPageWithSlideTransition(
+            context: context,
+            state: state,
+            child: const OnboardingPermissionScreen(),
+          );
+        },
       ),
     ],
   );
@@ -245,4 +387,40 @@ class GoRouterRefreshStream extends ChangeNotifier {
     _subscription.cancel();
     super.dispose();
   }
+}
+
+CustomTransitionPage buildPageWithSlideTransition({
+  required BuildContext context,
+  required GoRouterState state,
+  required Widget child,
+}) {
+  return CustomTransitionPage(
+    key: state.pageKey,
+    child: child,
+    transitionDuration: const Duration(milliseconds: 300),
+    reverseTransitionDuration: const Duration(milliseconds: 100),
+
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      const begin = Offset(0.1, 0.0);
+      const end = Offset.zero;
+
+      var positionTween = Tween(
+        begin: begin,
+        end: end,
+      ).chain(CurveTween(curve: Curves.easeOutCubic));
+
+      var opacityTween = Tween<double>(
+        begin: 0.0,
+        end: 1.0,
+      ).chain(CurveTween(curve: Curves.easeOut));
+
+      return FadeTransition(
+        opacity: animation.drive(opacityTween),
+        child: SlideTransition(
+          position: animation.drive(positionTween),
+          child: child,
+        ),
+      );
+    },
+  );
 }

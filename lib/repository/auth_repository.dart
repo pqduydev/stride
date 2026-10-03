@@ -118,6 +118,14 @@ class AuthRepository {
     }
   }
 
+  Future<void> clearLocalData() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('access_token');
+    await prefs.remove('refresh_token');
+    await prefs.remove('user_data');
+    await prefs.remove('has_seen_permission');
+  }
+
   Future<void> logout() async {
     final prefs = await SharedPreferences.getInstance();
     final refreshToken = prefs.getString('refresh_token');
@@ -131,9 +139,7 @@ class AuthRepository {
     } catch (e) {
       throw ApiException(message: 'Đã có lỗi xảy ra, vui lòng thử lại');
     } finally {
-      await prefs.remove('access_token');
-      await prefs.remove('refresh_token');
-      await prefs.remove('user_data');
+      await clearLocalData();
     }
   }
 }

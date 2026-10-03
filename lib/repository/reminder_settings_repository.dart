@@ -11,11 +11,7 @@ class ReminderSettingsRepository {
     final jsonString = prefs.getString(_key);
     if (jsonString == null) {
       final now = DateTime.now();
-      return ReminderSettings(
-        hour: now.hour,
-        minute: now.minute,
-        minutesBefore: 5,
-      );
+      return ReminderSettings(hour: now.hour, minute: now.minute);
     }
     return ReminderSettings.fromJson(jsonDecode(jsonString));
   }

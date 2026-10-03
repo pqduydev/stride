@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 class ItemCustomTextField extends StatefulWidget {
   final String label;
@@ -67,79 +68,91 @@ class _ItemCustomTextFieldState extends State<ItemCustomTextField> {
             GestureDetector(
               onTap: () => _focusNode.requestFocus(),
               behavior: HitTestBehavior.opaque,
-              child: Container(
-                height: widget.height,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 15,
-                  vertical: 12,
-                ),
-                decoration: BoxDecoration(
-                  color: Color(widget.backgroundColor),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: hasError
-                        ? Colors.redAccent
-                        : const Color(0xFFE8ECE8),
-                    width: 1,
-                  ),
-                ),
-                child: Column(
-                  crossAxisAlignment: .start,
-                  mainAxisAlignment: .center,
-                  children: [
-                    Text(
-                      widget.label,
-                      style: const TextStyle(
-                        color: Color(0xFF768079),
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Row(
-                      crossAxisAlignment: .center,
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            maxLines: widget.maxLines,
-                            readOnly: widget.readOnly,
-                            focusNode: _focusNode,
-                            controller: widget.controller,
-                            autofillHints: widget.autofillHints,
-                            textInputAction: widget.textInputAction,
-                            keyboardType: widget.keyboardType,
-                            autocorrect: widget.autocorrect,
-                            enableSuggestions: widget.enableSuggestions,
-                            onChanged: (value) => field.didChange(value),
-                            style: const TextStyle(
-                              color: Color(0xFF1C2520),
-                              fontSize: 15,
-                              fontWeight: FontWeight.w500,
-                            ),
-                            decoration: InputDecoration(
-                              hintText: widget.hintText,
-                              hintStyle: const TextStyle(
-                                color: Color(0xFFC4C9C5),
-                                fontSize: 15,
-                                fontWeight: FontWeight.w400,
-                              ),
-                              isDense: true,
-                              contentPadding: EdgeInsets.zero,
-                              border: InputBorder.none,
-                              enabledBorder: InputBorder.none,
-                              focusedBorder: InputBorder.none,
-                            ),
+              child:
+                  Container(
+                        height: widget.height,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 15,
+                          vertical: 12,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Color(widget.backgroundColor),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: hasError
+                                ? Colors.redAccent
+                                : const Color(0xFFE8ECE8),
+                            width: 1,
                           ),
                         ),
-                        if (widget.suffixIcon != null) ...[
-                          const SizedBox(width: 8),
-                          widget.suffixIcon!,
-                        ],
-                      ],
-                    ),
-                  ],
-                ),
-              ),
+                        child: Column(
+                          crossAxisAlignment: .start,
+                          mainAxisAlignment: .center,
+                          children: [
+                            Text(
+                              widget.label,
+                              style: const TextStyle(
+                                color: Color(0xFF768079),
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Row(
+                              crossAxisAlignment: .center,
+                              children: [
+                                Expanded(
+                                  child: TextField(
+                                    maxLines: widget.maxLines,
+                                    readOnly: widget.readOnly,
+                                    focusNode: _focusNode,
+                                    controller: widget.controller,
+                                    autofillHints: widget.autofillHints,
+                                    textInputAction: widget.textInputAction,
+                                    keyboardType: widget.keyboardType,
+                                    autocorrect: widget.autocorrect,
+                                    enableSuggestions: widget.enableSuggestions,
+                                    onChanged: (value) =>
+                                        field.didChange(value),
+                                    style: const TextStyle(
+                                      color: Color(0xFF1C2520),
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                    decoration: InputDecoration(
+                                      hintText: widget.hintText,
+                                      hintStyle: const TextStyle(
+                                        color: Color(0xFFC4C9C5),
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                      isDense: true,
+                                      contentPadding: EdgeInsets.zero,
+                                      border: InputBorder.none,
+                                      enabledBorder: InputBorder.none,
+                                      focusedBorder: InputBorder.none,
+                                    ),
+                                  ),
+                                ),
+                                if (widget.suffixIcon != null) ...[
+                                  const SizedBox(width: 8),
+                                  widget.suffixIcon!,
+                                ],
+                              ],
+                            ),
+                          ],
+                        ),
+                      )
+                      .animate(
+                        // Kích hoạt lại animation mỗi khi nội dung lỗi (errorText) thay đổi
+                        key: ValueKey(field.errorText),
+                      )
+                      .shakeX(
+                        hz: 4,
+                        // Có lỗi thì biên độ lắc = 4, không có lỗi (nhập đúng) thì biên độ = 0 (không lắc)
+                        amount: hasError ? 4 : 0,
+                        duration: 400.ms,
+                      ),
             ),
             Padding(
               padding: const EdgeInsets.only(top: 1, left: 2),

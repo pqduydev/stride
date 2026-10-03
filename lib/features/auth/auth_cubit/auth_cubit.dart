@@ -211,12 +211,6 @@ class AuthCubit extends Cubit<AuthState> {
         return; // Khi người dùng thoát màn hình trong khi đợi response
       }
 
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.remove('access_token');
-      await prefs.remove('refresh_token');
-      await prefs.remove('user_data');
-      await prefs.remove(_keyHasSeenPermission);
-
       emit(
         const AuthState(
           status: AuthStatus.unauthenticated,
@@ -242,11 +236,7 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   Future<void> forceLogout() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('access_token');
-    await prefs.remove('refresh_token');
-    await prefs.remove('user_data');
-    await prefs.remove(_keyHasSeenPermission);
+    await _authRepository.clearLocalData();
 
     emit(
       const AuthState(

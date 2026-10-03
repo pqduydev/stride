@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class ItemBottomButton extends StatelessWidget {
+class ItemBottomButton extends StatefulWidget {
   final String text;
   final VoidCallback? onTap;
   final bool isLoading;
@@ -21,33 +21,64 @@ class ItemBottomButton extends StatelessWidget {
   });
 
   @override
+  State<ItemBottomButton> createState() => _ItemBottomButtonState();
+}
+
+class _ItemBottomButtonState extends State<ItemBottomButton> {
+  bool _isPressed = false;
+
+  // Chỉ cho phép hiệu ứng nhấn khi nút không bị disable (có hàm onTap) và không trong trạng thái loading
+  bool get _canPress => widget.onTap != null && !widget.isLoading;
+
+  @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      overlayColor: WidgetStateProperty.all(Colors.transparent),
-      child: Container(
-        width: double.infinity,
-        height: 50,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: backgroundColor, // Gọn gàng và an toàn tuyệt đối
-          borderRadius: BorderRadius.circular(13),
-          border: Border.all(
-            color: borderColor,
-            width: borderWidth,
-            style: BorderStyle.solid,
+    return GestureDetector(
+      onTapDown: (_) {
+        if (_canPress) {
+          setState(() => _isPressed = true);
+        }
+      },
+      onTapUp: (_) {
+        if (_canPress) {
+          setState(() => _isPressed = false);
+        }
+      },
+      onTapCancel: () {
+        if (_canPress) {
+          setState(() => _isPressed = false);
+        }
+      },
+      // onTap để thực thi logic khi người dùng nhấn
+      onTap: _canPress ? widget.onTap : null,
+      child: AnimatedScale(
+        // Scale thu nhỏ về 0.95 khi đang nhấn, thả ra trở về 1.0
+        scale: _isPressed ? 0.95 : 1.0,
+        duration: const Duration(milliseconds: 100),
+        curve: Curves.easeInOut,
+        child: Container(
+          width: double.infinity,
+          height: 50,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: widget.backgroundColor,
+            borderRadius: BorderRadius.circular(13),
+            border: Border.all(
+              color: widget.borderColor,
+              width: widget.borderWidth,
+              style: BorderStyle.solid,
+            ),
           ),
-        ),
-        child: isLoading
-            ? const CircularProgressIndicator(color: Colors.white)
-            : Text(
-                text,
-                style: TextStyle(
-                  color: textColor,
-                  fontSize: 15,
-                  fontWeight: FontWeight.w700,
+          child: widget.isLoading
+              ? const CircularProgressIndicator(color: Colors.white)
+              : Text(
+                  widget.text,
+                  style: TextStyle(
+                    color: widget.textColor,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
-              ),
+        ),
       ),
     );
   }

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -43,52 +42,42 @@ class AppRouter {
       final hasSeenPermission = authCubit.state.hasSeenPermission;
       final location = state.matchedLocation;
 
-      // Khi đang ở trạng thái ban đầu -> Giữ ở Splash
-      if (authStatus == AuthStatus.initial && location == '/splash') {
-        return '/splash';
+      // 1. Khi app đang khởi chạy ở Splash
+      if (authStatus == AuthStatus.initial) {
+        // Nếu đã ở /splash rồi thì giữ nguyên (null), chưa ở /splash mới chuyển về /splash
+        return location == '/splash' ? null : '/splash';
       }
 
-      final isAuthRoute =
-          location == '/login' ||
-          location == '/register' ||
-          location == '/welcome';
+      // Khai báo danh sách đường dẫn public / auth
+      final authRoutes = ['/login', '/register', '/welcome', '/splash'];
+      final isAuthRoute = authRoutes.any((route) => location.startsWith(route));
+      final isPermissionRoute = location.startsWith('/onboarding_permission');
 
-      /** ĐÃ ĐĂNG NHẬP */
+      // 2. TRƯỜNG HỢP ĐÃ ĐĂNG NHẬP
       if (authStatus == AuthStatus.authenticated) {
-        // Nếu ĐÃ ĐĂNG NHẬP mà CHƯA XEM màn hình xin quyền
+        // Nếu chưa xem màn xin quyền -> Đẩy tới permission (nếu chưa ở đó)
         if (!hasSeenPermission) {
-          if (location != '/onboarding_permission') {
-            return '/onboarding_permission';
-          }
-          return null;
+          return location == '/onboarding_permission'
+              ? null
+              : '/onboarding_permission';
         }
 
-        // Nếu ĐÃ ĐĂNG NHẬP và ĐÃ XEM màn xin quyền rồi
-        if (isAuthRoute ||
-            location == '/splash' ||
-            location == '/onboarding_permission') {
+        // Nếu đã xem quyền và đang ở các trang Auth/Splash/Permission -> Đẩy về Main
+        if (isAuthRoute || location == '/splash' || isPermissionRoute) {
           return '/main_navigation_bar';
         }
+
+        // Nếu đang vào các màn hình protected (/profile, /my_route...) -> Cho phép đi tiếp
         return null;
       }
 
-      /** CHƯA ĐĂNG NHẬP */
-      // Danh sách các màn hình KHÔNG bắt buộc đăng nhập
-      final publicRoutes = ['/welcome', '/login', '/register', '/splash'];
-      final isPublicRoute = publicRoutes.any(
-        (route) => location.startsWith(route),
-      );
-
-      // Nếu cố tình truy cập màn hình yêu cầu đăng nhập -> Đá về Welcome
-      if (!isPublicRoute) {
-        return '/welcome';
-      }
-
-      // Nếu đang ở Splash mà xác thực thất bại/chưa đăng nhập -> Đá về Welcome
-      if (location == '/splash' &&
-          (authStatus == AuthStatus.unauthenticated ||
-              authStatus == AuthStatus.failure)) {
-        return '/welcome';
+      // 3. TRƯỜNG HỢP CHƯA ĐĂNG NHẬP HOẶC THẤT BẠI (unauthenticated / failure)
+      if (authStatus == AuthStatus.unauthenticated ||
+          authStatus == AuthStatus.failure) {
+        // Nếu đang ở Splash HOẶC cố truy cập màn hình bắt buộc đăng nhập -> Đẩy về Welcome
+        if (location == '/splash' || (!isAuthRoute && !isPermissionRoute)) {
+          return '/welcome';
+        }
       }
 
       return null;

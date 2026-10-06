@@ -35,8 +35,9 @@ class DeviceTokenRepository {
         data: {'token': fcmToken},
       );
     } on DioException catch (e) {
-      debugPrint(
-        'Lỗi hủy FCM Token trên Backend: ${e.response?.data ?? e.message}',
+      throw ApiException(
+        message:
+            'Lỗi hủy FCM Token trên Backend: ${e.response?.data ?? e.message}',
       );
     } catch (e) {
       throw ApiException(message: 'Lỗi không xác định khi hủy Token: $e');

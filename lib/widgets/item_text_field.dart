@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 class ItemTextField extends StatelessWidget {
-  final int textColor;
+  final Color textColor;
   final double textFontSize;
   final FontWeight textFontWeight;
   final String? hintText;
   final int? hintTextColor;
   final double? hintTextFontSize;
   final FontWeight? hintTextFontWeight;
-  final String? backgroundColor;
-  final String? borderColor;
+  final Color? backgroundColor;
+  final Color? borderColor;
   final double? borderWidth;
   final String? borderStyle;
   final double? borderRadius;
@@ -44,6 +44,7 @@ class ItemTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FormField<String>(
+      initialValue: controller?.text,
       validator: validator,
       builder: (field) {
         final hasError = field.hasError;
@@ -54,7 +55,7 @@ class ItemTextField extends StatelessWidget {
               onTap: onTap,
               onChanged: (value) => field.didChange(value),
               style: TextStyle(
-                color: Color(textColor),
+                color: textColor,
                 fontSize: textFontSize,
                 fontWeight: textFontWeight,
               ),
@@ -67,11 +68,7 @@ class ItemTextField extends StatelessWidget {
                   fontWeight: hintTextFontWeight ?? FontWeight.w500,
                 ),
                 filled: true,
-                fillColor: Color(
-                  backgroundColor != null
-                      ? int.parse(backgroundColor!)
-                      : 0xFFFFFFFF,
-                ),
+                fillColor: backgroundColor ?? Colors.white,
                 helperText: ' ',
                 helperStyle: const TextStyle(fontSize: 12, height: 1.2),
                 errorText: hasError ? field.errorText : null,
@@ -82,29 +79,15 @@ class ItemTextField extends StatelessWidget {
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderSide: BorderSide(
-                    color: Color(
-                      borderColor != null
-                          ? int.parse(borderColor!)
-                          : 0xFF8E8E93,
-                    ),
+                    color: borderColor ?? const Color(0xFF8E8E93),
                     width: borderWidth ?? 1,
-                    style: borderStyle == 'dashed'
-                        ? BorderStyle.solid
-                        : BorderStyle.solid,
                   ),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(
-                    color: Color(
-                      borderColor != null
-                          ? int.parse(borderColor!)
-                          : 0xFF8E8E93,
-                    ),
+                    color: borderColor ?? const Color(0xFF8E8E93),
                     width: borderWidth ?? 1,
-                    style: borderStyle == 'dashed'
-                        ? BorderStyle.solid
-                        : BorderStyle.solid,
                   ),
                   borderRadius: BorderRadius.circular(12),
                 ),

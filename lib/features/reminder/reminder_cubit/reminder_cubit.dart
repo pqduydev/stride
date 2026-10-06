@@ -24,10 +24,42 @@ class ReminderCubit extends Cubit<ReminderState> {
   /// Gạt công tắc Bật/Tắt
   Future<void> setEnabled(bool value) async {
     // 1. Cập nhật trạng thái Bật/Tắt vào state
-    _edit(state.settings.copyWith(enabled: value));
+    final newSettings = state.settings.copyWith(enabled: value);
+    _edit(newSettings);
 
-    // 2. Tự động lưu và thiết lập lại lịch ngầm ngay lập tức (cho cả Bật và Tắt)
-    await save(message: value ? 'Đã bật nhắc hẹn' : 'Đã tắt nhắc hẹn');
+    try {
+      // 2. Yêu cầu quyền thông báo nếu bật
+      if (value) {
+        await _scheduler.ensurePermission();
+      }
+
+      // 3. Lưu trực tiếp trạng thái cài đặt xuống Repository
+      await _repository.save(newSettings);
+
+      // 4. Áp dụng vào lịch
+      // Nếu bật, nhưng chưa có ngày nào được chọn -> Scheduler sẽ tự động không đặt lịch (vì weekdays rỗng).
+      // Nếu tắt -> Scheduler sẽ xoá các lịch đã đặt trước đó.
+      await _scheduler.apply(newSettings);
+
+      // 5. Bắn state thành công ra ngoài để hiển thị SnackBar
+      if (!isClosed) {
+        emit(
+          state.copyWith(
+            status: ReminderStatus.saved,
+            successMessage: value ? 'Đã bật nhắc hẹn' : 'Đã tắt nhắc hẹn',
+          ),
+        );
+      }
+    } catch (e) {
+      if (!isClosed) {
+        emit(
+          state.copyWith(
+            status: ReminderStatus.failure,
+            errorMessage: 'Không thể thay đổi trạng thái nhắc hẹn',
+          ),
+        );
+      }
+    }
   }
 
   void setTime(int hour, int minute) =>

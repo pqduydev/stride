@@ -555,7 +555,6 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                     onChanged: (value) {
                       final cubit = context.read<ReminderCubit>();
                       cubit.setEnabled(value);
-                      cubit.save(); // bật/tắt nhanh, không cần vào màn cài đặt
                     },
                   ),
                 ),

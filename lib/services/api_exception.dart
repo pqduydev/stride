@@ -62,6 +62,11 @@ class ApiException implements Exception {
       if (data.containsKey('detail')) {
         message = data['detail'].toString();
       }
+      // Kiểm tra lỗi chung non_field_errors từ BE
+      else if (data.containsKey('non_field_errors')) {
+        final errors = data['non_field_errors'];
+        message = errors is List ? errors.join(', ') : errors.toString();
+      }
       // Nếu là lỗi HTTP 500 Server Error
       else if (statusCode != null && statusCode >= 500) {
         message = 'Lỗi hệ thống máy chủ ($statusCode). Vui lòng thử lại sau.';

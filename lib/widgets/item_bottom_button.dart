@@ -27,8 +27,15 @@ class ItemBottomButton extends StatefulWidget {
 class _ItemBottomButtonState extends State<ItemBottomButton> {
   bool _isPressed = false;
 
-  // Chỉ cho phép hiệu ứng nhấn khi nút không bị disable (có hàm onTap) và không trong trạng thái loading
   bool get _canPress => widget.onTap != null && !widget.isLoading;
+
+  void _handleTap() {
+    // 1. Tắt bàn phím ngay lập tức
+    FocusScope.of(context).unfocus();
+
+    // 2. Thực thi callback onTap được truyền từ ngoài vào
+    widget.onTap?.call();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,10 +55,9 @@ class _ItemBottomButtonState extends State<ItemBottomButton> {
           setState(() => _isPressed = false);
         }
       },
-      // onTap để thực thi logic khi người dùng nhấn
-      onTap: _canPress ? widget.onTap : null,
+      // Tự động thu bàn phím khi bấm nút
+      onTap: _canPress ? _handleTap : null,
       child: AnimatedScale(
-        // Scale thu nhỏ về 0.95 khi đang nhấn, thả ra trở về 1.0
         scale: _isPressed ? 0.95 : 1.0,
         duration: const Duration(milliseconds: 100),
         curve: Curves.easeInOut,

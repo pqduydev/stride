@@ -123,9 +123,8 @@ class _AuthViewState extends State<AuthView> {
       ),
       body: BlocListener<AuthCubit, AuthState>(
         listener: (context, state) {
-          if (state.status == AuthStatus.authenticated) {
-            context.go('/main_navigation_bar');
-          } else if (state.status == AuthStatus.failure) {
+          if (state.status == AuthStatus.failure &&
+              state.errorMessage != null) {
             _formKey.currentState?.validate();
 
             if (state.errorMessage != null) {

@@ -40,6 +40,14 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
   @override
   void initState() {
     super.initState();
+
+    // Dọn dẹp lỗi cũ của Cubit ngay khi mở màn hình
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        context.read<RouteCubit>().resetErrors();
+      }
+    });
+
     if (isEditMode) {
       final route = widget.routeToEdit!;
       _titleController.text = route.title;
@@ -73,11 +81,10 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
   void _onSave() {
     final cubit = context.read<RouteCubit>();
 
-    if (cubit.state.actionStatus == RouteStatus.failure ||
-        (cubit.state.fieldErrors?.isNotEmpty ?? false)) {
-      cubit.resetErrors();
-    }
+    // 1. Reset trạng thái lỗi trên Cubit trước
+    cubit.resetErrors();
 
+    // 2. Validate form phía Client (kiểm tra rỗng, định dạng...)
     if (!_formKey.currentState!.validate()) {
       return;
     }
@@ -307,24 +314,25 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
                       hintText: 'Nhập tên lộ trình...',
                       hintTextFontSize: 15,
                       controller: _titleController,
-                      textColor: 0xFF1C2520,
+                      textColor: Color(0xFF1C2520),
                       textFontSize: 15,
                       textFontWeight: FontWeight.w500,
-                      borderColor: '0xFFE8ECE8',
+                      borderColor: Color(0xFFE8ECE8),
                       borderWidth: 1,
                       borderStyle: 'solid',
                       validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
+                        // Ưu tiên kiểm tra text trực tiếp từ controller
+                        final currentText = _titleController.text.trim();
+
+                        if (currentText.isEmpty) {
                           return 'Vui lòng nhập tên lộ trình';
                         }
 
-                        final fieldErrors = context
-                            .read<RouteCubit>()
-                            .state
-                            .fieldErrors;
-                        if (fieldErrors != null &&
-                            fieldErrors.containsKey('title')) {
-                          final errors = fieldErrors['title'];
+                        final routeState = context.read<RouteCubit>().state;
+                        if (routeState.actionStatus == RouteStatus.failure &&
+                            routeState.fieldErrors != null &&
+                            routeState.fieldErrors!.containsKey('title')) {
+                          final errors = routeState.fieldErrors!['title'];
                           if (errors is List && errors.isNotEmpty) {
                             return errors[0];
                           }
@@ -518,34 +526,31 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
                       ),
                     ),
                     const SizedBox(height: 5),
-                    SizedBox(
-                      height: 90,
-                      child: ItemTextField(
-                        hintText: 'Nhập mô tả mục tiêu...',
-                        hintTextFontSize: 14,
-                        controller: _descriptionController,
-                        textColor: 0xFF1C2520,
-                        textFontSize: 14,
-                        textFontWeight: FontWeight.w400,
-                        borderColor: '0xFFE8ECE8',
-                        borderWidth: 1,
-                        borderStyle: 'solid',
-                        maxLines: 3,
-                        validator: (value) {
-                          final fieldErrors = context
-                              .read<RouteCubit>()
-                              .state
-                              .fieldErrors;
-                          if (fieldErrors != null &&
-                              fieldErrors.containsKey('description')) {
-                            final errors = fieldErrors['description'];
-                            if (errors is List && errors.isNotEmpty) {
-                              return errors[0];
-                            }
+                    ItemTextField(
+                      hintText: 'Nhập mô tả mục tiêu...',
+                      hintTextFontSize: 14,
+                      controller: _descriptionController,
+                      textColor: Color(0xFF1C2520),
+                      textFontSize: 14,
+                      textFontWeight: FontWeight.w400,
+                      borderColor: Color(0xFFE8ECE8),
+                      borderWidth: 1,
+                      borderStyle: 'solid',
+                      maxLines: 3,
+                      validator: (value) {
+                        final routeState = context.read<RouteCubit>().state;
+                        if (routeState.actionStatus == RouteStatus.failure &&
+                            routeState.fieldErrors != null &&
+                            routeState.fieldErrors!.containsKey(
+                              'description',
+                            )) {
+                          final errors = routeState.fieldErrors!['description'];
+                          if (errors is List && errors.isNotEmpty) {
+                            return errors[0] as String;
                           }
-                          return null;
-                        },
-                      ),
+                        }
+                        return null;
+                      },
                     ),
                     const SizedBox(height: 24),
                   ],

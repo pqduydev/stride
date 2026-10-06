@@ -16,6 +16,7 @@ class ReminderScheduler {
     // 1. Luôn huỷ hết lịch cũ trước → không sót thông báo của ngày vừa bỏ chọn
     for (var day = DateTime.monday; day <= DateTime.sunday; day++) {
       await _notifications.cancel(_weeklyBaseId + day);
+      await _notifications.cancel(200 + day);
     }
     if (!settings.enabled) return;
 

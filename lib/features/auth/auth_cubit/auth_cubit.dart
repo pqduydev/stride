@@ -77,6 +77,8 @@ class AuthCubit extends Cubit<AuthState> {
         // Kiểm tra trước khi emit trong catch
         if (isClosed) return;
 
+        await minDelay;
+
         // Khi token khởi tạo hết hạn hoặc lỗi API -> Đưa về unauthenticated và dọn sạch error message
         emit(
           state.copyWith(
@@ -204,7 +206,7 @@ class AuthCubit extends Cubit<AuthState> {
     try {
       /* Gọi callback trước khi logout, Ví dụ thực hiện hủy FCM Device Token ở 
       Backend (cần assess token) trước khi xoá access token ở local */
-      _beforeLogout?.call();
+      await _beforeLogout?.call();
       await _authRepository.logout();
 
       if (isClosed) {
@@ -227,8 +229,11 @@ class AuthCubit extends Cubit<AuthState> {
       );
     } catch (e) {
       emit(
+        // Dù API lỗi, local token trong repository đã bị xóa ở khối `finally`,
+        // nên phải emit unauthenticated thay vì failure để đưa user về màn Login.
         state.copyWith(
-          status: AuthStatus.failure,
+          status: AuthStatus.unauthenticated,
+          hasSeenPermission: false,
           errorMessage: 'Đã xảy ra lỗi không xác định',
         ),
       );

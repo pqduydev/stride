@@ -8,6 +8,7 @@ import 'package:stride/features/reminder/reminder_cubit/reminder_cubit.dart';
 import 'package:stride/features/reminder/reminder_cubit/reminder_state.dart';
 import 'package:stride/features/route/route_cubit/route_cubit.dart';
 import 'package:stride/features/route/route_cubit/route_state.dart';
+import 'package:stride/features/route/widgets/route_card_skeleton.dart';
 import 'package:stride/features/route/widgets/route_card_item.dart';
 import 'package:stride/widgets/item_card_switch.dart';
 
@@ -196,7 +197,9 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                     builder: (context, routeState) {
                       if (routeState.listStatus == RouteStatus.loading ||
                           routeState.listStatus == RouteStatus.initial) {
-                        return const Center(child: CircularProgressIndicator());
+                        return const Center(
+                          child: const RouteCardSkeletonList(),
+                        );
                       }
 
                       if (routeState.listStatus == RouteStatus.failure) {

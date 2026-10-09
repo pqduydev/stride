@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
+import 'package:stride/core/utils/app_toast.dart';
 import 'package:stride/core/utils/reminder_time_calculator.dart';
 import 'package:stride/features/reminder/reminder_cubit/reminder_cubit.dart';
 import 'package:stride/features/reminder/reminder_cubit/reminder_state.dart';
@@ -51,32 +52,12 @@ class _ReminderSettingsScreenState extends State<ReminderSettingsScreen> {
             final message = state.successMessage ?? "Lưu nhắc hẹn thành công";
             final isDisabledAction = message == "Đã tắt nhắc hẹn";
 
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  message,
-                  style: TextStyle(
-                    color: isDisabledAction
-                        ? Colors.white
-                        : const Color(0xFF526C30),
-                  ),
-                ),
-                backgroundColor: isDisabledAction
-                    ? Colors.orangeAccent
-                    : const Color(0xFFEEF4E5),
-              ),
-            );
+            isDisabledAction
+                ? AppToast.showWarning(context, message)
+                : AppToast.showSuccess(context, message);
           } else if (state.status == ReminderStatus.failure &&
               state.errorMessage != null) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  state.errorMessage!,
-                  style: const TextStyle(color: Color(0xFFFFFFFF)),
-                ),
-                backgroundColor: Colors.redAccent,
-              ),
-            );
+            AppToast.showError(context, state.errorMessage!);
           }
         },
         builder: (context, state) {

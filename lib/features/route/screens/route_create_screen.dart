@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:stride/core/utils/app_toast.dart';
 import 'package:stride/core/utils/time_utils.dart';
 import 'package:stride/model/route_model.dart';
 import 'package:stride/features/route/route_cubit/route_cubit.dart';
@@ -246,12 +247,7 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
         if (state.actionStatus == RouteStatus.failure) {
           setState(() => _currentAction = FormAction.none);
 
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.errorMessage ?? 'Đã xảy ra lỗi'),
-              backgroundColor: Colors.redAccent,
-            ),
-          );
+          AppToast.showError(context, state.errorMessage ?? 'Đã xảy ra lỗi');
         } else if (state.actionStatus == RouteStatus.success) {
           String message = 'Tạo lộ trình thành công';
 
@@ -261,15 +257,9 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
             message = 'Cập nhật lộ trình thành công';
           }
 
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                message,
-                style: const TextStyle(color: Color(0xFF526C30)),
-              ),
-              backgroundColor: const Color(0xFFEEF4E5),
-            ),
-          );
+          // 1 DÒNG DUY NHẤT CHO THÀNH CÔNG
+          AppToast.showSuccess(context, message);
+
           Navigator.pop(context);
         }
       },

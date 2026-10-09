@@ -22,6 +22,7 @@ import 'package:stride/features/user/user_cubit/user_cubit.dart';
 import 'package:stride/services/notification_router.dart';
 import 'package:stride/services/notification_service.dart';
 import 'package:stride/services/push_service.dart';
+import 'package:toastification/toastification.dart';
 
 Future<void> main() async {
   // Bắt buộc khi cần gọi plugin trước runApp
@@ -144,23 +145,31 @@ class _MyAppState extends State<MyApp> {
           BlocProvider.value(value: _userCubit),
           BlocProvider.value(value: _reminderCubit),
         ],
-        child: MaterialApp.router(
-          title: 'Stride App',
-          debugShowCheckedModeBanner: false,
-          localizationsDelegates: const [
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
-          supportedLocales: const [Locale('vi', 'VN'), Locale('en', 'US')],
-          locale: const Locale('vi', 'VN'),
-          theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(
-              seedColor: const Color(0xFFF7F8FA),
-            ),
-            fontFamily: 'Inter',
+        child: ToastificationWrapper(
+          config: const ToastificationConfig(
+            // Nếu user spam 10 lần, nó cũng chỉ hiện 3 cái.
+            maxToastLimit: 3,
+
+            itemWidth: 300, // Chiều rộng tối đa của toast
           ),
-          routerConfig: _appRouter.router,
+          child: MaterialApp.router(
+            title: 'Stride App',
+            debugShowCheckedModeBanner: false,
+            localizationsDelegates: const [
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: const [Locale('vi', 'VN'), Locale('en', 'US')],
+            locale: const Locale('vi', 'VN'),
+            theme: ThemeData(
+              colorScheme: ColorScheme.fromSeed(
+                seedColor: const Color(0xFFF7F8FA),
+              ),
+              fontFamily: 'Inter',
+            ),
+            routerConfig: _appRouter.router,
+          ),
         ),
       ),
     );

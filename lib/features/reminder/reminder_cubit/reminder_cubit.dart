@@ -41,7 +41,7 @@ class ReminderCubit extends Cubit<ReminderState> {
       // Nếu tắt -> Scheduler sẽ xoá các lịch đã đặt trước đó.
       await _scheduler.apply(newSettings);
 
-      // 5. Bắn state thành công ra ngoài để hiển thị SnackBar
+      // 5. Bắn state thành công ra ngoài để hiển thị toast
       if (!isClosed) {
         emit(
           state.copyWith(

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:stride/core/utils/app_toast.dart';
 import 'package:stride/model/picked_media.dart';
 import 'package:stride/services/media_picker_exception.dart';
 import 'package:stride/services/photo_picker_service.dart';
@@ -101,19 +102,7 @@ class _AddImageScreenState extends State<AddImageScreen> {
   // Hiện thông báo
   void _showMessage(String message) {
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          message,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        backgroundColor: Colors.redAccent,
-      ),
-    );
+    AppToast.showError(context, message);
   }
 
   @override

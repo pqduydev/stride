@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:stride/core/utils/app_toast.dart';
 import 'package:stride/core/utils/instant_obscure_controller.dart';
 import 'package:stride/features/user/user_cubit/user_cubit.dart';
 import 'package:stride/features/user/user_cubit/user_state.dart';
@@ -88,23 +89,10 @@ class _ChangePasswordState extends State<ChangePassword> {
             _formKey.currentState?.validate();
 
             if (state.errorMessage != null) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.errorMessage!),
-                  backgroundColor: Colors.redAccent,
-                ),
-              );
+              AppToast.showError(context, state.errorMessage!);
             }
           } else if (state.status == UserStatus.success) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text(
-                  "Đổi mật khẩu thành công.",
-                  style: TextStyle(color: Color(0xFF526C30)),
-                ),
-                backgroundColor: Color(0xFFEEF4E5),
-              ),
-            );
+            AppToast.showSuccess(context, 'Đổi mật khẩu thành công.');
 
             context.read<UserCubit>().resetStatus();
             context.pop();

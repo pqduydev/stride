@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:stride/core/utils/app_toast.dart';
 import 'package:stride/features/auth/auth_cubit/auth_cubit.dart';
 import 'package:stride/features/user/user_cubit/user_cubit.dart';
 import 'package:stride/features/user/user_cubit/user_state.dart';
@@ -121,12 +122,8 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
     }
 
     if (!_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Vui lòng kiểm tra lại các trường bị lỗi.'),
-          backgroundColor: Colors.redAccent,
-        ),
-      );
+      AppToast.showError(context, 'Vui lòng kiểm tra lại các trường bị lỗi.');
+
       return;
     }
 
@@ -185,15 +182,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
 
     // Kiểm tra người dùng có thay đổi thông tin chưa
     if (changedFields.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Không có thông tin nào thay đổi.',
-            style: TextStyle(color: Color(0xFFFFFFFF)),
-          ),
-          backgroundColor: Colors.orangeAccent,
-        ),
-      );
+      AppToast.showWarning(context, 'Không có thông tin nào thay đổi.');
 
       return;
     }
@@ -220,26 +209,13 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
               context.read<AuthCubit>().updateUserInMemory(state.user!);
             }
 
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text(
-                  'Cập nhật thông tin thành công!',
-                  style: TextStyle(color: Color(0xFF526C30)),
-                ),
-                backgroundColor: Color(0xFFEEF4E5),
-              ),
-            );
+            AppToast.showSuccess(context, 'Cập nhật thông tin thành công!');
 
             context.pop();
           } else if (state.status == UserStatus.failure) {
             _formKey.currentState?.validate();
             if (state.errorMessage != null) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.errorMessage!),
-                  backgroundColor: Colors.redAccent,
-                ),
-              );
+              AppToast.showError(context, state.errorMessage!);
             }
           }
         },

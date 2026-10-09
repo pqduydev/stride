@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:stride/core/utils/app_toast.dart';
 import 'package:stride/features/auth/auth_cubit/auth_cubit.dart';
 import 'package:stride/features/auth/auth_cubit/auth_state.dart';
 import 'package:stride/widgets/item_custom_text_field.dart';
@@ -128,22 +129,12 @@ class _AuthViewState extends State<AuthView> {
             _formKey.currentState?.validate();
 
             if (state.errorMessage != null) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.errorMessage!),
-                  backgroundColor: Colors.redAccent,
-                ),
-              );
+              AppToast.showError(context, state.errorMessage!);
             }
           } else if (state.status == AuthStatus.success && !_isLogin) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text(
-                  "Đăng ký thành công! Vui lòng đăng nhập.",
-                  style: TextStyle(color: Color(0xFF526C30)),
-                ),
-                backgroundColor: Color(0xFFEEF4E5),
-              ),
+            AppToast.showSuccess(
+              context,
+              'Đăng ký thành công! Vui lòng đăng nhập.',
             );
 
             setState(() {

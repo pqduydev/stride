@@ -7,6 +7,7 @@ import 'package:stride/features/auth/auth_cubit/auth_cubit.dart';
 import 'package:stride/features/auth/auth_cubit/auth_state.dart';
 import 'package:stride/features/auth/screens/auth_screen.dart';
 import 'package:stride/features/common_screens/onboarding_permission_screen.dart';
+import 'package:stride/features/diary/screen/diary_screen.dart';
 import 'package:stride/features/reminder/screens/reminder_saved_screen.dart';
 import 'package:stride/features/reminder/screens/reminder_settings_screen.dart';
 import 'package:stride/model/route_model.dart';
@@ -345,6 +346,16 @@ class AppRouter {
             context: context,
             state: state,
             child: const OnboardingPermissionScreen(),
+          );
+        },
+      ),
+      GoRoute(
+        path: "/diary",
+        pageBuilder: (context, state) {
+          return buildPageWithSlideTransition(
+            context: context,
+            state: state,
+            child: const DiaryScreen(),
           );
         },
       ),

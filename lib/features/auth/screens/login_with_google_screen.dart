@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:stride/widgets/appbar_custom.dart';
 import 'package:stride/widgets/item_app_bar_title.dart';
@@ -41,8 +42,8 @@ class LoginWithGooglesScreen extends StatelessWidget {
                   color: Color(0xFFEEF4E5),
                   borderRadius: BorderRadius.circular(50),
                 ),
-                child: Image.asset(
-                  'assets/images/img_google.png',
+                child: SvgPicture.asset(
+                  'assets/icons/ic_google.svg',
                   width: 42,
                   height: 42,
                 ),

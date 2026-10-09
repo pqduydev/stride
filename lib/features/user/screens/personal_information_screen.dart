@@ -64,7 +64,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
 
     String joinedStr = '';
     if (user?.dateJoined != null) {
-      joinedStr = DateFormat("dd/MM/yyyy HH:mm").format(user!.dateJoined!);
+      joinedStr = DateFormat("dd/MM/yyyy").format(user!.dateJoined!);
     }
     _dateJoinedController = TextEditingController(text: joinedStr);
 

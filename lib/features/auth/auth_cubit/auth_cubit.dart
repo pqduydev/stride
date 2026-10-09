@@ -252,7 +252,12 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   void resetStatus() {
-    emit(state.copyWith(status: AuthStatus.initial, clearErrorMessage: true));
+    emit(
+      state.copyWith(
+        status: AuthStatus.unauthenticated,
+        clearErrorMessage: true,
+      ),
+    );
   }
 
   /** Hiện đang được gọi từ personal_information_screen 

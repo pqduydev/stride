@@ -309,7 +309,7 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                                 ),
                           ),
                           InkWell(
-                            onTap: () {},
+                            onTap: () => context.push('/appointment'),
                             child: Text(
                               "Xem lịch",
                               style: Theme.of(context).textTheme.titleLarge
@@ -452,10 +452,13 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                                   fontWeight: FontWeight.w700,
                                 ),
                           ),
-                          SvgPicture.asset(
-                            'assets/icons/ic_arrow_up_right.svg',
-                            width: 20,
-                            height: 20,
+                          InkWell(
+                            onTap: () => context.push('/diary'),
+                            child: SvgPicture.asset(
+                              'assets/icons/ic_arrow_up_right.svg',
+                              width: 20,
+                              height: 20,
+                            ),
                           ),
                         ],
                       ),

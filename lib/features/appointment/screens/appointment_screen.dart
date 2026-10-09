@@ -96,7 +96,9 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
       backgroundColor: const Color(0xFFF7F8FA),
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
-        child: AppbarCustom(title: ItemAppBarTitle(data: 'Lịch hẹn')),
+        child: AppbarCustom(
+          title: ItemAppBarTitle(data: 'Lịch hẹn', padding: 5),
+        ),
       ),
       body: CustomScrollView(
         slivers: [

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:stride/features/appointment/screens/appointment_screen.dart';
-import 'package:stride/features/common_screens/diary_screen.dart';
+import 'package:stride/features/diary/screen/diary_screen.dart';
 import 'package:stride/features/reminder/screens/reminder_settings_screen.dart';
 import 'package:stride/features/route/screens/my_route_screen.dart';
 import 'package:stride/services/notification_router.dart';

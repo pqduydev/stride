@@ -96,7 +96,11 @@ class DioClient {
             }
 
             // Xử lý khi Refresh thất bại hoặc không có Refresh Token
-            await prefs.clear(); // Xóa sạch dữ liệu cục bộ
+            // Xóa sạch dữ liệu cục bộ
+            await prefs.remove('access_token');
+            await prefs.remove('refresh_token');
+            await prefs.remove('user_data');
+            await prefs.remove('has_seen_permission');
             onUnauthenticated(); // Đẩy về màn hình chính
           }
 

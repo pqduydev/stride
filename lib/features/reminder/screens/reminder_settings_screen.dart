@@ -40,7 +40,9 @@ class _ReminderSettingsScreenState extends State<ReminderSettingsScreen> {
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
-        child: AppbarCustom(title: ItemAppBarTitle(data: 'Nhắc giờ tập')),
+        child: AppbarCustom(
+          title: ItemAppBarTitle(data: 'Nhắc giờ tập', padding: 5),
+        ),
       ),
       body: BlocConsumer<ReminderCubit, ReminderState>(
         listenWhen: (prev, curr) => prev.status != curr.status,

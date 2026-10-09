@@ -15,9 +15,8 @@ class RouteCardItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width:
-          MediaQuery.of(context).size.width -
-          40, // Lấy kích thước màn hình và trừ đi padding.
+      // Lấy kích thước màn hình và trừ đi padding + 20 để hể thị item tiếp theo.
+      width: MediaQuery.of(context).size.width - 60,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: const BorderRadius.all(Radius.circular(20)),

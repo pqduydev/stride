@@ -11,7 +11,7 @@ class RouteCardSkeletonList extends StatelessWidget {
       scrollDirection: Axis.horizontal,
       clipBehavior: Clip.none,
       physics: const NeverScrollableScrollPhysics(), // Khóa cuộn khi loading
-      itemCount: 1,
+      itemCount: 2,
       separatorBuilder: (context, index) => const SizedBox(width: 15),
       itemBuilder: (context, index) => const RouteCardSkeletonItem(),
     );
@@ -24,7 +24,7 @@ class RouteCardSkeletonItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double cardWidth = MediaQuery.of(context).size.width - 40;
+    final double cardWidth = MediaQuery.of(context).size.width - 60;
 
     return Shimmer.fromColors(
       baseColor: const Color(0xFFE2E8E3),
@@ -33,7 +33,6 @@ class RouteCardSkeletonItem extends StatelessWidget {
       child: Container(
         width: cardWidth,
         decoration: BoxDecoration(
-          // color: Colors.white,
           borderRadius: const BorderRadius.all(Radius.circular(20)),
           border: Border.all(color: const Color(0xFFE8ECE8), width: 1),
         ),

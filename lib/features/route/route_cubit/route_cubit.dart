@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:stride/model/route_model.dart';
 import 'package:stride/features/route/route_cubit/route_state.dart';
@@ -45,7 +46,7 @@ class RouteCubit extends Cubit<RouteState> {
       emit(
         state.copyWith(
           listStatus: RouteStatus.failure,
-          errorMessage: 'Không tải được buổi tập. Bạn hãy thử lại.',
+          errorMessage: 'route_cubit.error_load'.tr(),
         ),
       );
     }
@@ -84,7 +85,7 @@ class RouteCubit extends Cubit<RouteState> {
       emit(
         state.copyWith(
           actionStatus: RouteStatus.failure,
-          errorMessage: 'Không thể tạo lộ trình. Vui lòng thử lại.',
+          errorMessage: 'route_cubit.error_add'.tr(),
         ),
       );
     }
@@ -123,7 +124,7 @@ class RouteCubit extends Cubit<RouteState> {
       emit(
         state.copyWith(
           actionStatus: RouteStatus.failure,
-          errorMessage: 'Không thể cập nhật lộ trình. Vui lòng thử lại.',
+          errorMessage: 'route_cubit.error_update'.tr(),
         ),
       );
     }
@@ -161,7 +162,7 @@ class RouteCubit extends Cubit<RouteState> {
       emit(
         state.copyWith(
           actionStatus: RouteStatus.failure,
-          errorMessage: 'Không thể xóa lộ trình. Vui lòng thử lại.',
+          errorMessage: 'route_cubit.error_delete'.tr(),
         ),
       );
     }

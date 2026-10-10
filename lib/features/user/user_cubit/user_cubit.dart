@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:stride/repository/user_repository.dart';
 import 'package:stride/services/api_exception.dart';
@@ -49,7 +50,7 @@ class UserCubit extends Cubit<UserState> {
       emit(
         state.copyWith(
           status: UserStatus.failure,
-          errorMessage: 'Đã xảy ra lỗi không xác định',
+          errorMessage: 'user_cubit.unknown_error'.tr(),
         ),
       );
     }
@@ -76,7 +77,7 @@ class UserCubit extends Cubit<UserState> {
       emit(
         state.copyWith(
           status: UserStatus.failure,
-          errorMessage: 'Đã xảy ra lỗi không xác định',
+          errorMessage: 'user_cubit.unknown_error'.tr(),
         ),
       );
     }

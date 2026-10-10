@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:stride/model/attachment_model.dart';
 import 'package:stride/model/picked_media.dart';
 import 'package:stride/services/api_exception.dart';
@@ -23,7 +24,7 @@ class JournalRepository {
     } on DioException catch (e) {
       throw ApiException.fromDioException(e);
     } catch (e) {
-      throw ApiException(message: 'Đã có lỗi xảy ra, vui lòng thử lại');
+      throw ApiException(message: 'repositories.default_error'.tr());
     }
   }
 
@@ -65,7 +66,7 @@ class JournalRepository {
       throw ApiException.fromDioException(e);
     } catch (e) {
       // VD tệp tạm đã bị dọn mất → không đọc được
-      throw ApiException(message: 'Không đọc được tệp. Bạn hãy chọn lại.');
+      throw ApiException(message: 'repositories.file_read_error'.tr());
     }
   }
 

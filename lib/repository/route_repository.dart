@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:stride/model/route_model.dart';
 import 'package:stride/services/api_exception.dart';
 
@@ -22,7 +23,7 @@ class RouteRepository {
     } on DioException catch (e) {
       throw ApiException.fromDioException(e);
     } catch (e) {
-      throw ApiException(message: 'Đã có lỗi xảy ra, vui lòng thử lại');
+      throw ApiException(message: 'repositories.default_error'.tr());
     }
   }
 
@@ -43,7 +44,7 @@ class RouteRepository {
     } on DioException catch (e) {
       throw ApiException.fromDioException(e);
     } catch (e) {
-      throw ApiException(message: 'Đã có lỗi xảy ra, vui lòng thử lại');
+      throw ApiException(message: 'repositories.default_error'.tr());
     }
   }
 
@@ -64,7 +65,7 @@ class RouteRepository {
     } on DioException catch (e) {
       throw ApiException.fromDioException(e);
     } catch (e) {
-      throw ApiException(message: 'Đã có lỗi xảy ra, vui lòng thử lại');
+      throw ApiException(message: 'repositories.default_error'.tr());
     }
   }
 
@@ -74,7 +75,7 @@ class RouteRepository {
     } on DioException catch (e) {
       throw ApiException.fromDioException(e);
     } catch (e) {
-      throw ApiException(message: 'Đã có lỗi xảy ra, vui lòng thử lại');
+      throw ApiException(message: 'repositories.default_error'.tr());
     }
   }
 }

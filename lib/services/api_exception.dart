@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class ApiException implements Exception {
   final String message;
@@ -16,13 +17,13 @@ class ApiException implements Exception {
       case DioExceptionType.sendTimeout:
       case DioExceptionType.receiveTimeout:
         return ApiException(
-          message: 'Kết nối quá thời gian quy định. Vui lòng thử lại.',
+          message: 'api_exception.timeout'.tr(),
           statusCode: statusCode,
         );
 
       case DioExceptionType.connectionError:
         return ApiException(
-          message: 'Không thể kết nối đến máy chủ. Vui lòng kiểm tra lại mạng.',
+          message: 'api_exception.connection_error'.tr(),
           statusCode: statusCode,
         );
 
@@ -31,13 +32,13 @@ class ApiException implements Exception {
 
       case DioExceptionType.cancel:
         return ApiException(
-          message: 'Yêu cầu tới máy chủ đã bị hủy.',
+          message: 'api_exception.cancel'.tr(),
           statusCode: statusCode,
         );
 
       default:
         return ApiException(
-          message: 'Đã xảy ra lỗi không xác định. Vui lòng thử lại.',
+          message: 'api_exception.unknown'.tr(),
           statusCode: statusCode,
         );
     }
@@ -45,12 +46,12 @@ class ApiException implements Exception {
 
   /// Bóc tách các dạng response lỗi từ server
   static ApiException _parseBadResponse(int? statusCode, dynamic data) {
-    String message = 'Vui lòng kiểm tra lại thông tin nhập vào.';
+    String message = 'api_exception.bad_response_default'.tr();
     Map<String, dynamic>? fieldErrors;
 
     if (statusCode == 413) {
       return ApiException(
-        message: 'Tệp quá lớn. Bạn hãy chọn tệp khác.',
+        message: 'api_exception.file_too_large'.tr(),
         statusCode: statusCode,
       );
     }
@@ -69,7 +70,9 @@ class ApiException implements Exception {
       }
       // Nếu là lỗi HTTP 500 Server Error
       else if (statusCode != null && statusCode >= 500) {
-        message = 'Lỗi hệ thống máy chủ ($statusCode). Vui lòng thử lại sau.';
+        message = 'api_exception.server_error'.tr(
+          args: [statusCode.toString()],
+        );
       }
     } else if (data is String && data.isNotEmpty) {
       message = data;

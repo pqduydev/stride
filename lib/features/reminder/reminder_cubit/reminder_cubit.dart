@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:stride/features/reminder/reminder_cubit/reminder_state.dart';
 import 'package:stride/features/reminder/reminder_scheduler.dart';
@@ -46,7 +47,9 @@ class ReminderCubit extends Cubit<ReminderState> {
         emit(
           state.copyWith(
             status: ReminderStatus.saved,
-            successMessage: value ? 'Đã bật nhắc hẹn' : 'Đã tắt nhắc hẹn',
+            successMessage: value
+                ? 'reminder_cubit.enabled'.tr()
+                : 'reminder_cubit.disabled'.tr(),
           ),
         );
       }
@@ -55,7 +58,7 @@ class ReminderCubit extends Cubit<ReminderState> {
         emit(
           state.copyWith(
             status: ReminderStatus.failure,
-            errorMessage: 'Không thể thay đổi trạng thái nhắc hẹn',
+            errorMessage: 'reminder_cubit.error_change_status'.tr(),
           ),
         );
       }
@@ -91,7 +94,7 @@ class ReminderCubit extends Cubit<ReminderState> {
       emit(
         state.copyWith(
           status: ReminderStatus.failure,
-          errorMessage: 'Hãy chọn ít nhất một ngày trong tuần.',
+          errorMessage: 'reminder_cubit.error_select_day'.tr(),
         ),
       );
       return;
@@ -115,7 +118,7 @@ class ReminderCubit extends Cubit<ReminderState> {
       emit(
         state.copyWith(
           status: ReminderStatus.saved,
-          successMessage: message ?? 'Lưu nhắc hẹn thành công',
+          successMessage: message ?? 'reminder_cubit.success_save'.tr(),
         ),
       );
     } catch (e) {

@@ -1,5 +1,6 @@
 // ignore_for_file: slash_for_doc_comments
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -135,14 +136,15 @@ class AuthCubit extends Cubit<AuthState> {
         ),
       );
     } on ApiException catch (e) {
+      final credentialError = 'auth_cubit.invalid_credentials'.tr();
       emit(
         state.copyWith(
           status: AuthStatus.failure,
           errorMessage: e.message,
           fieldErrors: e.statusCode == 401
               ? {
-                  "username": ["Tên đăng nhập hoặc mật khẩu không chính xác"],
-                  "password": ["Tên đăng nhập hoặc mật khẩu không chính xác"],
+                  "username": [credentialError],
+                  "password": [credentialError],
                 }
               : null,
         ),
@@ -151,7 +153,7 @@ class AuthCubit extends Cubit<AuthState> {
       emit(
         state.copyWith(
           status: AuthStatus.failure,
-          errorMessage: 'Đã xảy ra lỗi không xác định',
+          errorMessage: 'auth_cubit.unknown_error'.tr(),
         ),
       );
     }
@@ -194,7 +196,7 @@ class AuthCubit extends Cubit<AuthState> {
       emit(
         state.copyWith(
           status: AuthStatus.failure,
-          errorMessage: 'Đã xảy ra lỗi không xác định',
+          errorMessage: 'auth_cubit.unknown_error'.tr(),
         ),
       );
     }
@@ -234,7 +236,7 @@ class AuthCubit extends Cubit<AuthState> {
         state.copyWith(
           status: AuthStatus.unauthenticated,
           hasSeenPermission: false,
-          errorMessage: 'Đã xảy ra lỗi không xác định',
+          errorMessage: 'auth_cubit.unknown_error'.tr(),
         ),
       );
     }

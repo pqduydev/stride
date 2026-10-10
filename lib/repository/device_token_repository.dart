@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:stride/services/api_exception.dart';
 
 class DeviceTokenRepository {
@@ -22,7 +23,9 @@ class DeviceTokenRepository {
     } on DioException catch (e) {
       throw ApiException.fromDioException(e);
     } catch (e) {
-      throw ApiException(message: 'Lỗi không xác định khi đăng ký Token: $e');
+      throw ApiException(
+        message: 'repositories.device_token_register_error'.tr(args: ['$e']),
+      );
     }
   }
 
@@ -35,11 +38,16 @@ class DeviceTokenRepository {
       );
     } on DioException catch (e) {
       throw ApiException(
-        message:
-            'Lỗi hủy FCM Token trên Backend: ${e.response?.data ?? e.message}',
+        message: 'repositories.device_token_unregister_error'.tr(
+          args: ['${e.response?.data ?? e.message}'],
+        ),
       );
     } catch (e) {
-      throw ApiException(message: 'Lỗi không xác định khi hủy Token: $e');
+      throw ApiException(
+        message: 'repositories.device_token_unregister_unknown'.tr(
+          args: ['$e'],
+        ),
+      );
     }
   }
 }

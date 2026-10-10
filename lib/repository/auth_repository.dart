@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stride/model/user_model.dart';
 import 'package:stride/services/api_exception.dart';
@@ -50,7 +51,7 @@ class AuthRepository {
       throw ApiException.fromDioException(e);
     } catch (e) {
       // Thống nhất ném ApiException
-      throw ApiException(message: 'Đã có lỗi xảy ra, vui lòng thử lại');
+      throw ApiException(message: 'repositories.default_error'.tr());
     }
   }
 
@@ -85,7 +86,7 @@ class AuthRepository {
     } on DioException catch (e) {
       throw ApiException.fromDioException(e);
     } catch (e) {
-      throw ApiException(message: 'Đã có lỗi xảy ra, vui lòng thử lại');
+      throw ApiException(message: 'repositories.default_error'.tr());
     }
   }
 
@@ -114,7 +115,7 @@ class AuthRepository {
     } on DioException catch (e) {
       throw ApiException.fromDioException(e);
     } catch (e) {
-      throw ApiException(message: 'Đã có lỗi xảy ra, vui lòng thử lại');
+      throw ApiException(message: 'repositories.default_error'.tr());
     }
   }
 
@@ -137,7 +138,7 @@ class AuthRepository {
     } on DioException catch (e) {
       throw ApiException.fromDioException(e);
     } catch (e) {
-      throw ApiException(message: 'Đã có lỗi xảy ra, vui lòng thử lại');
+      throw ApiException(message: 'repositories.default_error'.tr());
     } finally {
       await clearLocalData();
     }

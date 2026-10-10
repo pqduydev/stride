@@ -430,5 +430,41 @@
     "health_title": "Health Information",
     "health_desc": "Individual choices before sending to AI.\nYou can revoke permissions in Profile.",
     "btn_understood": "Understood"
+  },
+  "api_exception": {
+    "timeout": "Connection timed out. Please try again.",
+    "connection_error": "Unable to connect to the server. Please check your network.",
+    "cancel": "Request to the server was cancelled.",
+    "unknown": "An unknown error occurred. Please try again.",
+    "bad_response_default": "Please check your input information.",
+    "file_too_large": "File is too large. Please choose another file.",
+    "server_error": "Server error ({}). Please try again later."
+  },
+  "auth_cubit": {
+    "invalid_credentials": "Incorrect username or password",
+    "unknown_error": "An unknown error occurred"
+  },
+  "reminder_cubit": {
+    "enabled": "Reminders enabled",
+    "disabled": "Reminders disabled",
+    "error_change_status": "Unable to change reminder status",
+    "error_select_day": "Please select at least one day of the week.",
+    "success_save": "Reminder saved successfully"
+  },
+  "route_cubit": {
+    "error_load": "Could not load routes. Please try again.",
+    "error_add": "Could not create route. Please try again.",
+    "error_update": "Could not update route. Please try again.",
+    "error_delete": "Could not delete route. Please try again."
+  },
+  "user_cubit": {
+    "unknown_error": "An unknown error occurred"
+  },
+  "repositories": {
+    "default_error": "An error occurred, please try again",
+    "device_token_register_error": "Unknown error registering token: {}",
+    "device_token_unregister_error": "Error unregistering FCM Token on Backend: {}",
+    "device_token_unregister_unknown": "Unknown error unregistering token: {}",
+    "file_read_error": "Could not read file. Please choose again."
   }
 }

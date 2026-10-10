@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:stride/widgets/appbar_custom.dart';
@@ -26,12 +27,14 @@ class CheckScreen extends StatelessWidget {
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: AppbarCustom(
-          title: ItemAppBarTitle(data: appBarTitle ?? 'Kiểm tra'),
+          title: ItemAppBarTitle(
+            data: appBarTitle ?? 'check.default_title'.tr(),
+          ),
         ),
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.only(top: 15, left: 20, right: 20),
+          padding: const EdgeInsets.only(top: 15, left: 20, right: 20),
           child: Column(
             crossAxisAlignment: .start,
             children: [
@@ -39,10 +42,10 @@ class CheckScreen extends StatelessWidget {
                 child: Container(
                   width: 100,
                   height: 100,
-                  margin: EdgeInsets.only(top: 80, bottom: 50),
+                  margin: const EdgeInsets.only(top: 80, bottom: 50),
                   alignment: .center,
                   decoration: BoxDecoration(
-                    color: Color(0xFFEEF4E5),
+                    color: const Color(0xFFEEF4E5),
                     borderRadius: BorderRadius.circular(50),
                   ),
                   child: SvgPicture.asset(
@@ -52,23 +55,21 @@ class CheckScreen extends StatelessWidget {
                   ),
                 ),
               ),
-
               Center(
                 child: Column(
                   children: [
                     Text(
-                      title ?? 'Vui lòng kiểm tra',
-                      style: TextStyle(
+                      title ?? 'check.default_heading'.tr(),
+                      style: const TextStyle(
                         color: Color(0xFF1C2520),
                         fontSize: 24,
                         fontWeight: .w700,
                       ),
                     ),
-
                     const SizedBox(height: 10),
                     Text(
                       info ?? '',
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Color(0xFF768079),
                         fontSize: 14,
                         fontWeight: .w400,
@@ -81,15 +82,17 @@ class CheckScreen extends StatelessWidget {
           ),
         ),
       ),
-
       bottomNavigationBar: Padding(
-        padding: EdgeInsetsGeometry.only(
+        padding: const EdgeInsets.only(
           left: 20,
           right: 20,
           bottom: 80,
           top: 30,
         ),
-        child: ItemBottomButton(text: buttonTitle ?? 'Tiếp tục', onTap: onTap),
+        child: ItemBottomButton(
+          text: buttonTitle ?? 'check.btn_continue'.tr(),
+          onTap: onTap,
+        ),
       ),
     );
   }

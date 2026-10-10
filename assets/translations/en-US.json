@@ -1,0 +1,434 @@
+{
+  "auth": {
+    "login_title": "Login",
+    "register_title": "Create Account",
+    "login_welcome": "Welcome back. Let's continue the journey!",
+    "register_welcome": "Start your own journey.",
+    "register_success": "Registration successful! Please log in.",
+    "fields": {
+      "last_name": "Last Name",
+      "first_name": "First Name",
+      "username": "Username",
+      "email": "Email",
+      "password": "Password",
+      "password_confirm": "Confirm Password"
+    },
+    "validation": {
+      "empty_last_name": "Please enter last name",
+      "empty_first_name": "Please enter first name",
+      "empty_username": "Please enter username",
+      "username_invalid": "Username must be 3-20 characters, letters, numbers, and underscores only",
+      "empty_email": "Please enter email",
+      "email_invalid": "Invalid email format",
+      "empty_password": "Please enter password",
+      "password_too_short": "Password must be at least 6 characters",
+      "empty_password_confirm": "Please confirm password",
+      "password_mismatch": "Passwords do not match"
+    },
+    "actions": {
+      "forgot_password": "Forgot password?"
+    },
+    "hints": {
+      "password_hint": "Use at least 6 characters for your password."
+    },
+    "terms": {
+      "agreement_prefix": "By creating an account, you agree to",
+      "agreement_link": "Terms of Use and Privacy Policy."
+    },
+    "buttons": {
+      "login": "Login",
+      "register_email": "Create account with email"
+    },
+    "social": {
+      "divider": "OR CONTINUE WITH",
+      "phone": "Phone number",
+      "google": "Continue with Google",
+      "apple": "Continue with Apple"
+    },
+    "switches": {
+      "to_register": "Don't have an account? Sign up",
+      "to_login": "Already have an account? Login"
+    }
+  },
+  "welcome": {
+    "badge": "WITH YOU",
+    "title": "Every goal.\nOne journey.",
+    "subtitle": "Plan ahead, stay on track, and receive\nsuggestions tailored to your progress.",
+    "feature_1_title": "Learn something new",
+    "feature_1_desc": "Lessons, milestones & achievements",
+    "feature_2_title": "Active treatment tracking",
+    "feature_2_desc": "Appointments, logs & records",
+    "feature_3_title": "Maintain your momentum",
+    "feature_3_desc": "Activities & photo journal",
+    "btn_register": "Create account",
+    "btn_login": "Already have an account? Login",
+    "footer": "Your data, your journey."
+  },
+  "add_image": {
+    "title": "Add Images",
+    "subtitle": "Select photos to save to your journal.",
+    "btn_camera": "Take new photo",
+    "section_recent": "Recent photos",
+    "btn_gallery": "Your photos",
+    "description": "Capture moments along your journey. You can add gym photos, exercise shots, or transformation pictures.",
+    "btn_select": "Select photos",
+    "btn_add_count": "Add {} photos",
+    "error_max_limit": "You can only add a maximum of {} photos."
+  },
+  "check": {
+    "default_title": "Check",
+    "default_heading": "Please check",
+    "btn_continue": "Continue"
+  },
+  "navigation": {
+    "route": "Route",
+    "appointment": "Appointments",
+    "diary": "Diary",
+    "reminder": "Reminders"
+  },
+  "onboarding_permission": {
+    "title": "Personalize\nyour experience",
+    "subtitle": "Stride needs some permissions to make your journey complete.",
+    "camera_title": "Camera",
+    "camera_desc": "Take photos and store image logs of your progress.",
+    "notification_title": "Notifications",
+    "notification_desc": "Receive reminders for appointments and planned goals.",
+    "btn_allow": "Grant access",
+    "btn_skip": "Skip for now",
+    "dialog_title": "Device Settings Required",
+    "dialog_content": "Some permissions were previously disabled. Would you like to open app Settings to enable them manually?",
+    "dialog_cancel": "Later",
+    "dialog_open_settings": "Open Settings"
+  },
+  "my_route": {
+    "date_placeholder": "MONDAY, SEPTEMBER 14",
+    "title": "My Routes",
+    "error_occurred": "An error occurred",
+    "retry": "Retry",
+    "empty_routes": "You don't have any training routes yet.",
+    "today": "Today",
+    "view_schedule": "View schedule",
+    "duration_minutes": "60 minutes",
+    "body_part": "Upper body & core",
+    "reminder_notice": "Remind 15 minutes before",
+    "review_journey": "Review journey",
+    "week_label": "WEEK 4",
+    "week_title": "More consistent every week",
+    "week_desc": "3 workouts · 1 update"
+  },
+  "route_create": {
+    "title_create": "Create New Route",
+    "title_edit": "Edit Route",
+    "subtitle": "One goal, a new journey.",
+    "label_title": "Route Name",
+    "hint_title": "Enter route name...",
+    "error_empty_title": "Please enter route name",
+    "label_start_date": "Start Date",
+    "label_end_date": "End Date",
+    "duration_prefix": "Duration: ",
+    "label_description": "Goal Description",
+    "hint_description": "Enter goal description...",
+    "btn_delete": "Delete Route",
+    "btn_save_changes": "Save Changes",
+    "btn_create": "Create Route",
+    "success_create": "Route created successfully",
+    "success_update": "Route updated successfully",
+    "success_delete": "Route deleted successfully",
+    "error_default": "An error occurred",
+    "delete_dialog_title": "Delete Route",
+    "delete_dialog_prefix": "Are you sure you want to delete route ",
+    "delete_dialog_suffix": " ? This action cannot be undone.",
+    "btn_cancel": "Cancel",
+    "btn_confirm_delete": "Delete"
+  },
+  "route_details": {
+    "appbar_title": "Gym Training Route",
+    "tag_health": "HEALTH & FITNESS",
+    "title_main": "Persistent Training",
+    "subtitle": "3 months of habit building, step-by-step progress.",
+    "completed_sessions": "completed sessions",
+    "weekly_frequency": "Per week",
+    "weekly_unit": "sessions",
+    "remaining_days": "days remaining",
+    "tab_overview": "Overview",
+    "tab_schedule": "Schedule",
+    "tab_diary": "Diary",
+    "btn_view_schedule": "View schedule",
+    "milestones_title": "Your Milestones",
+    "milestone_1_title": "Build habits",
+    "milestone_1_time": "17/08 – 16/09",
+    "milestone_2_title": "Stabilize training rhythm",
+    "milestone_2_time": "17/09 – 16/10",
+    "milestone_3_title": "Maintain & evaluate",
+    "milestone_3_time": "17/10 – 17/11",
+    "in_progress": "In progress"
+  },
+  "route_card": {
+    "completed_label": "Completed",
+    "sessions_unit": "sessions",
+    "week_label": "Week 5",
+    "goal_format": "GOAL {}"
+  },
+  "appointment": {
+    "appbar_title": "Appointments",
+    "today": "Today",
+    "empty_schedules": "No workouts scheduled for this day",
+    "dropdown_1": "Persistent Training",
+    "dropdown_2": "Upper body & Core",
+    "dropdown_3": "Lower body",
+    "weekdays": {
+      "sun": "Sunday",
+      "mon": "Monday",
+      "tue": "Tuesday",
+      "wed": "Wednesday",
+      "thu": "Thursday",
+      "fri": "Friday",
+      "sat": "Saturday"
+    },
+    "reminder_at": "Remind at {}"
+  },
+  "calendar": {
+    "tab_week": "Weekly",
+    "tab_month": "Monthly",
+    "dow": {
+      "mon": "Mo",
+      "tue": "Tu",
+      "wed": "We",
+      "thu": "Th",
+      "fri": "Fr",
+      "sat": "Sa",
+      "sun": "Su"
+    },
+    "has_workout": "Has workout",
+    "rest_day": "Rest day"
+  },
+  "item_card_switch": {
+    "title": "Enable reminders",
+    "subtitle": "Don't miss your scheduled workout"
+  },
+  "weekly_record_card": {
+    "illustration": "Illustration"
+  },
+  "diary": {
+    "appbar_title": "Development Diary",
+    "subtitle": "Every step forward is memorable.",
+    "tabs": {
+      "weekly": "Weekly",
+      "monthly": "Monthly"
+    },
+    "weekly": {
+      "banner_title": "4 weeks maintaining momentum",
+      "banner_desc": "12 workouts completed",
+      "week_4_label": "Week 4",
+      "week_4_date": "Sep 07 – Sep 13",
+      "week_4_title": "More consistent every week",
+      "week_4_desc": "Completed 3 workouts. Feeling more comfortable with the new routine.",
+      "week_5_label": "Week 5",
+      "week_5_date": "Sep 14 – Sep 20",
+      "btn_add_update": "+  Add photos & update"
+    },
+    "monthly": {
+      "coming_soon": "\"Monthly\" content will be added later"
+    }
+  },
+  "reminder_saved": {
+    "title": "Reminder Saved Successfully"
+  },
+  "reminder_settings": {
+    "appbar_title": "Workout Reminder",
+    "success_save": "Reminder saved successfully",
+    "success_disable": "Reminders disabled",
+    "section_time": "WORKOUT TIME",
+    "repeat_weekly": "Repeat weekly",
+    "remind_before": "Remind before",
+    "status_disabled": "Reminders are temporarily disabled",
+    "status_no_date": "No training day selected",
+    "status_next_format": "Next: {}, {} at {}",
+    "btn_save": "Save Reminder",
+    "minutes": {
+      "exact": "On time",
+      "one_hour": "1 hour",
+      "n_minutes": "{} minutes"
+    },
+    "weekdays": {
+      "mon": "Mon",
+      "tue": "Tue",
+      "wed": "Wed",
+      "thu": "Thu",
+      "fri": "Fri",
+      "sat": "Sat",
+      "sun": "Sun",
+      "full_sun": "Sunday",
+      "full_mon": "Monday",
+      "full_tue": "Tuesday",
+      "full_wed": "Wednesday",
+      "full_thu": "Thursday",
+      "full_fri": "Friday",
+      "full_sat": "Saturday"
+    }
+  },
+  "reminder_scheduler": {
+    "title_prepare": "Get ready for your workout",
+    "body_prepare_exact": "It's time for your workout ({})!",
+    "body_prepare_before": "Workout starts at {}, in {} minutes.",
+    "title_time": "It's time to work out!",
+    "body_time": "Let's start today's workout!"
+  },
+  "item_radio_route_group": {
+    "section_title": "Goal Group",
+    "scroll_hint": "Scroll",
+    "goals": {
+      "weight_loss": "Weight loss",
+      "muscle_gain": "Muscle gain",
+      "endurance": "Endurance",
+      "flexibility": "Flexibility",
+      "general": "General"
+    }
+  },
+  "time_utils": {
+    "zero_days": "0 days",
+    "one_day": "1 day",
+    "days": "{} days",
+    "one_week": "1 week",
+    "weeks": "{} weeks",
+    "weeks_days": "{} weeks {} days",
+    "one_month": "1 month",
+    "months": "{} months",
+    "months_weeks": "{} months {} weeks",
+    "one_year": "1 year",
+    "years": "{} years",
+    "years_months": "{} years {} months"
+  },
+  "change_password": {
+    "appbar_title": "Change Password",
+    "success": "Password changed successfully.",
+    "error_min_length": "Password must be at least 6 characters",
+    "old_password": {
+      "label": "Old Password",
+      "error_empty": "Please enter your old password"
+    },
+    "new_password": {
+      "label": "New Password",
+      "error_empty": "Please enter your new password",
+      "error_same_old": "New password must be different from old password"
+    },
+    "confirm_password": {
+      "label": "Confirm New Password",
+      "error_empty": "Please confirm your new password",
+      "error_mismatch": "New passwords do not match"
+    },
+    "btn_submit": "Change Password"
+  },
+  "personal_info": {
+    "appbar_title": "Personal Information",
+    "subtitle": "Information helps with reminders and recommendations.",
+    "error_check_fields": "Please check the fields for errors.",
+    "warning_no_changes": "No information changed.",
+    "success_update": "Information updated successfully!",
+    "username": "Username",
+    "date_joined": "Date Joined",
+    "error_must_be_number": "Must be a number",
+    "last_name": {
+      "label": "Last Name",
+      "error_empty": "Last name cannot be empty"
+    },
+    "first_name": {
+      "label": "First Name",
+      "error_empty": "First name cannot be empty"
+    },
+    "email": {
+      "label": "Email",
+      "error_empty": "Email cannot be empty",
+      "error_format": "Invalid email format"
+    },
+    "phone": {
+      "label": "Phone Number (+84)",
+      "error_empty": "Phone number cannot be empty",
+      "error_format": "Invalid phone number"
+    },
+    "dob": "Date of Birth",
+    "height": {
+      "label": "Height (cm)",
+      "error_empty": "Height cannot be empty"
+    },
+    "weight": {
+      "label": "Weight (kg)",
+      "error_empty": "Weight cannot be empty"
+    },
+    "bio": "Bio",
+    "btn_save": "Save Changes"
+  },
+  "profile": {
+    "appbar_title": "Your Profile",
+    "personal_info_title": "Personal Information",
+    "personal_info_subtitle": "Name, contact, body metrics, ...",
+    "change_password": "Change Password",
+    "logout": "Log Out"
+  },
+  "email_verification": {
+    "appbar_title": "Your Data",
+    "subtitle": "Just one more step to secure your account.",
+    "title": "Check your inbox",
+    "desc": "Verification link has been sent to\nminhan@example.com.",
+    "info_title": "Continue after verification",
+    "info_desc": "Open your email and tap the link.\nThen return to Stride to continue.",
+    "btn_verify": "I have verified my email",
+    "resend": "Resend email"
+  },
+  "forget_password": {
+    "appbar_title": "Forgot Password",
+    "subtitle": "Secure connection to your account.",
+    "email_label": "Email",
+    "error_empty": "Please enter your email",
+    "error_format": "Invalid email format",
+    "note": "You will receive password reset instructions\nif this email is registered.",
+    "btn_submit": "Send Instructions",
+    "back_to_login": "Back to login",
+    "check_email_title": "Check Email",
+    "check_email_info": "If the account exists, password reset instructions\nwill be sent to your email.",
+    "btn_back_login": "Back to Login"
+  },
+  "login_apple": {
+    "appbar_title": "Sign in with Apple",
+    "subtitle": "Secure connection to your account.",
+    "title": "Continue with Apple",
+    "desc": "You will confirm your login on\nApple's security screen.",
+    "info_title": "Basic Information",
+    "info_desc": "Stride uses your name and email to create a profile.\nYou can edit your profile after signing in.",
+    "btn_continue": "Continue",
+    "other_method": "Use another login method"
+  },
+  "login_google": {
+    "appbar_title": "Sign in with Google",
+    "subtitle": "Secure connection to your account.",
+    "title": "Continue with Google",
+    "desc": "You will confirm your login on\nGoogle's security screen.",
+    "info_title": "Basic Information",
+    "info_desc": "Stride uses your name and email to create a profile.\nYou can edit your profile after signing in.",
+    "btn_continue": "Continue",
+    "other_method": "Use another login method"
+  },
+  "login_phone": {
+    "appbar_title": "Phone Number",
+    "subtitle": "Register or log in using a verification code.",
+    "title": "Enter Phone Number",
+    "desc": "We will send a verification code via SMS.",
+    "phone_label": "Vietnam (+84)",
+    "error_empty": "Please enter your phone number",
+    "error_format": "Invalid phone number (exclude leading 0)",
+    "phone_note": "Do not enter the leading 0 after +84.",
+    "btn_submit": "Send Verification Code",
+    "other_method": "Use email or another account"
+  },
+  "privacy_info": {
+    "appbar_title": "Your Data",
+    "subtitle": "You control how Stride uses your information.",
+    "sync_title": "Account & Sync",
+    "sync_desc": "Save profile, routes, activities, and diary\nto continue your journey across devices.",
+    "personalize_title": "Personalized Preferences",
+    "personalize_desc": "Only use data you permit.\nTurning off AI keeps core features intact.",
+    "health_title": "Health Information",
+    "health_desc": "Individual choices before sending to AI.\nYou can revoke permissions in Profile.",
+    "btn_understood": "Understood"
+  }
+}

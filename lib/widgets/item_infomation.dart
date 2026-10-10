@@ -10,7 +10,7 @@ class ItemInfomation extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      height: 98,
+      height: 107,
       padding: EdgeInsets.all(15),
       margin: EdgeInsets.only(top: 40),
       decoration: BoxDecoration(

@@ -52,11 +52,11 @@ class RouteCardSkeletonItem extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: .start,
                 children: [
                   // Hàng 1: "Đã hoàn thành" — "... / ... buổi"
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: .spaceBetween,
                     children: [
                       Container(
                         width: 95,
@@ -91,7 +91,7 @@ class RouteCardSkeletonItem extends StatelessWidget {
 
                   // Hàng 2: "Tuần ..." — "...%"
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: .spaceBetween,
                     children: [
                       Container(
                         width: 50,

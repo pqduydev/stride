@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 class ItemRadioRouteGroup extends StatelessWidget {
@@ -10,12 +11,13 @@ class ItemRadioRouteGroup extends StatelessWidget {
     required this.onGoalChanged,
   });
 
-  static const Map<String, String> goalOptions = {
-    "Giảm cân": "weight_loss",
-    "Tăng cơ": "muscle_gain",
-    "Tăng sức bền": "endurance",
-    "Tăng linh hoạt": "flexibility",
-    "Tổng quát": "general",
+  // Ánh xạ value với key dùng cho đa ngôn ngữ
+  static const Map<String, String> goalKeys = {
+    "weight_loss": "item_radio_route_group.goals.weight_loss",
+    "muscle_gain": "item_radio_route_group.goals.muscle_gain",
+    "endurance": "item_radio_route_group.goals.endurance",
+    "flexibility": "item_radio_route_group.goals.flexibility",
+    "general": "item_radio_route_group.goals.general",
   };
 
   @override
@@ -27,26 +29,26 @@ class ItemRadioRouteGroup extends StatelessWidget {
         Row(
           mainAxisAlignment: .spaceBetween,
           children: [
-            const Text(
-              "Nhóm mục tiêu",
-              style: TextStyle(
+            Text(
+              "item_radio_route_group.section_title".tr(),
+              style: const TextStyle(
                 color: Color(0xFF768079),
                 fontSize: 13,
-                fontWeight: FontWeight.w500,
+                fontWeight: .w500,
               ),
             ),
             Row(
-              children: const [
+              children: [
                 Text(
-                  "Cuộn ngang",
-                  style: TextStyle(
+                  "item_radio_route_group.scroll_hint".tr(),
+                  style: const TextStyle(
                     color: Color(0xFFB0B8B3),
                     fontSize: 11,
-                    fontWeight: FontWeight.w400,
+                    fontWeight: .w400,
                   ),
                 ),
-                SizedBox(width: 4),
-                Icon(
+                const SizedBox(width: 4),
+                const Icon(
                   Icons.arrow_forward_ios_rounded,
                   size: 10,
                   color: Color(0xFFB0B8B3),
@@ -62,9 +64,9 @@ class ItemRadioRouteGroup extends StatelessWidget {
           scrollDirection: Axis.horizontal,
           physics: const BouncingScrollPhysics(),
           child: Row(
-            children: goalOptions.entries.map((entry) {
-              final String label = entry.key;
-              final String value = entry.value;
+            children: goalKeys.entries.map((entry) {
+              final String value = entry.key;
+              final String translationKey = entry.value;
               final bool isSelected = selectedGoalKey == value;
 
               return Padding(
@@ -88,11 +90,11 @@ class ItemRadioRouteGroup extends StatelessWidget {
                     ),
                     alignment: .center,
                     child: Text(
-                      label,
+                      translationKey.tr(),
                       style: TextStyle(
                         color: Color(isSelected ? 0xFFFFFFFF : 0xFF768079),
                         fontSize: 13,
-                        fontWeight: FontWeight.w500,
+                        fontWeight: .w500,
                       ),
                     ),
                   ),

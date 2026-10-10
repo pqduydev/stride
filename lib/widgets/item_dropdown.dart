@@ -45,7 +45,7 @@ class ItemDropdown extends StatelessWidget {
                 style: const TextStyle(
                   color: Color(0xFF1C2520),
                   fontSize: 15,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: .w600,
                 ),
                 onChanged: (value) {
                   if (value != null) onItemChanged(value);

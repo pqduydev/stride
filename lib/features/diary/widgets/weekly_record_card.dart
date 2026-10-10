@@ -1,4 +1,4 @@
-// Thêm widget này vào file của bạn
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 class WeeklyRecordCard extends StatelessWidget {
@@ -19,7 +19,7 @@ class WeeklyRecordCard extends StatelessWidget {
       height: 228,
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: Color(0xFFFFFFFF),
+        color: const Color(0xFFFFFFFF),
         borderRadius: BorderRadius.circular(15),
         border: Border.all(color: const Color(0xFFE8ECE8), width: 1),
       ),
@@ -41,13 +41,12 @@ class WeeklyRecordCard extends StatelessWidget {
                     return Container(
                       height: 140,
                       color: Colors.grey[300],
-                      alignment: Alignment.center,
+                      alignment: .center,
                       child: const Icon(Icons.image, color: Colors.grey),
                     );
                   },
                 ),
               ),
-
               Positioned(
                 bottom: 12,
                 left: 12,
@@ -60,24 +59,25 @@ class WeeklyRecordCard extends StatelessWidget {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(6),
                   ),
-                  child: const Text(
-                    'Ảnh minh họa',
-                    style: TextStyle(
+                  child: Text(
+                    'weekly_record_card.illustration'.tr(),
+                    style: const TextStyle(
                       color: Color(0xFF768079),
                       fontSize: 11,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: .w600,
                     ),
                   ),
                 ),
               ),
             ],
           ),
-
           Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: .start,
             children: [
               Text(
                 title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
                   color: Color(0xFF1C2520),
                   fontSize: 17,
@@ -87,6 +87,8 @@ class WeeklyRecordCard extends StatelessWidget {
               const SizedBox(height: 5),
               Text(
                 description,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
                   color: Color(0xFF768079),
                   fontSize: 13,

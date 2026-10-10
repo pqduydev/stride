@@ -1,6 +1,6 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:intl/intl.dart';
 import 'package:stride/model/appointment_model.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:stride/widgets/appbar_custom.dart';
@@ -16,71 +16,81 @@ class AppointmentScreen extends StatefulWidget {
 }
 
 class _AppointmentScreenState extends State<AppointmentScreen> {
-  final List<String> listDropDown = const [
-    'Tập luyện bền bỉ',
-    'Thân trên & Core',
-    'Thân dưới',
-  ];
-
-  String _selectedDropdownItem = 'Tập luyện bền bỉ';
-
+  late String _selectedDropdownItem;
   DateTime _selectedDate = DateTime.now();
 
-  // Danh sách lịch tập
+  // Danh sách lịch tập mẫu
   final List<ScheduleModel> _allSchedules = [
     ScheduleModel(
       id: '1',
       title: 'Thân trên & core',
       time: '18:00 – 19:00',
-      reminderTime: 'Nhắc lúc 17:45',
+      reminderTime: '17:45',
       date: DateTime(2026, 9, 18),
     ),
     ScheduleModel(
       id: '2',
       title: 'Thân dưới & Cardio',
       time: '20:00 – 21:00',
-      reminderTime: 'Nhắc lúc 19:45',
+      reminderTime: '19:45',
       date: DateTime(2026, 9, 19),
     ),
     ScheduleModel(
       id: '3',
       title: 'Thân trên & core',
       time: '18:00 – 19:00',
-      reminderTime: 'Nhắc lúc 17:45',
+      reminderTime: '17:45',
       date: DateTime(2026, 9, 19),
     ),
     ScheduleModel(
       id: '4',
       title: 'Thân dưới & Cardio',
       time: '20:00 – 21:00',
-      reminderTime: 'Nhắc lúc 19:45',
+      reminderTime: '19:45',
       date: DateTime(2026, 9, 19),
     ),
     ScheduleModel(
       id: '5',
       title: 'Thân trên & core',
       time: '18:00 – 19:00',
-      reminderTime: 'Nhắc lúc 17:45',
+      reminderTime: '17:45',
       date: DateTime(2026, 9, 19),
     ),
     ScheduleModel(
       id: '6',
       title: 'Thân trên & core',
       time: '18:00 – 19:00',
-      reminderTime: 'Nhắc lúc 17:45',
+      reminderTime: '17:45',
       date: DateTime(2026, 9, 19),
     ),
     ScheduleModel(
       id: '7',
       title: 'Chạy bộ bền bỉ',
       time: '06:00 – 07:00',
-      reminderTime: 'Nhắc lúc 05:45',
+      reminderTime: '05:45',
       date: DateTime(2026, 9, 20),
     ),
   ];
 
   @override
+  void initState() {
+    super.initState();
+    _selectedDropdownItem = 'appointment.dropdown_1'.tr();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    // Khởi tạo danh sách dropdown động theo ngôn ngữ hiện tại
+    final listDropDown = [
+      'appointment.dropdown_1'.tr(),
+      'appointment.dropdown_2'.tr(),
+      'appointment.dropdown_3'.tr(),
+    ];
+
+    if (!listDropDown.contains(_selectedDropdownItem)) {
+      _selectedDropdownItem = listDropDown.first;
+    }
+
     // Lấy danh sách các ngày có lịch tập
     final workoutDays = _allSchedules.map((e) => e.date).toList();
 
@@ -97,7 +107,10 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: AppbarCustom(
-          title: ItemAppBarTitle(data: 'Lịch hẹn', padding: 5),
+          title: ItemAppBarTitle(
+            data: 'appointment.appbar_title'.tr(),
+            padding: 5,
+          ),
         ),
       ),
       body: CustomScrollView(
@@ -116,9 +129,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                     listDropdown: listDropDown,
                     icon: 'assets/icons/ic_dumbbell.svg',
                   ),
-
                   const SizedBox(height: 16),
-
                   CustomScheduleCalendar(
                     selectedDay: _selectedDate,
                     workoutDays: workoutDays,
@@ -128,14 +139,12 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                       });
                     },
                   ),
-
                   const SizedBox(height: 20),
                   const Divider(height: 1, color: Color(0xFFE8ECE8)),
                 ],
               ),
             ),
           ),
-
           SliverPadding(
             padding: const EdgeInsets.only(top: 15, left: 20, right: 20),
             sliver: SliverPersistentHeader(
@@ -144,19 +153,18 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                 minHeight: 50,
                 maxHeight: 50,
                 child: Container(
-                  color: Color(0xFFF7F8FA),
+                  color: const Color(0xFFF7F8FA),
                   child: Row(
                     mainAxisAlignment: .spaceBetween,
                     children: [
                       Text(
-                        _formatVietnameseHeaderDate(_selectedDate),
+                        _formatLocalizedHeaderDate(_selectedDate),
                         style: const TextStyle(
                           color: Color(0xFF1C2520),
                           fontSize: 18,
-                          fontWeight: FontWeight.w700,
+                          fontWeight: .w700,
                         ),
                       ),
-
                       if (isToday)
                         Container(
                           width: 79,
@@ -166,12 +174,12 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                             color: const Color(0xFFEEF4E5),
                             borderRadius: BorderRadius.circular(7),
                           ),
-                          child: const Text(
-                            'Hôm nay',
-                            style: TextStyle(
+                          child: Text(
+                            'appointment.today'.tr(),
+                            style: const TextStyle(
                               color: Color(0xFF526C30),
                               fontSize: 11,
-                              fontWeight: FontWeight.w600,
+                              fontWeight: .w600,
                             ),
                           ),
                         ),
@@ -181,7 +189,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
               ),
             ),
           ),
-
           SliverPadding(
             padding: const EdgeInsets.only(
               top: 5,
@@ -191,12 +198,12 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
             ),
             sliver: SliverToBoxAdapter(
               child: schedulesOfSelectedDay.isEmpty
-                  ? const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 30),
+                  ? Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 30),
                       child: Center(
                         child: Text(
-                          'Không có lịch tập vào ngày này',
-                          style: TextStyle(
+                          'appointment.empty_schedules'.tr(),
+                          style: const TextStyle(
                             color: Color(0xFF768079),
                             fontSize: 14,
                           ),
@@ -221,25 +228,23 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     );
   }
 
-  // Hàm phụ trợ định dạng ngày thành chữ
-  String _formatVietnameseHeaderDate(DateTime date) {
-    // 0 -> 6
-    final weekdayNames = [
-      'Chủ Nhật',
-      'Thứ Hai',
-      'Thứ Ba',
-      'Thứ Tư',
-      'Thứ Năm',
-      'Thứ Sáu',
-      'Thứ Bảy',
+  // Hàm định dạng ngày header tương thích đa ngôn ngữ
+  String _formatLocalizedHeaderDate(DateTime date) {
+    final weekdayKeys = [
+      'appointment.weekdays.sun',
+      'appointment.weekdays.mon',
+      'appointment.weekdays.tue',
+      'appointment.weekdays.wed',
+      'appointment.weekdays.thu',
+      'appointment.weekdays.fri',
+      'appointment.weekdays.sat',
     ];
-    // date.weekday: 1 -> 7
-    final weekday = weekdayNames[date.weekday % 7];
+    final weekdayKey = weekdayKeys[date.weekday % 7];
+    final weekday = weekdayKey.tr();
     final dayMonth = DateFormat('dd/MM').format(date);
     return '$weekday, $dayMonth';
   }
 
-  // Hàm tạo thẻ tập lịch
   Widget _buildScheduleCard(ScheduleModel item) {
     return Container(
       padding: const EdgeInsets.all(15),
@@ -271,7 +276,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                         style: const TextStyle(
                           color: Color(0xFF1C2520),
                           fontSize: 16,
-                          fontWeight: FontWeight.w600,
+                          fontWeight: .w600,
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -280,7 +285,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                         style: const TextStyle(
                           color: Color(0xFF768079),
                           fontSize: 14,
-                          fontWeight: FontWeight.w400,
+                          fontWeight: .w400,
                         ),
                       ),
                     ],
@@ -297,11 +302,11 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                   ),
                   const SizedBox(width: 10),
                   Text(
-                    item.reminderTime,
+                    tr('appointment.reminder_at', args: [item.reminderTime]),
                     style: const TextStyle(
                       color: Color(0xFF768079),
                       fontSize: 13,
-                      fontWeight: FontWeight.w400,
+                      fontWeight: .w400,
                     ),
                   ),
                 ],

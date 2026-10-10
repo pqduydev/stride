@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -12,27 +13,16 @@ import 'package:stride/widgets/item_app_bar_title.dart';
 import 'package:stride/widgets/item_bottom_button.dart';
 import 'package:stride/widgets/item_social_button.dart';
 
-class AuthScreen extends StatelessWidget {
+class AuthScreen extends StatefulWidget {
   final bool isLogin;
 
   const AuthScreen({super.key, required this.isLogin});
 
   @override
-  Widget build(BuildContext context) {
-    return AuthView(isLogin: isLogin);
-  }
+  State<AuthScreen> createState() => _AuthScreenState();
 }
 
-class AuthView extends StatefulWidget {
-  final bool isLogin;
-
-  const AuthView({super.key, required this.isLogin});
-
-  @override
-  State<AuthView> createState() => _AuthViewState();
-}
-
-class _AuthViewState extends State<AuthView> {
+class _AuthScreenState extends State<AuthScreen> {
   final _formKey = GlobalKey<FormState>();
   late bool _isLogin;
 
@@ -63,7 +53,6 @@ class _AuthViewState extends State<AuthView> {
     for (var controller in controllers) {
       controller.addListener(() {
         final state = context.read<AuthCubit>().state;
-        // Nếu có lỗi server (fieldErrors) hoặc errorMessage, lập tức xóa khi gõ
         if (state.status == AuthStatus.failure ||
             (state.fieldErrors?.isNotEmpty ?? false)) {
           context.read<AuthCubit>().resetErrors();
@@ -86,7 +75,6 @@ class _AuthViewState extends State<AuthView> {
   void _submit() {
     final cubit = context.read<AuthCubit>();
 
-    // Xóa sạch lỗi server cũ trước khi kiểm tra Form
     if (cubit.state.status == AuthStatus.failure ||
         cubit.state.fieldErrors != null) {
       cubit.resetErrors();
@@ -118,7 +106,9 @@ class _AuthViewState extends State<AuthView> {
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: AppbarCustom(
           title: ItemAppBarTitle(
-            data: _isLogin ? "Đăng nhập" : "Tạo tài khoản",
+            data: _isLogin
+                ? 'auth.login_title'.tr()
+                : 'auth.register_title'.tr(),
           ),
         ),
       ),
@@ -132,15 +122,10 @@ class _AuthViewState extends State<AuthView> {
               AppToast.showError(context, state.errorMessage!);
             }
           } else if (state.status == AuthStatus.success && !_isLogin) {
-            AppToast.showSuccess(
-              context,
-              'Đăng ký thành công! Vui lòng đăng nhập.',
-            );
+            AppToast.showSuccess(context, 'auth.register_success'.tr());
 
             setState(() {
               _isLogin = true;
-
-              // Clear các field
               _firstNameController.clear();
               _lastNameController.clear();
               _usernameController.clear();
@@ -148,11 +133,9 @@ class _AuthViewState extends State<AuthView> {
               _passwordController.clear();
               _passwordConfirmController.clear();
 
-              // Đặt lại trạng thái icon
               _obscurePassword = true;
               _obscureConfirmPassword = true;
 
-              // Cập nhật trạng thái cho controller
               _passwordController.isObscured = true;
               _passwordConfirmController.isObscured = true;
             });
@@ -165,7 +148,7 @@ class _AuthViewState extends State<AuthView> {
             final isLoading = state.status == AuthStatus.loading;
 
             return AbsorbPointer(
-              absorbing: isLoading, // Khóa toàn bộ tương tác chuột/bàn phím nếu đang loading
+              absorbing: isLoading,
               child: Form(
                 key: _formKey,
                 child: SingleChildScrollView(
@@ -175,12 +158,12 @@ class _AuthViewState extends State<AuthView> {
                     children: [
                       Text(
                         _isLogin
-                            ? "Chào mừng bạn trở lại. Tiếp tục hành trình nhé!"
-                            : "Bắt đầu hành trình của riêng bạn.",
+                            ? 'auth.login_welcome'.tr()
+                            : 'auth.register_welcome'.tr(),
                         style: const TextStyle(
                           color: Color(0xFF768079),
                           fontSize: 14,
-                          fontWeight: FontWeight.w400,
+                          fontWeight: .w400,
                         ),
                       ),
                       const SizedBox(height: 30),
@@ -189,11 +172,12 @@ class _AuthViewState extends State<AuthView> {
                           children: [
                             Expanded(
                               child: ItemCustomTextField(
-                                label: 'Họ',
+                                label: 'auth.fields.last_name'.tr(),
                                 controller: _lastNameController,
                                 validator: (value) {
                                   if (value == null || value.trim().isEmpty) {
-                                    return 'Vui lòng nhập họ';
+                                    return 'auth.validation.empty_last_name'
+                                        .tr();
                                   }
                                   final fieldErrors = context
                                       .read<AuthCubit>()
@@ -213,11 +197,12 @@ class _AuthViewState extends State<AuthView> {
                             const SizedBox(width: 10),
                             Expanded(
                               child: ItemCustomTextField(
-                                label: 'Tên',
+                                label: 'auth.fields.first_name'.tr(),
                                 controller: _firstNameController,
                                 validator: (value) {
                                   if (value == null || value.trim().isEmpty) {
-                                    return 'Vui lòng nhập tên';
+                                    return 'auth.validation.empty_first_name'
+                                        .tr();
                                   }
                                   final fieldErrors = context
                                       .read<AuthCubit>()
@@ -239,7 +224,7 @@ class _AuthViewState extends State<AuthView> {
                         const SizedBox(height: 3),
                       ],
                       ItemCustomTextField(
-                        label: 'Tên đăng nhập',
+                        label: 'auth.fields.username'.tr(),
                         controller: _usernameController,
                         suffixIcon: SvgPicture.asset(
                           "assets/icons/ic_user.svg",
@@ -248,11 +233,11 @@ class _AuthViewState extends State<AuthView> {
                         ),
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
-                            return 'Vui lòng nhập tên đăng nhập';
+                            return 'auth.validation.empty_username'.tr();
                           }
                           final usernameRegex = RegExp(r'^[a-zA-Z0-9_]{3,20}$');
                           if (!usernameRegex.hasMatch(value.trim())) {
-                            return 'Username từ 3-20 ký tự, chỉ gồm chữ, số và dấu _';
+                            return 'auth.validation.username_invalid'.tr();
                           }
                           final fieldErrors = context
                               .read<AuthCubit>()
@@ -271,7 +256,7 @@ class _AuthViewState extends State<AuthView> {
                       const SizedBox(height: 3),
                       if (!_isLogin) ...[
                         ItemCustomTextField(
-                          label: 'Email',
+                          label: 'auth.fields.email'.tr(),
                           controller: _mailController,
                           suffixIcon: SvgPicture.asset(
                             "assets/icons/ic_mail.svg",
@@ -281,13 +266,13 @@ class _AuthViewState extends State<AuthView> {
                           keyboardType: TextInputType.emailAddress,
                           validator: (value) {
                             if (value == null || value.trim().isEmpty) {
-                              return 'Vui lòng nhập email';
+                              return 'auth.validation.empty_email'.tr();
                             }
                             final emailRegex = RegExp(
                               r'^[a-z0-9_\-\.]+@([a-z0-9\-]+\.)+[a-z]{2,4}$',
                             );
                             if (!emailRegex.hasMatch(value.trim())) {
-                              return 'Email không đúng định dạng';
+                              return 'auth.validation.email_invalid'.tr();
                             }
                             final fieldErrors = context
                                 .read<AuthCubit>()
@@ -306,7 +291,7 @@ class _AuthViewState extends State<AuthView> {
                         const SizedBox(height: 3),
                       ],
                       ItemCustomTextField(
-                        label: 'Mật khẩu',
+                        label: 'auth.fields.password'.tr(),
                         controller: _passwordController,
                         suffixIcon: GestureDetector(
                           onTap: () {
@@ -329,10 +314,10 @@ class _AuthViewState extends State<AuthView> {
                         enableSuggestions: false,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Vui lòng nhập mật khẩu';
+                            return 'auth.validation.empty_password'.tr();
                           }
                           if (value.length < 6) {
-                            return 'Mật khẩu phải có ít nhất 6 ký tự';
+                            return 'auth.validation.password_too_short'.tr();
                           }
                           final fieldErrors = context
                               .read<AuthCubit>()
@@ -351,7 +336,7 @@ class _AuthViewState extends State<AuthView> {
                       const SizedBox(height: 3),
                       if (!_isLogin) ...[
                         ItemCustomTextField(
-                          label: 'Xác nhận mật khẩu',
+                          label: 'auth.fields.password_confirm'.tr(),
                           controller: _passwordConfirmController,
                           suffixIcon: GestureDetector(
                             onTap: () {
@@ -376,10 +361,11 @@ class _AuthViewState extends State<AuthView> {
                           enableSuggestions: false,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Vui lòng xác nhận mật khẩu';
+                              return 'auth.validation.empty_password_confirm'
+                                  .tr();
                             }
                             if (value != _passwordController.text) {
-                              return 'Mật khẩu xác nhận không khớp';
+                              return 'auth.validation.password_mismatch'.tr();
                             }
                             final fieldErrors = context
                                 .read<AuthCubit>()
@@ -407,11 +393,11 @@ class _AuthViewState extends State<AuthView> {
                                 onTap: () =>
                                     context.push('/login/forget_password'),
                                 child: Text(
-                                  "Quên mật khẩu?",
-                                  style: TextStyle(
+                                  'auth.actions.forgot_password'.tr(),
+                                  style: const TextStyle(
                                     color: Color(0xFF526C30),
                                     fontSize: 13,
-                                    fontWeight: FontWeight.w600,
+                                    fontWeight: .w600,
                                   ),
                                 ),
                               ),
@@ -423,32 +409,32 @@ class _AuthViewState extends State<AuthView> {
                           crossAxisAlignment: .start,
                           children: [
                             const SizedBox(height: 15),
-                            const Text(
-                              "Dùng ít nhất 6 ký tự cho mật khẩu.",
-                              style: TextStyle(
+                            Text(
+                              'auth.hints.password_hint'.tr(),
+                              style: const TextStyle(
                                 color: Color(0xFF768079),
                                 fontSize: 12,
-                                fontWeight: FontWeight.w400,
+                                fontWeight: .w400,
                               ),
                             ),
                             const SizedBox(height: 25),
-                            const Text(
-                              "Khi tạo tài khoản, bạn đồng ý với",
-                              style: TextStyle(
+                            Text(
+                              'auth.terms.agreement_prefix'.tr(),
+                              style: const TextStyle(
                                 color: Color(0xFF768079),
                                 fontSize: 12,
-                                fontWeight: FontWeight.w400,
+                                fontWeight: .w400,
                               ),
                             ),
                             const SizedBox(height: 8),
                             InkWell(
                               onTap: () => context.push('/register/privacy'),
-                              child: const Text(
-                                "Điều khoản sử dụng và Quyền riêng tư.",
-                                style: TextStyle(
+                              child: Text(
+                                'auth.terms.agreement_link'.tr(),
+                                style: const TextStyle(
                                   color: Color(0xFF526C30),
                                   fontSize: 12,
-                                  fontWeight: FontWeight.w600,
+                                  fontWeight: .w600,
                                 ),
                               ),
                             ),
@@ -465,8 +451,8 @@ class _AuthViewState extends State<AuthView> {
                       else
                         ItemBottomButton(
                           text: _isLogin
-                              ? "Đăng nhập"
-                              : "Tạo tài khoản bằng email",
+                              ? 'auth.buttons.login'.tr()
+                              : 'auth.buttons.register_email'.tr(),
                           onTap: _submit,
                         ),
 
@@ -475,18 +461,18 @@ class _AuthViewState extends State<AuthView> {
                           crossAxisAlignment: .center,
                           children: [
                             const SizedBox(height: 30),
-                            const Text(
-                              "HOẶC TIẾP TỤC BẰNG",
-                              style: TextStyle(
+                            Text(
+                              'auth.social.divider'.tr(),
+                              style: const TextStyle(
                                 color: Color(0xFF768079),
                                 fontSize: 13.5,
-                                fontWeight: FontWeight.w600,
+                                fontWeight: .w600,
                               ),
                             ),
                             const SizedBox(height: 30),
                             ItemSocialButton(
-                              text: 'Số điện thoại',
-                              fontWeight: FontWeight.w700,
+                              text: 'auth.social.phone'.tr(),
+                              fontWeight: .w700,
                               backgroundColor: const Color(0xFFFFFFFF),
                               textColor: const Color(0xFF526C30),
                               icon: SvgPicture.asset(
@@ -503,7 +489,7 @@ class _AuthViewState extends State<AuthView> {
                         ),
                       const SizedBox(height: 15),
                       ItemSocialButton(
-                        text: 'Tiếp tục với Google',
+                        text: 'auth.social.google'.tr(),
                         backgroundColor: const Color(0xFFFFFFFF),
                         textColor: const Color(0xFF1F1F1F),
                         icon: SvgPicture.asset(
@@ -517,7 +503,7 @@ class _AuthViewState extends State<AuthView> {
                       ),
                       const SizedBox(height: 15),
                       ItemSocialButton(
-                        text: 'Tiếp tục với Apple',
+                        text: 'auth.social.apple'.tr(),
                         backgroundColor: const Color(0xFF000000),
                         textColor: const Color(0xFFFFFFFF),
                         icon: SvgPicture.asset(
@@ -545,11 +531,9 @@ class _AuthViewState extends State<AuthView> {
                               _firstNameController.clear();
                               _lastNameController.clear();
 
-                              // Đặt lại trạng thái icon
                               _obscurePassword = true;
                               _obscureConfirmPassword = true;
 
-                              // Cập nhật trạng thái cho controller
                               _passwordController.isObscured = true;
                               _passwordConfirmController.isObscured = true;
 
@@ -557,12 +541,12 @@ class _AuthViewState extends State<AuthView> {
                             },
                             child: Text(
                               _isLogin
-                                  ? "Chưa có tài khoản? Đăng ký"
-                                  : "Đã có tài khoản? Đăng nhập",
+                                  ? 'auth.switches.to_register'.tr()
+                                  : 'auth.switches.to_login'.tr(),
                               style: const TextStyle(
                                 color: Color(0xFF526C30),
                                 fontSize: 13,
-                                fontWeight: FontWeight.w600,
+                                fontWeight: .w600,
                               ),
                             ),
                           ),

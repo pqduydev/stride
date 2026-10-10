@@ -10,12 +10,12 @@ class AppToast {
       title: Text(
         message,
         style: const TextStyle(
-          fontWeight: FontWeight.w500,
+          fontWeight: .w500,
           fontSize: 13,
           color: Color(0xFF526C30),
         ),
       ),
-      alignment: Alignment.topRight,
+      alignment: .topRight,
       autoCloseDuration: const Duration(seconds: 3),
       primaryColor: const Color(0xFF526C30),
       backgroundColor: const Color(0xFFEEF4E5),
@@ -44,12 +44,12 @@ class AppToast {
       title: Text(
         message,
         style: const TextStyle(
-          fontWeight: FontWeight.w500,
+          fontWeight: .w500,
           fontSize: 13,
           color: Color(0xFFD32F2F),
         ),
       ),
-      alignment: Alignment.topRight,
+      alignment: .topRight,
       autoCloseDuration: const Duration(seconds: 3),
       primaryColor: const Color(0xFFD32F2F),
       backgroundColor: const Color(0xFFFDE8E8),
@@ -78,12 +78,12 @@ class AppToast {
       title: Text(
         message,
         style: const TextStyle(
-          fontWeight: FontWeight.w500,
+          fontWeight: .w500,
           fontSize: 13,
           color: Color(0xFFE65100),
         ),
       ),
-      alignment: Alignment.topRight,
+      alignment: .topRight,
       autoCloseDuration: const Duration(seconds: 3),
       primaryColor: const Color(0xFFE65100),
       backgroundColor: const Color(0xFFFFF4E5),
@@ -116,12 +116,12 @@ class AppToast {
       title: Text(
         message,
         style: const TextStyle(
-          fontWeight: FontWeight.w500,
+          fontWeight: .w500,
           fontSize: 13,
           color: Color(0xFF1565C0),
         ),
       ),
-      alignment: Alignment.topRight,
+      alignment: .topRight,
       autoCloseDuration: const Duration(seconds: 3),
       primaryColor: const Color(0xFF1565C0),
       backgroundColor: const Color(0xFFE8F4FD),

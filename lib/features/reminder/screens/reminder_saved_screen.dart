@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 class ReminderSavedScreen extends StatelessWidget {
@@ -8,9 +9,9 @@ class ReminderSavedScreen extends StatelessWidget {
     return Scaffold(
       body: Center(
         child: Text(
-          "Nhắc hẹn thành công",
+          'reminder_saved.title'.tr(),
           style: Theme.of(context).textTheme.titleLarge
-              ?.copyWith(fontSize: 50, fontWeight: FontWeight.w700),
+              ?.copyWith(fontSize: 50, fontWeight: .w700),
         ),
       ),
     );

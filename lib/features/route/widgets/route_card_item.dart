@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:stride/model/route_model.dart';
@@ -15,7 +16,6 @@ class RouteCardItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      // Lấy kích thước màn hình và trừ đi padding + 20 để hể thị item tiếp theo.
       width: MediaQuery.of(context).size.width - 60,
       decoration: BoxDecoration(
         color: Colors.white,
@@ -52,10 +52,10 @@ class RouteCardItem extends StatelessWidget {
                     vertical: 20,
                   ),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: .start,
+                    mainAxisAlignment: .spaceBetween,
                     children: [
-                      // Tag Mục tiêu
+                      // Tag Mục tiêu đã đa ngôn ngữ hóa
                       Container(
                         height: 25,
                         padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -66,22 +66,24 @@ class RouteCardItem extends StatelessWidget {
                         child: Center(
                           widthFactor: 1,
                           child: Text(
-                            "MỤC TIÊU ${route.durationText}".toUpperCase(),
+                            tr(
+                              'route_card.goal_format',
+                              args: [route.durationText],
+                            ).toUpperCase(),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: Theme.of(context).textTheme.titleLarge
                                 ?.copyWith(
                                   fontSize: 11,
-                                  fontWeight: FontWeight.w600,
+                                  fontWeight: .w600,
                                   color: const Color(0xFF1C2520),
                                 ),
                           ),
                         ),
                       ),
                       const SizedBox(height: 15),
-                      // Tiêu đề & Thời gian
                       Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: .start,
                         children: [
                           Text(
                             route.title,
@@ -91,17 +93,19 @@ class RouteCardItem extends StatelessWidget {
                                 ?.copyWith(
                                   color: const Color(0xFFFFFFFF),
                                   fontSize: 25,
-                                  fontWeight: FontWeight.w700,
+                                  fontWeight: .w700,
                                 ),
                           ),
                           const SizedBox(height: 5),
                           Text(
                             formattedDate,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                             style: Theme.of(context).textTheme.labelSmall
                                 ?.copyWith(
                                   color: const Color(0xFFE4EBE3),
                                   fontSize: 12,
-                                  fontWeight: FontWeight.w400,
+                                  fontWeight: .w400,
                                 ),
                           ),
                         ],
@@ -111,31 +115,37 @@ class RouteCardItem extends StatelessWidget {
                 ),
               ),
             ),
-
-            // Phần thông số tĩnh
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: .start,
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: .spaceBetween,
+                    crossAxisAlignment: .center,
                     children: [
-                      Text(
-                        "Đã hoàn thành",
-                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                          color: const Color(0xFF768079),
-                          fontSize: 13,
-                          fontWeight: FontWeight.w400,
+                      Expanded(
+                        child: Text(
+                          'route_card.completed_label'.tr(),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.labelSmall
+                              ?.copyWith(
+                                color: const Color(0xFF768079),
+                                fontSize: 13,
+                                fontWeight: .w400,
+                              ),
                         ),
                       ),
+                      const SizedBox(width: 8),
                       Text(
-                        "12 / 40 buổi",
+                        "12 / 40 ${'route_card.sessions_unit'.tr()}",
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: Theme.of(context).textTheme.labelSmall?.copyWith(
                           color: const Color(0xFF1C2520),
                           fontSize: 14,
-                          fontWeight: FontWeight.w700,
+                          fontWeight: .w700,
                         ),
                       ),
                     ],
@@ -149,7 +159,7 @@ class RouteCardItem extends StatelessWidget {
                       borderRadius: BorderRadius.all(Radius.circular(5)),
                     ),
                     child: FractionallySizedBox(
-                      alignment: Alignment.centerLeft,
+                      alignment: .centerLeft,
                       widthFactor: 0.37,
                       child: Container(
                         decoration: const BoxDecoration(
@@ -161,23 +171,31 @@ class RouteCardItem extends StatelessWidget {
                   ),
                   const SizedBox(height: 13),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: .spaceBetween,
+                    crossAxisAlignment: .center,
                     children: [
-                      Text(
-                        "Tuần 5",
-                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                          color: const Color(0xFF768079),
-                          fontSize: 13,
-                          fontWeight: FontWeight.w400,
+                      Expanded(
+                        child: Text(
+                          'route_card.week_label'.tr(),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.labelSmall
+                              ?.copyWith(
+                                color: const Color(0xFF768079),
+                                fontSize: 13,
+                                fontWeight: .w400,
+                              ),
                         ),
                       ),
+                      const SizedBox(width: 8),
                       Text(
                         "30%",
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: Theme.of(context).textTheme.labelSmall?.copyWith(
                           color: const Color(0xFF526C30),
                           fontSize: 14,
-                          fontWeight: FontWeight.w700,
+                          fontWeight: .w700,
                         ),
                       ),
                     ],

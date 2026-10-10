@@ -1,10 +1,10 @@
 import 'dart:async';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:stride/features/auth/auth_cubit/auth_cubit.dart';
 import 'package:stride/features/auth/auth_cubit/auth_state.dart';
 import 'package:stride/features/reminder/reminder_cubit/reminder_cubit.dart';
@@ -36,7 +36,23 @@ Future<void> main() async {
   // Xử lý thông báo khi tắt/chạy nền
   FirebaseMessaging.onBackgroundMessage(firebaseBackgroundHandler);
 
-  runApp(const MyApp());
+  // 1. Đảm bảo Flutter Binding đã được khởi tạo
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // 2. Khởi tạo easy_localization
+  await EasyLocalization.ensureInitialized();
+
+  runApp(
+    EasyLocalization(
+      supportedLocales: const [Locale('vi', 'VN'), Locale('en', 'US')],
+      path: 'assets/translations',
+      fallbackLocale: const Locale(
+        'vi',
+        'VN',
+      ), // Ngôn ngữ mặc định nếu không tìm thấy
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatefulWidget {
@@ -155,13 +171,9 @@ class _MyAppState extends State<MyApp> {
           child: MaterialApp.router(
             title: 'Stride App',
             debugShowCheckedModeBanner: false,
-            localizationsDelegates: const [
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-            ],
-            supportedLocales: const [Locale('vi', 'VN'), Locale('en', 'US')],
-            locale: const Locale('vi', 'VN'),
+            localizationsDelegates: context.localizationDelegates,
+            supportedLocales: context.supportedLocales,
+            locale: context.locale,
             theme: ThemeData(
               colorScheme: ColorScheme.fromSeed(
                 seedColor: const Color(0xFFF7F8FA),

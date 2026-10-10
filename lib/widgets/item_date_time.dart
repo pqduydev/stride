@@ -85,7 +85,7 @@ class _ItemDateTimeState extends State<ItemDateTime> {
           style: const TextStyle(
             color: Color(0xFF768079),
             fontSize: 13,
-            fontWeight: FontWeight.w500,
+            fontWeight: .w500,
           ),
         ),
         const SizedBox(height: 5),
@@ -103,7 +103,7 @@ class _ItemDateTimeState extends State<ItemDateTime> {
             style: const TextStyle(
               color: Color(0xFF1C2520),
               fontSize: 14,
-              fontWeight: FontWeight.w500,
+              fontWeight: .w500,
             ),
             decoration: InputDecoration(
               hintText: DateFormat("dd/MM/yyyy").format(DateTime.now()),

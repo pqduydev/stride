@@ -1,0 +1,434 @@
+{
+  "auth": {
+    "login_title": "Đăng nhập",
+    "register_title": "Tạo tài khoản",
+    "login_welcome": "Chào mừng bạn trở lại. Tiếp tục hành trình nhé!",
+    "register_welcome": "Bắt đầu hành trình của riêng bạn.",
+    "register_success": "Đăng ký thành công! Vui lòng đăng nhập.",
+    "fields": {
+      "last_name": "Họ",
+      "first_name": "Tên",
+      "username": "Tên đăng nhập",
+      "email": "Email",
+      "password": "Mật khẩu",
+      "password_confirm": "Xác nhận mật khẩu"
+    },
+    "validation": {
+      "empty_last_name": "Vui lòng nhập họ",
+      "empty_first_name": "Vui lòng nhập tên",
+      "empty_username": "Vui lòng nhập tên đăng nhập",
+      "username_invalid": "Username từ 3-20 ký tự, chỉ gồm chữ, số và dấu _",
+      "empty_email": "Vui lòng nhập email",
+      "email_invalid": "Email không đúng định dạng",
+      "empty_password": "Vui lòng nhập mật khẩu",
+      "password_too_short": "Mật khẩu phải có ít nhất 6 ký tự",
+      "empty_password_confirm": "Vui lòng xác nhận mật khẩu",
+      "password_mismatch": "Mật khẩu xác nhận không khớp"
+    },
+    "actions": {
+      "forgot_password": "Quên mật khẩu?"
+    },
+    "hints": {
+      "password_hint": "Dùng ít nhất 6 ký tự cho mật khẩu."
+    },
+    "terms": {
+      "agreement_prefix": "Khi tạo tài khoản, bạn đồng ý với",
+      "agreement_link": "Điều khoản sử dụng và Quyền riêng tư."
+    },
+    "buttons": {
+      "login": "Đăng nhập",
+      "register_email": "Tạo tài khoản bằng email"
+    },
+    "social": {
+      "divider": "HOẶC TIẾP TỤC BẰNG",
+      "phone": "Số điện thoại",
+      "google": "Tiếp tục với Google",
+      "apple": "Tiếp tục với Apple"
+    },
+    "switches": {
+      "to_register": "Chưa có tài khoản? Đăng ký",
+      "to_login": "Đã có tài khoản? Đăng nhập"
+    }
+  },
+  "welcome": {
+    "badge": "CÙNG BẠN",
+    "title": "Mỗi mục tiêu.\nMột hành trình.",
+    "subtitle": "Lên kế hoạch, giữ đúng hẹn và nhận\ngợi ý phù hợp với tiến trình của bạn.",
+    "feature_1_title": "Học thêm điều mới",
+    "feature_1_desc": "Bài học, cột mốc & thành quả",
+    "feature_2_title": "Chủ động theo dõi điều trị",
+    "feature_2_desc": "Lịch hẹn, ghi nhận & hồ sơ",
+    "feature_3_title": "Duy trì nhịp vận động",
+    "feature_3_desc": "Hoạt động & nhật ký hình ảnh",
+    "btn_register": "Tạo tài khoản",
+    "btn_login": "Đã có tài khoản? Đăng nhập",
+    "footer": "Dữ liệu của bạn, hành trình của bạn."
+  },
+  "add_image": {
+    "title": "Thêm hình ảnh",
+    "subtitle": "Chọn ảnh để lưu vào nhật ký.",
+    "btn_camera": "Chụp ảnh mới",
+    "section_recent": "Ảnh gần đây",
+    "btn_gallery": "Ảnh của bạn",
+    "description": "Lưu lại những khoảnh khắc trên hành trình. Bạn có thể thêm ảnh phòng tập, bài tập hoặc ảnh ghi lại sự thay đổi của mình.",
+    "btn_select": "Chọn ảnh",
+    "btn_add_count": "Thêm {} ảnh",
+    "error_max_limit": "Bạn chỉ thêm được tối đa {} ảnh."
+  },
+  "check": {
+    "default_title": "Kiểm tra",
+    "default_heading": "Vui lòng kiểm tra",
+    "btn_continue": "Tiếp tục"
+  },
+  "navigation": {
+    "route": "Lộ trình",
+    "appointment": "Lịch hẹn",
+    "diary": "Nhật ký",
+    "reminder": "Nhắc hẹn"
+  },
+  "onboarding_permission": {
+    "title": "Cá nhân hóa\ntrải nghiệm của bạn",
+    "subtitle": "Stride cần một số quyền truy cập để giúp hành trình của bạn trọn vẹn nhất.",
+    "camera_title": "Máy ảnh",
+    "camera_desc": "Chụp ảnh và lưu trữ nhật ký hình ảnh trong tiến trình của bạn.",
+    "notification_title": "Thông báo",
+    "notification_desc": "Nhận lời nhắc về lịch hẹn và các mục tiêu đã lên kế hoạch.",
+    "btn_allow": "Cấp quyền truy cập",
+    "btn_skip": "Để sau",
+    "dialog_title": "Cần mở Cài đặt thiết bị",
+    "dialog_content": "Một số quyền truy cập đã bị tắt trước đó. Bạn có muốn mở Cài đặt ứng dụng để bật thủ công không?",
+    "dialog_cancel": "Để sau",
+    "dialog_open_settings": "Mở Cài đặt"
+  },
+  "my_route": {
+    "date_placeholder": "THỨ HAI, 14 THÁNG 9",
+    "title": "Lộ trình của tôi",
+    "error_occurred": "Có lỗi xảy ra",
+    "retry": "Thử lại",
+    "empty_routes": "Bạn chưa có lộ trình tập luyện nào.",
+    "today": "Hôm nay",
+    "view_schedule": "Xem lịch",
+    "duration_minutes": "60 phút",
+    "body_part": "Thân trên & core",
+    "reminder_notice": "Nhắc trước 15 phút",
+    "review_journey": "Nhìn lại hành trình",
+    "week_label": "TUẦN 4",
+    "week_title": "Đều đặn hơn mỗi tuần",
+    "week_desc": "3 buổi tập · 1 cập nhật"
+  },
+  "route_create": {
+    "title_create": "Tạo lộ trình mới",
+    "title_edit": "Chỉnh sửa lộ trình",
+    "subtitle": "Một mục tiêu, một hành trình mới.",
+    "label_title": "Tên lộ trình",
+    "hint_title": "Nhập tên lộ trình...",
+    "error_empty_title": "Vui lòng nhập tên lộ trình",
+    "label_start_date": "Ngày bắt đầu",
+    "label_end_date": "Ngày kết thúc",
+    "duration_prefix": "Thời lượng: ",
+    "label_description": "Mô tả mục tiêu",
+    "hint_description": "Nhập mô tả mục tiêu...",
+    "btn_delete": "Xoá lộ trình",
+    "btn_save_changes": "Lưu thay đổi",
+    "btn_create": "Tạo lộ trình",
+    "success_create": "Tạo lộ trình thành công",
+    "success_update": "Cập nhật lộ trình thành công",
+    "success_delete": "Xóa lộ trình thành công",
+    "error_default": "Đã xảy ra lỗi",
+    "delete_dialog_title": "Xóa lộ trình",
+    "delete_dialog_prefix": "Bạn có chắc muốn xóa lộ trình ",
+    "delete_dialog_suffix": " ? Thao tác này không thể hoàn tác.",
+    "btn_cancel": "Hủy",
+    "btn_confirm_delete": "Xóa"
+  },
+  "route_details": {
+    "appbar_title": "Lộ trình tập gym",
+    "tag_health": "SỨC KHỎE & THỂ CHẤT",
+    "title_main": "Tập luyện bền bỉ",
+    "subtitle": "3 tháng tạo thói quen, từng bước tiến bộ.",
+    "completed_sessions": "buổi hoàn thành",
+    "weekly_frequency": "Mỗi tuần",
+    "weekly_unit": "buổi",
+    "remaining_days": "ngày còn lại",
+    "tab_overview": "Tổng quan",
+    "tab_schedule": "Lịch tập",
+    "tab_diary": "Nhật ký",
+    "btn_view_schedule": "Xem lịch tập",
+    "milestones_title": "Cột mốc của bạn",
+    "milestone_1_title": "Xây dựng thói quen",
+    "milestone_1_time": "17/08 – 16/09",
+    "milestone_2_title": "Ổn định nhịp tập",
+    "milestone_2_time": "17/09 – 16/10",
+    "milestone_3_title": "Duy trì & đánh giá",
+    "milestone_3_time": "17/10 – 17/11",
+    "in_progress": "Đang thực hiện"
+  },
+  "route_card": {
+    "completed_label": "Đã hoàn thành",
+    "sessions_unit": "buổi",
+    "week_label": "Tuần 5",
+    "goal_format": "MỤC TIÊU {}"
+  },
+  "appointment": {
+    "appbar_title": "Lịch hẹn",
+    "today": "Hôm nay",
+    "empty_schedules": "Không có lịch tập vào ngày này",
+    "dropdown_1": "Tập luyện bền bỉ",
+    "dropdown_2": "Thân trên & Core",
+    "dropdown_3": "Thân dưới",
+    "weekdays": {
+      "sun": "Chủ Nhật",
+      "mon": "Thứ Hai",
+      "tue": "Thứ Ba",
+      "wed": "Thứ Tư",
+      "thu": "Thứ Năm",
+      "fri": "Thứ Sáu",
+      "sat": "Thứ Bảy"
+    },
+    "reminder_at": "Nhắc lúc {}"
+  },
+  "calendar": {
+    "tab_week": "Theo tuần",
+    "tab_month": "Theo tháng",
+    "dow": {
+      "mon": "T2",
+      "tue": "T3",
+      "wed": "T4",
+      "thu": "T5",
+      "fri": "T6",
+      "sat": "T7",
+      "sun": "CN"
+    },
+    "has_workout": "Có lịch tập",
+    "rest_day": "Ngày nghỉ"
+  },
+  "item_card_switch": {
+    "title": "Bật nhắc hẹn",
+    "subtitle": "Đừng bỏ lỡ buổi tập đã lên lịch"
+  },
+  "weekly_record_card": {
+    "illustration": "Ảnh minh họa"
+  },
+  "diary": {
+    "appbar_title": "Nhật ký phát triển",
+    "subtitle": "Mỗi bước tiến đều đáng nhớ.",
+    "tabs": {
+      "weekly": "Theo tuần",
+      "monthly": "Theo tháng"
+    },
+    "weekly": {
+      "banner_title": "4 tuần giữ nhịp",
+      "banner_desc": "12 buổi tập đã hoàn thành",
+      "week_4_label": "Tuần 4",
+      "week_4_date": "07 – 13/09",
+      "week_4_title": "Đều đặn hơn mỗi tuần",
+      "week_4_desc": "Đã hoàn thành 3 buổi tập. Cảm thấy thoải mái hơn với lịch tập mới.",
+      "week_5_label": "Tuần 5",
+      "week_5_date": "14 – 20/09",
+      "btn_add_update": "+  Thêm ảnh & cập nhật"
+    },
+    "monthly": {
+      "coming_soon": "Nội dung \"Theo tháng\" sẽ được thêm sau"
+    }
+  },
+  "reminder_saved": {
+    "title": "Nhắc hẹn thành công"
+  },
+  "reminder_settings": {
+    "appbar_title": "Nhắc giờ tập",
+    "success_save": "Lưu nhắc hẹn thành công",
+    "success_disable": "Đã tắt nhắc hẹn",
+    "section_time": "GIỜ TẬP",
+    "repeat_weekly": "Lặp lại mỗi tuần",
+    "remind_before": "Nhắc trước",
+    "status_disabled": "Nhắc hẹn đang tạm tắt",
+    "status_no_date": "Chưa chọn ngày tập",
+    "status_next_format": "Lần tiếp theo: {}, {} lúc {}",
+    "btn_save": "Lưu nhắc hẹn",
+    "minutes": {
+      "exact": "Đúng giờ",
+      "one_hour": "1 giờ",
+      "n_minutes": "{} phút"
+    },
+    "weekdays": {
+      "mon": "T2",
+      "tue": "T3",
+      "wed": "T4",
+      "thu": "T5",
+      "fri": "T6",
+      "sat": "T7",
+      "sun": "CN",
+      "full_sun": "Chủ Nhật",
+      "full_mon": "Thứ Hai",
+      "full_tue": "Thứ Ba",
+      "full_wed": "Thứ Tư",
+      "full_thu": "Thứ Năm",
+      "full_fri": "Thứ Sáu",
+      "full_sat": "Thứ Bảy"
+    }
+  },
+  "reminder_scheduler": {
+    "title_prepare": "Chuẩn bị cho buổi tập",
+    "body_prepare_exact": "Đến giờ tập rồi ({})!",
+    "body_prepare_before": "Buổi tập bắt đầu lúc {}, còn {} phút.",
+    "title_time": "Đến giờ tập rồi!",
+    "body_time": "Bắt đầu buổi tập hôm nay thôi nào!"
+  },
+  "item_radio_route_group": {
+    "section_title": "Nhóm mục tiêu",
+    "scroll_hint": "Cuộn ngang",
+    "goals": {
+      "weight_loss": "Giảm cân",
+      "muscle_gain": "Tăng cơ",
+      "endurance": "Tăng sức bền",
+      "flexibility": "Tăng linh hoạt",
+      "general": "Tổng quát"
+    }
+  },
+  "time_utils": {
+    "zero_days": "0 ngày",
+    "one_day": "1 ngày",
+    "days": "{} ngày",
+    "one_week": "1 tuần",
+    "weeks": "{} tuần",
+    "weeks_days": "{} tuần {} ngày",
+    "one_month": "1 tháng",
+    "months": "{} tháng",
+    "months_weeks": "{} tháng {} tuần",
+    "one_year": "1 năm",
+    "years": "{} năm",
+    "years_months": "{} năm {} tháng"
+  },
+  "change_password": {
+    "appbar_title": "Đổi mật khẩu",
+    "success": "Đổi mật khẩu thành công.",
+    "error_min_length": "Mật khẩu phải có ít nhất 6 ký tự",
+    "old_password": {
+      "label": "Mật khẩu cũ",
+      "error_empty": "Vui lòng nhập mật khẩu cũ"
+    },
+    "new_password": {
+      "label": "Mật khẩu mới",
+      "error_empty": "Vui lòng nhập mật khẩu mới",
+      "error_same_old": "Mật khẩu mới phải khác mật khẩu cũ"
+    },
+    "confirm_password": {
+      "label": "Xác nhận mật khẩu mới",
+      "error_empty": "Vui lòng xác nhận mật khẩu mới",
+      "error_mismatch": "Mật khẩu mới không trùng khớp"
+    },
+    "btn_submit": "Đổi mật khẩu"
+  },
+  "personal_info": {
+    "appbar_title": "Thông tin cá nhân",
+    "subtitle": "Thông tin giúp nhắc hẹn và gợi ý phù hợp.",
+    "error_check_fields": "Vui lòng kiểm tra lại các trường bị lỗi.",
+    "warning_no_changes": "Không có thông tin nào thay đổi.",
+    "success_update": "Cập nhật thông tin thành công!",
+    "username": "Tên người dùng",
+    "date_joined": "Ngày tham gia",
+    "error_must_be_number": "Phải là số",
+    "last_name": {
+      "label": "Họ",
+      "error_empty": "Vui lòng không để trống họ"
+    },
+    "first_name": {
+      "label": "Tên",
+      "error_empty": "Vui lòng không để trống tên"
+    },
+    "email": {
+      "label": "Email liên hệ",
+      "error_empty": "Vui lòng không để trống email",
+      "error_format": "Email không đúng định dạng"
+    },
+    "phone": {
+      "label": "Số điện thoại (+84)",
+      "error_empty": "Vui lòng không để trống số điện thoại",
+      "error_format": "Số điện thoại không hợp lệ"
+    },
+    "dob": "Ngày sinh",
+    "height": {
+      "label": "Chiều cao (cm)",
+      "error_empty": "Vui lòng không để trống chiều cao"
+    },
+    "weight": {
+      "label": "Cân nặng (kg)",
+      "error_empty": "Vui lòng không để trống cân nặng"
+    },
+    "bio": "Tiểu sử",
+    "btn_save": "Lưu thay đổi"
+  },
+  "profile": {
+    "appbar_title": "Hồ sơ của bạn",
+    "personal_info_title": "Thông tin cá nhân",
+    "personal_info_subtitle": "Tên, liên hệ, chỉ số cơ thể, ...",
+    "change_password": "Đổi mật khẩu",
+    "logout": "Đăng xuất"
+  },
+  "email_verification": {
+    "appbar_title": "Dữ liệu của bạn",
+    "subtitle": "Chỉ còn một bước để bảo vệ tài khoản.",
+    "title": "Kiểm tra hộp thư của bạn",
+    "desc": "Liên kết xác thực đã được gửi đến\nminhan@example.com.",
+    "info_title": "Tiếp tục sau khi xác thực",
+    "info_desc": "Mở email và chạm vào liên kết.\nSau đó quay lại Stride để tiếp tục.",
+    "btn_verify": "Tôi đã xác thực email",
+    "resend": "Gửi lại email"
+  },
+  "forget_password": {
+    "appbar_title": "Quên mật khẩu",
+    "subtitle": "Kết nối an toàn với tài khoản của bạn.",
+    "email_label": "Email",
+    "error_empty": "Vui lòng nhập email",
+    "error_format": "Email không đúng định dạng",
+    "note": "Bạn sẽ nhận được hướng dẫn đặt lại\nmật khẩu nếu email này đã được đăng ký.",
+    "btn_submit": "Gửi hướng dẫn",
+    "back_to_login": "Quay lại đăng nhập",
+    "check_email_title": "Kiểm tra email",
+    "check_email_info": "Nếu tài khoản tồn tại, hướng dẫn đặt lại\nmật khẩu sẽ được gửi đến email của bạn.",
+    "btn_back_login": "Về đăng nhập"
+  },
+  "login_apple": {
+    "appbar_title": "Đăng nhập với Apple",
+    "subtitle": "Kết nối an toàn với tài khoản của bạn.",
+    "title": "Tiếp tục với Apple",
+    "desc": "Bạn sẽ xác nhận đăng nhập trên\nmàn hình bảo mật của Apple.",
+    "info_title": "Thông tin cơ bản",
+    "info_desc": "Stride dùng tên và email để tạo hồ sơ.\nBạn có thể chỉnh sửa hồ sơ sau đăng nhập.",
+    "btn_continue": "Tiếp tục",
+    "other_method": "Dùng cách đăng nhập khác"
+  },
+  "login_google": {
+    "appbar_title": "Đăng nhập với Google",
+    "subtitle": "Kết nối an toàn với tài khoản của bạn.",
+    "title": "Tiếp tục với Google",
+    "desc": "Bạn sẽ xác nhận đăng nhập trên\nmàn hình bảo mật của Google.",
+    "info_title": "Thông tin cơ bản",
+    "info_desc": "Stride dùng tên và email để tạo hồ sơ.\nBạn có thể chỉnh sửa hồ sơ sau đăng nhập.",
+    "btn_continue": "Tiếp tục",
+    "other_method": "Dùng cách đăng nhập khác"
+  },
+  "login_phone": {
+    "appbar_title": "Số điện thoại",
+    "subtitle": "Đăng ký hoặc đăng nhập bằng mã xác thực.",
+    "title": "Nhập số điện thoại",
+    "desc": "Chúng tôi sẽ gửi mã xác thực qua SMS.",
+    "phone_label": "Việt Nam (+84)",
+    "error_empty": "Vui lòng nhập số điện thoại",
+    "error_format": "Số điện thoại không hợp lệ (bỏ số 0 ở đầu)",
+    "phone_note": "Không nhập số 0 đầu tiên sau mã +84.",
+    "btn_submit": "Gửi mã xác thực",
+    "other_method": "Dùng email hoặc tài khoản khác"
+  },
+  "privacy_info": {
+    "appbar_title": "Dữ liệu của bạn",
+    "subtitle": "Bạn kiểm soát cách Stride sử dụng thông tin.",
+    "sync_title": "Tài khoản & đồng bộ",
+    "sync_desc": "Lưu hồ sơ, lộ trình, hoạt động và nhật ký\nđể tiếp tục hành trình trên các thiết bị.",
+    "personalize_title": "Cá nhân hóa tùy chọn",
+    "personalize_desc": "Chỉ dùng dữ liệu được bạn cho phép.\nTắt AI vẫn giữ nguyên các tính năng chính.",
+    "health_title": "Thông tin sức khỏe",
+    "health_desc": "Có lựa chọn riêng trước khi gửi cho AI.\nBạn có thể thu hồi quyền trong Hồ sơ.",
+    "btn_understood": "Đã hiểu"
+  }
+}

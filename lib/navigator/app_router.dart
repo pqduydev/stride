@@ -6,6 +6,7 @@ import 'package:stride/features/appointment/screens/appointment_screen.dart';
 import 'package:stride/features/auth/auth_cubit/auth_cubit.dart';
 import 'package:stride/features/auth/auth_cubit/auth_state.dart';
 import 'package:stride/features/auth/screens/auth_screen.dart';
+import 'package:stride/features/auth/screens/login_with_apple_screen.dart';
 import 'package:stride/features/common_screens/onboarding_permission_screen.dart';
 import 'package:stride/features/diary/screen/diary_screen.dart';
 import 'package:stride/features/reminder/screens/reminder_saved_screen.dart';
@@ -27,7 +28,6 @@ import 'package:stride/features/route/screens/route_create_screen.dart';
 import 'package:stride/features/route/screens/route_details_screen.dart';
 import 'package:stride/features/common_screens/splash_screen.dart';
 import 'package:stride/features/common_screens/welcome_screen.dart';
-import 'package:stride/widgets/login_with_apple_screen.dart';
 
 class AppRouter {
   final AuthCubit authCubit;

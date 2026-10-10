@@ -1,5 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class CustomScheduleCalendar extends StatefulWidget {
@@ -72,17 +74,14 @@ class _CustomScheduleCalendarState extends State<CustomScheduleCalendar>
             ),
             labelColor: const Color(0xFF1C2520),
             unselectedLabelColor: const Color(0xFF768079),
-            labelStyle: const TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: 14,
-            ),
+            labelStyle: const TextStyle(fontWeight: .w600, fontSize: 14),
             unselectedLabelStyle: const TextStyle(
-              fontWeight: FontWeight.w500,
+              fontWeight: .w500,
               fontSize: 14,
             ),
-            tabs: const [
-              Tab(text: 'Theo tuần'),
-              Tab(text: 'Theo tháng'),
+            tabs: [
+              Tab(text: 'calendar.tab_week'.tr()),
+              Tab(text: 'calendar.tab_month'.tr()),
             ],
           ),
         ),
@@ -90,7 +89,7 @@ class _CustomScheduleCalendarState extends State<CustomScheduleCalendar>
         const SizedBox(height: 16),
 
         TableCalendar(
-          locale: 'vi_VN',
+          locale: context.locale.toString(),
           firstDay: DateTime.utc(2026, 1, 1),
           lastDay: DateTime.utc(2050, 12, 31),
           focusedDay: _focusedDay,
@@ -113,8 +112,6 @@ class _CustomScheduleCalendarState extends State<CustomScheduleCalendar>
               _focusedDay = focusedDay;
             });
 
-            // Thông báo cho màn hình cha là có sự thay đổi
-            // và gửi kèm theo ngày đang được chọn
             widget.onDaySelected(selectedDay);
           },
 
@@ -129,22 +126,26 @@ class _CustomScheduleCalendarState extends State<CustomScheduleCalendar>
           daysOfWeekHeight: 35,
           rowHeight: 45,
 
-          // Custom lại các thứ trong tuần
+          // Custom lại các thứ trong tuần và tiêu đề lịch
           calendarBuilders: CalendarBuilders(
             headerTitleBuilder: (context, day) {
+              final formattedMonthYear = DateFormat(
+                'MMMM yyyy',
+                context.locale.languageCode,
+              ).format(day);
+
               return Row(
                 mainAxisAlignment: .spaceBetween,
                 crossAxisAlignment: .center,
                 children: [
                   Text(
-                    'Tháng ${day.month}, ${day.year}',
+                    formattedMonthYear,
                     style: const TextStyle(
                       fontSize: 20,
-                      fontWeight: FontWeight.w700,
+                      fontWeight: .w700,
                       color: Color(0xFF1C2520),
                     ),
                   ),
-
                   SvgPicture.asset(
                     'assets/icons/ic_calendar_days.svg',
                     width: 20,
@@ -156,13 +157,13 @@ class _CustomScheduleCalendarState extends State<CustomScheduleCalendar>
 
             dowBuilder: (context, day) {
               final text = switch (day.weekday) {
-                DateTime.monday => 'T2',
-                DateTime.tuesday => 'T3',
-                DateTime.wednesday => 'T4',
-                DateTime.thursday => 'T5',
-                DateTime.friday => 'T6',
-                DateTime.saturday => 'T7',
-                DateTime.sunday => 'CN',
+                DateTime.monday => 'calendar.dow.mon'.tr(),
+                DateTime.tuesday => 'calendar.dow.tue'.tr(),
+                DateTime.wednesday => 'calendar.dow.wed'.tr(),
+                DateTime.thursday => 'calendar.dow.thu'.tr(),
+                DateTime.friday => 'calendar.dow.fri'.tr(),
+                DateTime.saturday => 'calendar.dow.sat'.tr(),
+                DateTime.sunday => 'calendar.dow.sun'.tr(),
                 _ => '',
               };
               return Center(
@@ -170,7 +171,7 @@ class _CustomScheduleCalendarState extends State<CustomScheduleCalendar>
                   text,
                   style: const TextStyle(
                     color: Color(0xFF768079),
-                    fontWeight: FontWeight.w500,
+                    fontWeight: .w500,
                     fontSize: 12,
                   ),
                 ),
@@ -184,19 +185,16 @@ class _CustomScheduleCalendarState extends State<CustomScheduleCalendar>
                   .length;
 
               if (workoutCount > 0) {
-                // Giới hạn tối đa hiển thị 4 chấm để không bị tràn ô lịch
                 final displayCount = workoutCount > 4 ? 4 : workoutCount;
 
                 return Positioned(
                   bottom: 5,
                   child: Row(
-                    mainAxisSize: .min, // Để Row thu nhỏ vừa bằng các dấu chấm
+                    mainAxisSize: MainAxisSize.min,
                     children: List.generate(
                       displayCount,
                       (index) => Container(
-                        margin: const EdgeInsets.symmetric(
-                          horizontal: 1.5,
-                        ), // Khoảng cách giữa các chấm
+                        margin: const EdgeInsets.symmetric(horizontal: 1.5),
                         width: 5,
                         height: 5,
                         decoration: const BoxDecoration(
@@ -222,7 +220,7 @@ class _CustomScheduleCalendarState extends State<CustomScheduleCalendar>
             todayTextStyle: TextStyle(
               color: Color(0xFF1C2520),
               fontSize: 14,
-              fontWeight: FontWeight.w400,
+              fontWeight: .w400,
             ),
           ),
         ),
@@ -243,9 +241,12 @@ class _CustomScheduleCalendarState extends State<CustomScheduleCalendar>
                   ),
                 ),
                 const SizedBox(width: 8),
-                const Text(
-                  'Có lịch tập',
-                  style: TextStyle(color: Color(0xFF768079), fontSize: 13),
+                Text(
+                  'calendar.has_workout'.tr(),
+                  style: const TextStyle(
+                    color: Color(0xFF768079),
+                    fontSize: 13,
+                  ),
                 ),
               ],
             ),
@@ -261,9 +262,12 @@ class _CustomScheduleCalendarState extends State<CustomScheduleCalendar>
                   ),
                 ),
                 const SizedBox(width: 8),
-                const Text(
-                  'Ngày nghỉ',
-                  style: TextStyle(color: Color(0xFF768079), fontSize: 13),
+                Text(
+                  'calendar.rest_day'.tr(),
+                  style: const TextStyle(
+                    color: Color(0xFF768079),
+                    fontSize: 13,
+                  ),
                 ),
               ],
             ),

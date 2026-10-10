@@ -64,7 +64,7 @@ class _ItemBottomButtonState extends State<ItemBottomButton> {
         child: Container(
           width: double.infinity,
           height: 50,
-          alignment: Alignment.center,
+          alignment: .center,
           decoration: BoxDecoration(
             color: widget.backgroundColor,
             borderRadius: BorderRadius.circular(13),
@@ -81,7 +81,7 @@ class _ItemBottomButtonState extends State<ItemBottomButton> {
                   style: TextStyle(
                     color: widget.textColor,
                     fontSize: 15,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: .w700,
                   ),
                 ),
         ),

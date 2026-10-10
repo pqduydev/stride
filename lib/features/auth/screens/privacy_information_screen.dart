@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:stride/widgets/appbar_custom.dart';
@@ -12,29 +13,30 @@ class PrivacyInformationScreen extends StatelessWidget {
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
-        child: AppbarCustom(title: ItemAppBarTitle(data: 'Dữ liệu của bạn')),
+        child: AppbarCustom(
+          title: ItemAppBarTitle(data: 'privacy_info.appbar_title'.tr()),
+        ),
       ),
       body: Padding(
-        padding: EdgeInsets.only(top: 15, left: 20, right: 20),
+        padding: const EdgeInsets.only(top: 15, left: 20, right: 20),
         child: Column(
           crossAxisAlignment: .start,
           children: [
             Text(
-              'Bạn kiểm soát cách Stride sử dụng thông tin.',
-              style: TextStyle(
+              'privacy_info.subtitle'.tr(),
+              style: const TextStyle(
                 color: Color(0xFF768079),
                 fontSize: 14,
                 fontWeight: .w400,
               ),
             ),
-
             Container(
               width: double.infinity,
               height: 98,
-              padding: EdgeInsets.all(15),
-              margin: EdgeInsets.only(top: 40),
+              padding: const EdgeInsets.all(15),
+              margin: const EdgeInsets.only(top: 40),
               decoration: BoxDecoration(
-                color: Color(0xFFEEF4E5),
+                color: const Color(0xFFEEF4E5),
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Column(
@@ -42,49 +44,16 @@ class PrivacyInformationScreen extends StatelessWidget {
                 mainAxisAlignment: .spaceBetween,
                 children: [
                   Text(
-                    'Tài khoản & đồng bộ',
-                    style: TextStyle(
+                    'privacy_info.sync_title'.tr(),
+                    style: const TextStyle(
                       color: Color(0xFF526C30),
                       fontSize: 14,
                       fontWeight: .w600,
                     ),
                   ),
                   Text(
-                    'Lưu hồ sơ, lộ trình, hoạt động và nhật ký\nđể tiếp tục hành trình trên các thiết bị.',
-                    style: TextStyle(
-                      color: Color(0xFF768079),
-                      fontSize: 13,
-                      fontWeight: .w400,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            Container(
-              width: double.infinity,
-              height: 98,
-              padding: EdgeInsets.all(15),
-              margin: EdgeInsets.only(top: 35),
-              decoration: BoxDecoration(
-                color: Color(0xFFEEF4E5),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Column(
-                crossAxisAlignment: .start,
-                mainAxisAlignment: .spaceBetween,
-                children: [
-                  Text(
-                    'Cá nhân hóa tùy chọn',
-                    style: TextStyle(
-                      color: Color(0xFF526C30),
-                      fontSize: 14,
-                      fontWeight: .w600,
-                    ),
-                  ),
-                  Text(
-                    'Chỉ dùng dữ liệu được bạn cho phép.\nTắt AI vẫn giữ nguyên các tính năng chính.',
-                    style: TextStyle(
+                    'privacy_info.sync_desc'.tr(),
+                    style: const TextStyle(
                       color: Color(0xFF768079),
                       fontSize: 13,
                       fontWeight: .w400,
@@ -96,10 +65,10 @@ class PrivacyInformationScreen extends StatelessWidget {
             Container(
               width: double.infinity,
               height: 98,
-              padding: EdgeInsets.all(15),
-              margin: EdgeInsets.only(top: 35),
+              padding: const EdgeInsets.all(15),
+              margin: const EdgeInsets.only(top: 35),
               decoration: BoxDecoration(
-                color: Color(0xFFEEF4E5),
+                color: const Color(0xFFEEF4E5),
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Column(
@@ -107,16 +76,48 @@ class PrivacyInformationScreen extends StatelessWidget {
                 mainAxisAlignment: .spaceBetween,
                 children: [
                   Text(
-                    'Thông tin sức khỏe',
-                    style: TextStyle(
+                    'privacy_info.personalize_title'.tr(),
+                    style: const TextStyle(
                       color: Color(0xFF526C30),
                       fontSize: 14,
                       fontWeight: .w600,
                     ),
                   ),
                   Text(
-                    'Có lựa chọn riêng trước khi gửi cho AI.\nBạn có thể thu hồi quyền trong Hồ sơ.',
-                    style: TextStyle(
+                    'privacy_info.personalize_desc'.tr(),
+                    style: const TextStyle(
+                      color: Color(0xFF768079),
+                      fontSize: 13,
+                      fontWeight: .w400,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              width: double.infinity,
+              height: 98,
+              padding: const EdgeInsets.all(15),
+              margin: const EdgeInsets.only(top: 35),
+              decoration: BoxDecoration(
+                color: const Color(0xFFEEF4E5),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Column(
+                crossAxisAlignment: .start,
+                mainAxisAlignment: .spaceBetween,
+                children: [
+                  Text(
+                    'privacy_info.health_title'.tr(),
+                    style: const TextStyle(
+                      color: Color(0xFF526C30),
+                      fontSize: 14,
+                      fontWeight: .w600,
+                    ),
+                  ),
+                  Text(
+                    'privacy_info.health_desc'.tr(),
+                    style: const TextStyle(
                       color: Color(0xFF768079),
                       fontSize: 13,
                       fontWeight: .w400,
@@ -128,10 +129,12 @@ class PrivacyInformationScreen extends StatelessWidget {
           ],
         ),
       ),
-
       bottomNavigationBar: Container(
-        margin: EdgeInsets.only(left: 20, right: 20, bottom: 80),
-        child: ItemBottomButton(text: 'Đã hiểu', onTap: () => context.pop()),
+        margin: const EdgeInsets.only(left: 20, right: 20, bottom: 80),
+        child: ItemBottomButton(
+          text: 'privacy_info.btn_understood'.tr(),
+          onTap: () => context.pop(),
+        ),
       ),
     );
   }

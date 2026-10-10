@@ -94,7 +94,7 @@ class _ItemCustomTextFieldState extends State<ItemCustomTextField> {
                               style: const TextStyle(
                                 color: Color(0xFF768079),
                                 fontSize: 12,
-                                fontWeight: FontWeight.w500,
+                                fontWeight: .w500,
                               ),
                             ),
                             const SizedBox(height: 4),
@@ -117,14 +117,14 @@ class _ItemCustomTextFieldState extends State<ItemCustomTextField> {
                                     style: const TextStyle(
                                       color: Color(0xFF1C2520),
                                       fontSize: 15,
-                                      fontWeight: FontWeight.w500,
+                                      fontWeight: .w500,
                                     ),
                                     decoration: InputDecoration(
                                       hintText: widget.hintText,
                                       hintStyle: const TextStyle(
                                         color: Color(0xFFC4C9C5),
                                         fontSize: 15,
-                                        fontWeight: FontWeight.w400,
+                                        fontWeight: .w400,
                                       ),
                                       isDense: true,
                                       contentPadding: EdgeInsets.zero,

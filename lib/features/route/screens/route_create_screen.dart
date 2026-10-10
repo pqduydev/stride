@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -42,7 +43,6 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
   void initState() {
     super.initState();
 
-    // Dọn dẹp lỗi cũ của Cubit ngay khi mở màn hình
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         context.read<RouteCubit>().resetErrors();
@@ -81,11 +81,8 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
 
   void _onSave() {
     final cubit = context.read<RouteCubit>();
-
-    // 1. Reset trạng thái lỗi trên Cubit trước
     cubit.resetErrors();
 
-    // 2. Validate form phía Client (kiểm tra rỗng, định dạng...)
     if (!_formKey.currentState!.validate()) {
       return;
     }
@@ -137,18 +134,16 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
                   ),
                 ),
                 const SizedBox(height: 16),
-
-                const Text(
-                  'Xóa lộ trình',
-                  style: TextStyle(
+                Text(
+                  'route_create.delete_dialog_title'.tr(),
+                  style: const TextStyle(
                     fontSize: 18,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: .w700,
                     color: Color(0xFF1C2520),
                   ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 8),
-
                 RichText(
                   textAlign: TextAlign.center,
                   text: TextSpan(
@@ -158,22 +153,19 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
                       height: 1.4,
                     ),
                     children: [
-                      const TextSpan(text: 'Bạn có chắc muốn xóa lộ trình '),
+                      TextSpan(text: 'route_create.delete_dialog_prefix'.tr()),
                       TextSpan(
                         text: '"${route.title}"',
                         style: const TextStyle(
-                          fontWeight: FontWeight.w700,
+                          fontWeight: .w700,
                           color: Color(0xFF1C2520),
                         ),
                       ),
-                      const TextSpan(
-                        text: ' ? Thao tác này không thể hoàn tác.',
-                      ),
+                      TextSpan(text: 'route_create.delete_dialog_suffix'.tr()),
                     ],
                   ),
                 ),
                 const SizedBox(height: 24),
-
                 Row(
                   children: [
                     Expanded(
@@ -186,26 +178,23 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                        child: const Text(
-                          'Hủy',
-                          style: TextStyle(
+                        child: Text(
+                          'route_create.btn_cancel'.tr(),
+                          style: const TextStyle(
                             fontSize: 14,
-                            fontWeight: FontWeight.w600,
+                            fontWeight: .w600,
                             color: Color(0xFF768079),
                           ),
                         ),
                       ),
                     ),
                     const SizedBox(width: 12),
-
                     Expanded(
                       child: ElevatedButton(
                         onPressed: () {
                           final cubit = context.read<RouteCubit>();
-
                           Navigator.pop(dialogContext);
                           setState(() => _currentAction = FormAction.deleting);
-
                           cubit.deleteRoute(route.id!);
                         },
                         style: ElevatedButton.styleFrom(
@@ -216,11 +205,11 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                        child: const Text(
-                          'Xóa',
-                          style: TextStyle(
+                        child: Text(
+                          'route_create.btn_confirm_delete'.tr(),
+                          style: const TextStyle(
                             fontSize: 14,
-                            fontWeight: FontWeight.w600,
+                            fontWeight: .w600,
                             color: Colors.white,
                           ),
                         ),
@@ -246,20 +235,20 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
       listener: (context, state) {
         if (state.actionStatus == RouteStatus.failure) {
           setState(() => _currentAction = FormAction.none);
-
-          AppToast.showError(context, state.errorMessage ?? 'Đã xảy ra lỗi');
+          AppToast.showError(
+            context,
+            state.errorMessage ?? 'route_create.error_default'.tr(),
+          );
         } else if (state.actionStatus == RouteStatus.success) {
-          String message = 'Tạo lộ trình thành công';
+          String message = 'route_create.success_create'.tr();
 
           if (_currentAction == FormAction.deleting) {
-            message = 'Xóa lộ trình thành công';
+            message = 'route_create.success_delete'.tr();
           } else if (_currentAction == FormAction.saving && isEditMode) {
-            message = 'Cập nhật lộ trình thành công';
+            message = 'route_create.success_update'.tr();
           }
 
-          // 1 DÒNG DUY NHẤT CHO THÀNH CÔNG
           AppToast.showSuccess(context, message);
-
           Navigator.pop(context);
         }
       },
@@ -269,7 +258,9 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
             preferredSize: const Size.fromHeight(kToolbarHeight),
             child: AppbarCustom(
               title: ItemAppBarTitle(
-                data: isEditMode ? 'Chỉnh sửa lộ trình' : 'Tạo lộ trình mới',
+                data: isEditMode
+                    ? 'route_create.title_edit'.tr()
+                    : 'route_create.title_create'.tr(),
               ),
             ),
           ),
@@ -282,42 +273,39 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
                 child: Column(
                   crossAxisAlignment: .start,
                   children: [
-                    const Text(
-                      "Một mục tiêu, một hành trình mới.",
-                      style: TextStyle(
+                    Text(
+                      'route_create.subtitle'.tr(),
+                      style: const TextStyle(
                         color: Color(0xFF768079),
                         fontSize: 14,
-                        fontWeight: FontWeight.w400,
+                        fontWeight: .w400,
                       ),
                     ),
                     const SizedBox(height: 20),
-                    const Text(
-                      "Tên lộ trình",
-                      style: TextStyle(
+                    Text(
+                      'route_create.label_title'.tr(),
+                      style: const TextStyle(
                         color: Color(0xFF768079),
                         fontSize: 13,
-                        fontWeight: FontWeight.w500,
+                        fontWeight: .w500,
                       ),
                     ),
                     const SizedBox(height: 5),
                     ItemTextField(
-                      hintText: 'Nhập tên lộ trình...',
+                      hintText: 'route_create.hint_title'.tr(),
                       hintTextFontSize: 15,
                       controller: _titleController,
-                      textColor: Color(0xFF1C2520),
+                      textColor: const Color(0xFF1C2520),
                       textFontSize: 15,
-                      textFontWeight: FontWeight.w500,
-                      borderColor: Color(0xFFE8ECE8),
+                      textFontWeight: .w500,
+                      borderColor: const Color(0xFFE8ECE8),
                       borderWidth: 1,
                       borderStyle: 'solid',
                       validator: (value) {
-                        // Ưu tiên kiểm tra text trực tiếp từ controller
                         final currentText = _titleController.text.trim();
-
                         if (currentText.isEmpty) {
-                          return 'Vui lòng nhập tên lộ trình';
+                          return 'route_create.error_empty_title'.tr();
                         }
-
                         final routeState = context.read<RouteCubit>().state;
                         if (routeState.actionStatus == RouteStatus.failure &&
                             routeState.fieldErrors != null &&
@@ -330,20 +318,16 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
                         return null;
                       },
                     ),
-
                     ItemRadioRouteGroup(
                       selectedGoalKey: _selectedGoal,
                       onGoalChanged: (goalEnum) {
                         setState(() => _selectedGoal = goalEnum);
-
                         if (state.actionStatus == RouteStatus.failure ||
                             (state.fieldErrors?.isNotEmpty ?? false)) {
                           context.read<RouteCubit>().resetErrors();
                         }
                       },
                     ),
-
-                    // Chủ động hiển thị lỗi từ API cho ItemRadioRouteGroup (nếu có)
                     if (state.fieldErrors != null &&
                         state.fieldErrors!.containsKey('goal') &&
                         (state.fieldErrors!['goal'] as List).isNotEmpty)
@@ -357,17 +341,16 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
                           ),
                         ),
                       ),
-
                     const SizedBox(height: 18),
                     Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: .start,
                       children: [
                         Expanded(
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                            crossAxisAlignment: .start,
                             children: [
                               ItemDateTime(
-                                label: 'Ngày bắt đầu',
+                                label: 'route_create.label_start_date'.tr(),
                                 initialDate: _startDate,
                                 firstDate:
                                     isEditMode &&
@@ -383,8 +366,6 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
                                       );
                                     }
                                   });
-
-                                  // Xóa lỗi API
                                   if (state.actionStatus ==
                                           RouteStatus.failure ||
                                       (state.fieldErrors?.isNotEmpty ??
@@ -393,7 +374,6 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
                                   }
                                 },
                               ),
-                              // Hiển thị lỗi API start_date
                               if (state.fieldErrors != null &&
                                   state.fieldErrors!.containsKey(
                                     'start_date',
@@ -417,14 +397,13 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
                             ],
                           ),
                         ),
-
                         const SizedBox(width: 12),
                         Expanded(
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                            crossAxisAlignment: .start,
                             children: [
                               ItemDateTime(
-                                label: 'Ngày kết thúc',
+                                label: 'route_create.label_end_date'.tr(),
                                 initialDate: _endDate,
                                 firstDate: _startDate.add(
                                   const Duration(days: 1),
@@ -433,8 +412,6 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
                                   setState(() {
                                     _endDate = newDate;
                                   });
-
-                                  // Xóa lỗi API
                                   if (state.actionStatus ==
                                           RouteStatus.failure ||
                                       (state.fieldErrors?.isNotEmpty ??
@@ -443,7 +420,6 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
                                   }
                                 },
                               ),
-                              // Hiển thị lỗi API end_date
                               if (state.fieldErrors != null &&
                                   state.fieldErrors!.containsKey('end_date') &&
                                   (state.fieldErrors!['end_date'] as List)
@@ -466,7 +442,6 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
                         ),
                       ],
                     ),
-
                     const SizedBox(height: 10),
                     Container(
                       constraints: const BoxConstraints(minHeight: 35),
@@ -481,12 +456,12 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
                       ),
                       child: Row(
                         children: [
-                          const Text(
-                            'Thời lượng: ',
-                            style: TextStyle(
+                          Text(
+                            'route_create.duration_prefix'.tr(),
+                            style: const TextStyle(
                               color: Color(0xFF768079),
                               fontSize: 13,
-                              fontWeight: FontWeight.w500,
+                              fontWeight: .w500,
                             ),
                           ),
                           const SizedBox(width: 5),
@@ -496,7 +471,7 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
                               style: const TextStyle(
                                 color: Color(0xFF202C25),
                                 fontSize: 15,
-                                fontWeight: FontWeight.w500,
+                                fontWeight: .w500,
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -505,25 +480,24 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
                         ],
                       ),
                     ),
-
                     const SizedBox(height: 18),
-                    const Text(
-                      "Mô tả mục tiêu",
-                      style: TextStyle(
+                    Text(
+                      'route_create.label_description'.tr(),
+                      style: const TextStyle(
                         color: Color(0xFF768079),
                         fontSize: 13,
-                        fontWeight: FontWeight.w500,
+                        fontWeight: .w500,
                       ),
                     ),
                     const SizedBox(height: 5),
                     ItemTextField(
-                      hintText: 'Nhập mô tả mục tiêu...',
+                      hintText: 'route_create.hint_description'.tr(),
                       hintTextFontSize: 14,
                       controller: _descriptionController,
-                      textColor: Color(0xFF1C2520),
+                      textColor: const Color(0xFF1C2520),
                       textFontSize: 14,
-                      textFontWeight: FontWeight.w400,
-                      borderColor: Color(0xFFE8ECE8),
+                      textFontWeight: .w400,
+                      borderColor: const Color(0xFFE8ECE8),
                       borderWidth: 1,
                       borderStyle: 'solid',
                       maxLines: 3,
@@ -548,12 +522,10 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
               ),
             ),
           ),
-
           bottomNavigationBar: BlocBuilder<RouteCubit, RouteState>(
             builder: (context, routeState) {
               final isGlobalLoading =
                   routeState.actionStatus == RouteStatus.loading;
-
               final isSaving =
                   isGlobalLoading && _currentAction == FormAction.saving;
               final isDeleting =
@@ -566,8 +538,8 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
                   children: [
                     if (isEditMode) ...[
                       ItemBottomButton(
-                        text: 'Xoá lộ trình',
-                        backgroundColor: Color(0xFFFF5252),
+                        text: 'route_create.btn_delete'.tr(),
+                        backgroundColor: const Color(0xFFFF5252),
                         isLoading: isDeleting,
                         onTap: isGlobalLoading
                             ? null
@@ -578,9 +550,10 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
                       ),
                       const SizedBox(height: 20),
                     ],
-
                     ItemBottomButton(
-                      text: isEditMode ? 'Lưu thay đổi' : 'Tạo lộ trình',
+                      text: isEditMode
+                          ? 'route_create.btn_save_changes'.tr()
+                          : 'route_create.btn_create'.tr(),
                       isLoading: isSaving,
                       onTap: isGlobalLoading ? null : _onSave,
                     ),

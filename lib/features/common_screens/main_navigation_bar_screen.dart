@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
@@ -19,18 +20,11 @@ class MainNavigationBarScreen extends StatefulWidget {
 class _MainNavigationBarScreenState extends State<MainNavigationBarScreen> {
   late int _selectedIndex;
 
-  final _pages = [
+  List<Widget> get _pages => const [
     MyRouteScreen(),
     AppointmentScreen(),
     DiaryScreen(),
     ReminderSettingsScreen(),
-  ];
-
-  final _itemList = [
-    _Items(assetName: "assets/icons/ic_layout_grid.svg", label: "Lộ trình"),
-    _Items(assetName: "assets/icons/ic_calendar_days.svg", label: "Lịch hẹn"),
-    _Items(assetName: "assets/icons/ic_diary.svg", label: "Nhật ký"),
-    _Items(assetName: "assets/icons/ic_bell.svg", label: "Nhắc hẹn"),
   ];
 
   @override
@@ -38,8 +32,6 @@ class _MainNavigationBarScreenState extends State<MainNavigationBarScreen> {
     _selectedIndex = 0;
     super.initState();
 
-    // Bấm thông báo khi ứng dụng tắt hẳn
-    // Chờ màn vẽ xong khung hình đầu tiên rồi mới điều hướng
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final data = NotificationService.instance.consumeLaunchData();
       if (data != null && mounted) {
@@ -62,7 +54,7 @@ class _MainNavigationBarScreenState extends State<MainNavigationBarScreen> {
       width: 40,
       height: 28,
       alignment: .center,
-      margin: EdgeInsets.only(bottom: 5),
+      margin: const EdgeInsets.only(bottom: 5),
       decoration: BoxDecoration(
         color: isSelected ? const Color(0xFFD2F36B) : Colors.transparent,
         borderRadius: BorderRadius.circular(10),
@@ -81,6 +73,28 @@ class _MainNavigationBarScreenState extends State<MainNavigationBarScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Ép widget lắng nghe thay đổi locale để tự động rebuild ngay lập tức khi đổi ngôn ngữ
+    context.locale;
+
+    final itemList = [
+      _Items(
+        assetName: "assets/icons/ic_layout_grid.svg",
+        label: 'navigation.route'.tr(),
+      ),
+      _Items(
+        assetName: "assets/icons/ic_calendar_days.svg",
+        label: 'navigation.appointment'.tr(),
+      ),
+      _Items(
+        assetName: "assets/icons/ic_diary.svg",
+        label: 'navigation.diary'.tr(),
+      ),
+      _Items(
+        assetName: "assets/icons/ic_bell.svg",
+        label: 'navigation.reminder'.tr(),
+      ),
+    ];
+
     return Scaffold(
       body: _pages[_selectedIndex],
       bottomNavigationBar: SizedBox(
@@ -92,17 +106,14 @@ class _MainNavigationBarScreenState extends State<MainNavigationBarScreen> {
           selectedItemColor: const Color(0xFF1C2520),
           unselectedItemColor: const Color(0xFF8E8E93),
           showUnselectedLabels: true,
-          selectedLabelStyle: const TextStyle(
-            fontSize: 11,
-            fontWeight: FontWeight.w600,
-          ),
+          selectedLabelStyle: const TextStyle(fontSize: 11, fontWeight: .w600),
           unselectedLabelStyle: const TextStyle(
             fontSize: 11,
-            fontWeight: FontWeight.w400,
+            fontWeight: .w400,
           ),
-          backgroundColor: Color(0xFFFFFFFF),
+          backgroundColor: const Color(0xFFFFFFFF),
           items: [
-            for (_Items item in _itemList)
+            for (_Items item in itemList)
               BottomNavigationBarItem(
                 icon: _buildCuttomIconSvg(
                   assetName: item.assetName,

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
@@ -7,7 +8,7 @@ import 'package:stride/widgets/item_app_bar_title.dart';
 import 'package:stride/widgets/item_bottom_button.dart';
 
 class DiaryScreen extends StatefulWidget {
-  const new({super.key});
+  const DiaryScreen({super.key});
 
   @override
   State<DiaryScreen> createState() => _DiaryScreenState();
@@ -20,7 +21,6 @@ class _DiaryScreenState extends State<DiaryScreen>
   @override
   void initState() {
     super.initState();
-    // Khởi tạo TabController với 2 tab
     _tabController = TabController(length: 2, vsync: this);
   }
 
@@ -36,7 +36,7 @@ class _DiaryScreenState extends State<DiaryScreen>
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: AppbarCustom(
-          title: ItemAppBarTitle(data: 'Nhật ký phát triển', padding: 5),
+          title: ItemAppBarTitle(data: 'diary.appbar_title'.tr(), padding: 5),
         ),
       ),
       body: SingleChildScrollView(
@@ -48,19 +48,14 @@ class _DiaryScreenState extends State<DiaryScreen>
             bottom: 30,
           ),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: .start,
             children: [
               const SizedBox(height: 15),
-
-              // Subtitle
               Text(
-                'Mỗi bước tiến đều đáng nhớ.',
-                style: TextStyle(color: Color(0xFF768079), fontSize: 14),
+                'diary.subtitle'.tr(),
+                style: const TextStyle(color: Color(0xFF768079), fontSize: 14),
               ),
-
               const SizedBox(height: 20),
-
-              // Container bao bọc TabBar
               Container(
                 height: 48,
                 decoration: BoxDecoration(
@@ -88,23 +83,21 @@ class _DiaryScreenState extends State<DiaryScreen>
                     labelColor: const Color(0xFF1C2520),
                     unselectedLabelColor: const Color(0xFF768079),
                     labelStyle: const TextStyle(
-                      fontWeight: FontWeight.w600,
+                      fontWeight: .w600,
                       fontSize: 14,
                     ),
                     unselectedLabelStyle: const TextStyle(
-                      fontWeight: FontWeight.w500,
+                      fontWeight: .w500,
                       fontSize: 14,
                     ),
-                    tabs: const [
-                      Tab(text: 'Theo tuần'),
-                      Tab(text: 'Theo tháng'),
+                    tabs: [
+                      Tab(text: 'diary.tabs.weekly'.tr()),
+                      Tab(text: 'diary.tabs.monthly'.tr()),
                     ],
                   ),
                 ),
               ),
-
               const SizedBox(height: 15),
-
               AnimatedBuilder(
                 animation: _tabController,
                 builder: (context, _) {
@@ -151,41 +144,44 @@ Widget _buildWeeklyView(VoidCallback onTap) {
                     height: 23,
                   ),
                   const SizedBox(width: 15),
-                  const Text(
-                    '4 tuần giữ nhịp',
-                    style: TextStyle(
-                      color: Color(0xFFFFFFFF),
-                      fontSize: 18,
-                      fontWeight: .w600,
+                  Expanded(
+                    child: Text(
+                      'diary.weekly.banner_title'.tr(),
+                      maxLines: 1, // Giới hạn đúng 1 dòng
+                      overflow:
+                          TextOverflow.ellipsis, // Cắt bớt và thêm dấu ...
+                      style: const TextStyle(
+                        color: Color(0xFFFFFFFF),
+                        fontSize: 18,
+                        fontWeight: .w600,
+                      ),
                     ),
                   ),
                 ],
               ),
               const SizedBox(height: 12),
-              const Text(
-                '12 buổi tập đã hoàn thành',
-                style: TextStyle(color: Color(0xFFB5B8B6), fontSize: 14),
+              Text(
+                'diary.weekly.banner_desc'.tr(),
+                style: const TextStyle(color: Color(0xFFB5B8B6), fontSize: 14),
               ),
             ],
           ),
         ),
-
         const SizedBox(height: 30),
-
         Row(
           mainAxisAlignment: .spaceBetween,
           children: [
             Text(
-              'Tuần 4',
-              style: TextStyle(
+              'diary.weekly.week_4_label'.tr(),
+              style: const TextStyle(
                 color: Color(0xFF1C2520),
                 fontSize: 20,
                 fontWeight: .w700,
               ),
             ),
             Text(
-              '07 – 13/09',
-              style: TextStyle(
+              'diary.weekly.week_4_date'.tr(),
+              style: const TextStyle(
                 color: Color(0xFF768079),
                 fontSize: 12,
                 fontWeight: .w400,
@@ -193,31 +189,27 @@ Widget _buildWeeklyView(VoidCallback onTap) {
             ),
           ],
         ),
-
         const SizedBox(height: 15),
-
-        const WeeklyRecordCard(
+        WeeklyRecordCard(
           imagePath: 'assets/images/img_background.jpg',
-          title: 'Đều đặn hơn mỗi tuần',
-          description: 'Đã hoàn thành 3 buổi tập. Cảm thấy thoải mái hơn với lịch tập mới.',
+          title: 'diary.weekly.week_4_title'.tr(),
+          description: 'diary.weekly.week_4_desc'.tr(),
         ),
-
         const SizedBox(height: 30),
-
         Row(
           mainAxisAlignment: .spaceBetween,
           children: [
             Text(
-              'Tuần 5',
-              style: TextStyle(
+              'diary.weekly.week_5_label'.tr(),
+              style: const TextStyle(
                 color: Color(0xFF1C2520),
                 fontSize: 20,
                 fontWeight: .w700,
               ),
             ),
             Text(
-              '14 – 20/09',
-              style: TextStyle(
+              'diary.weekly.week_5_date'.tr(),
+              style: const TextStyle(
                 color: Color(0xFF768079),
                 fontSize: 12,
                 fontWeight: .w400,
@@ -225,15 +217,13 @@ Widget _buildWeeklyView(VoidCallback onTap) {
             ),
           ],
         ),
-
         const SizedBox(height: 15),
-
         ItemBottomButton(
-          text: '+  Thêm ảnh & cập nhật',
+          text: 'diary.weekly.btn_add_update'.tr(),
           onTap: onTap,
-          backgroundColor: Color(0xFFFFFFFF),
-          textColor: Color(0xFF526C30),
-          borderColor: Color(0xFFE8ECE8),
+          backgroundColor: const Color(0xFFFFFFFF),
+          textColor: const Color(0xFF526C30),
+          borderColor: const Color(0xFFE8ECE8),
           borderWidth: 1,
         ),
       ],
@@ -243,12 +233,12 @@ Widget _buildWeeklyView(VoidCallback onTap) {
 
 // Nội dung Tab 2: "Theo tháng"
 Widget _buildMonthlyView() {
-  return const Center(
+  return Center(
     child: Padding(
-      padding: EdgeInsetsGeometry.only(top: 40),
+      padding: const EdgeInsets.only(top: 40),
       child: Text(
-        'Nội dung "Theo tháng" sẽ được thêm sau',
-        style: TextStyle(color: Colors.grey),
+        'diary.monthly.coming_soon'.tr(),
+        style: const TextStyle(color: Colors.grey),
       ),
     ),
   );

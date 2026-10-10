@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -15,10 +16,12 @@ class ProfileScreen extends StatelessWidget {
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
-        child: AppbarCustom(title: ItemAppBarTitle(data: 'Hồ sơ của bạn')),
+        child: AppbarCustom(
+          title: ItemAppBarTitle(data: 'profile.appbar_title'.tr()),
+        ),
       ),
       body: Padding(
-        padding: EdgeInsets.only(top: 15, left: 20, right: 20),
+        padding: const EdgeInsets.only(top: 15, left: 20, right: 20),
         child: Column(
           children: [
             BlocBuilder<AuthCubit, AuthState>(
@@ -30,7 +33,6 @@ class ProfileScreen extends StatelessWidget {
                 return Row(
                   crossAxisAlignment: .center,
                   children: [
-                    // Avatar với kích thước cố định
                     Container(
                       width: 76,
                       height: 76,
@@ -45,12 +47,10 @@ class ProfileScreen extends StatelessWidget {
                         style: const TextStyle(
                           color: Color(0xFF526C30),
                           fontSize: 23,
-                          fontWeight: FontWeight.w700,
+                          fontWeight: .w700,
                         ),
                       ),
                     ),
-
-                    // Bọc Column vào Expanded để ép chiều rộng không vượt quá màn hình
                     Expanded(
                       child: Column(
                         crossAxisAlignment: .start,
@@ -62,7 +62,7 @@ class ProfileScreen extends StatelessWidget {
                             style: const TextStyle(
                               color: Color(0xFF1C2520),
                               fontSize: 25,
-                              fontWeight: FontWeight.w700,
+                              fontWeight: .w700,
                             ),
                           ),
                           const SizedBox(height: 5),
@@ -73,7 +73,7 @@ class ProfileScreen extends StatelessWidget {
                             style: const TextStyle(
                               color: Color(0xFF768079),
                               fontSize: 13,
-                              fontWeight: FontWeight.w400,
+                              fontWeight: .w400,
                             ),
                           ),
                         ],
@@ -83,15 +83,14 @@ class ProfileScreen extends StatelessWidget {
                 );
               },
             ),
-
             Container(
               height: 85,
-              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-              margin: EdgeInsets.only(top: 30),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+              margin: const EdgeInsets.only(top: 30),
               decoration: BoxDecoration(
-                color: Color(0xFFFFFFFF),
-                border: BoxBorder.all(
-                  color: Color(0xFFE8ECE8),
+                color: const Color(0xFFFFFFFF),
+                border: Border.all(
+                  color: const Color(0xFFE8ECE8),
                   width: 1,
                   style: BorderStyle.solid,
                 ),
@@ -103,10 +102,10 @@ class ProfileScreen extends StatelessWidget {
                   Container(
                     width: 37,
                     height: 37,
-                    margin: EdgeInsets.only(right: 10),
+                    margin: const EdgeInsets.only(right: 10),
                     alignment: .center,
                     decoration: BoxDecoration(
-                      color: Color(0xFFEEF4E5),
+                      color: const Color(0xFFEEF4E5),
                       borderRadius: BorderRadius.circular(11),
                     ),
                     child: SvgPicture.asset(
@@ -115,7 +114,6 @@ class ProfileScreen extends StatelessWidget {
                       height: 19,
                     ),
                   ),
-
                   Expanded(
                     child: InkWell(
                       onTap: () =>
@@ -127,8 +125,8 @@ class ProfileScreen extends StatelessWidget {
                             crossAxisAlignment: .start,
                             children: [
                               Text(
-                                'Thông tin cá nhân',
-                                style: TextStyle(
+                                'profile.personal_info_title'.tr(),
+                                style: const TextStyle(
                                   color: Color(0xFF1C2520),
                                   fontSize: 15,
                                   fontWeight: .w600,
@@ -136,8 +134,8 @@ class ProfileScreen extends StatelessWidget {
                               ),
                               const SizedBox(height: 5),
                               Text(
-                                'Tên, liên hệ, chỉ số cơ thể, ...',
-                                style: TextStyle(
+                                'profile.personal_info_subtitle'.tr(),
+                                style: const TextStyle(
                                   color: Color(0xFF768079),
                                   fontSize: 12,
                                   fontWeight: .w400,
@@ -145,7 +143,6 @@ class ProfileScreen extends StatelessWidget {
                               ),
                             ],
                           ),
-
                           SvgPicture.asset('assets/icons/ic_chevron_right.svg'),
                         ],
                       ),
@@ -154,14 +151,13 @@ class ProfileScreen extends StatelessWidget {
                 ],
               ),
             ),
-
             const SizedBox(height: 50),
             Center(
               child: InkWell(
                 onTap: () => context.push('/profile/change_password'),
                 child: Text(
-                  'Đổi mật khẩu',
-                  style: TextStyle(
+                  'profile.change_password'.tr(),
+                  style: const TextStyle(
                     color: Color(0xFF526C30),
                     fontSize: 14,
                     fontWeight: .w700,
@@ -169,14 +165,13 @@ class ProfileScreen extends StatelessWidget {
                 ),
               ),
             ),
-
             const SizedBox(height: 40),
             Center(
               child: InkWell(
                 onTap: () => context.read<AuthCubit>().logout(),
                 child: Text(
-                  'Đăng xuất',
-                  style: TextStyle(
+                  'profile.logout'.tr(),
+                  style: const TextStyle(
                     color: Color(0xFF526C30),
                     fontSize: 14,
                     fontWeight: .w700,

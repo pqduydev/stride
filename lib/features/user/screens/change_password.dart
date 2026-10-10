@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -42,7 +43,6 @@ class _ChangePasswordState extends State<ChangePassword> {
     for (var controller in controllers) {
       controller.addListener(() {
         final state = context.read<UserCubit>().state;
-        // Xóa ngay nếu đang có lỗi API hoặc trạng thái failure
         if (state.status == UserStatus.failure ||
             (state.fieldErrors?.isNotEmpty ?? false)) {
           context.read<UserCubit>().resetErrors();
@@ -79,9 +79,11 @@ class _ChangePasswordState extends State<ChangePassword> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const PreferredSize(
-        preferredSize: Size.fromHeight(kToolbarHeight),
-        child: AppbarCustom(title: ItemAppBarTitle(data: 'Đổi mật khẩu')),
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: AppbarCustom(
+          title: ItemAppBarTitle(data: 'change_password.appbar_title'.tr()),
+        ),
       ),
       body: BlocListener<UserCubit, UserState>(
         listener: (context, state) {
@@ -92,7 +94,7 @@ class _ChangePasswordState extends State<ChangePassword> {
               AppToast.showError(context, state.errorMessage!);
             }
           } else if (state.status == UserStatus.success) {
-            AppToast.showSuccess(context, 'Đổi mật khẩu thành công.');
+            AppToast.showSuccess(context, 'change_password.success'.tr());
 
             context.read<UserCubit>().resetStatus();
             context.pop();
@@ -135,7 +137,7 @@ class _ChangePasswordState extends State<ChangePassword> {
 
                         // 1. Mật khẩu cũ
                         ItemCustomTextField(
-                          label: 'Mật khẩu cũ',
+                          label: 'change_password.old_password.label'.tr(),
                           controller: _oldPasswordController,
                           textInputAction: TextInputAction.next,
                           suffixIcon: GestureDetector(
@@ -158,10 +160,11 @@ class _ChangePasswordState extends State<ChangePassword> {
                           enableSuggestions: false,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Vui lòng nhập mật khẩu cũ';
+                              return 'change_password.old_password.error_empty'
+                                  .tr();
                             }
                             if (value.length < 6) {
-                              return 'Mật khẩu phải có ít nhất 6 ký tự';
+                              return 'change_password.error_min_length'.tr();
                             }
                             final fieldErrors = context
                                 .read<UserCubit>()
@@ -182,7 +185,7 @@ class _ChangePasswordState extends State<ChangePassword> {
 
                         // 2. Mật khẩu mới
                         ItemCustomTextField(
-                          label: 'Mật khẩu mới',
+                          label: 'change_password.new_password.label'.tr(),
                           controller: _newPasswordController,
                           textInputAction: TextInputAction.next,
                           suffixIcon: GestureDetector(
@@ -205,16 +208,18 @@ class _ChangePasswordState extends State<ChangePassword> {
                           enableSuggestions: false,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Vui lòng nhập mật khẩu mới';
+                              return 'change_password.new_password.error_empty'
+                                  .tr();
                             }
                             if (value.length < 6) {
-                              return 'Mật khẩu phải có ít nhất 6 ký tự';
+                              return 'change_password.error_min_length'.tr();
                             }
 
                             final oldPassword = _oldPasswordController.text;
                             if (oldPassword.isNotEmpty &&
                                 _newPasswordController.text == oldPassword) {
-                              return 'Mật khẩu mới phải khác mật khẩu cũ';
+                              return 'change_password.new_password.error_same_old'
+                                  .tr();
                             }
 
                             final fieldErrors = context
@@ -236,7 +241,7 @@ class _ChangePasswordState extends State<ChangePassword> {
 
                         // 3. Xác nhận mật khẩu mới
                         ItemCustomTextField(
-                          label: 'Xác nhận mật khẩu mới',
+                          label: 'change_password.confirm_password.label'.tr(),
                           controller: _newPasswordConfirmController,
                           textInputAction: TextInputAction.done,
                           suffixIcon: GestureDetector(
@@ -260,17 +265,19 @@ class _ChangePasswordState extends State<ChangePassword> {
                           enableSuggestions: false,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Vui lòng xác nhận mật khẩu mới';
+                              return 'change_password.confirm_password.error_empty'
+                                  .tr();
                             }
                             if (value.length < 6) {
-                              return 'Mật khẩu phải có ít nhất 6 ký tự';
+                              return 'change_password.error_min_length'.tr();
                             }
 
                             final newPassword = _newPasswordController.text;
                             if (newPassword.isNotEmpty &&
                                 _newPasswordConfirmController.text !=
                                     newPassword) {
-                              return 'Mật khẩu mới không trùng khớp';
+                              return 'change_password.confirm_password.error_mismatch'
+                                  .tr();
                             }
 
                             final fieldErrors = context
@@ -311,7 +318,7 @@ class _ChangePasswordState extends State<ChangePassword> {
               top: 20,
             ),
             child: ItemBottomButton(
-              text: 'Đổi mật khẩu',
+              text: 'change_password.btn_submit'.tr(),
               isLoading: isLoading,
               onTap: isLoading ? null : _submit,
             ),

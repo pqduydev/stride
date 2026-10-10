@@ -15,10 +15,9 @@ class ItemAppBarTitle extends StatelessWidget {
         style: TextStyle(
           color: Color(0xFF1C2520),
           fontSize: 19,
-          fontWeight: FontWeight.w700,
+          fontWeight: .w700,
         ),
       ),
     );
-    ;
   }
 }

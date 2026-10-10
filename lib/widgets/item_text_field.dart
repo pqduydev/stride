@@ -65,7 +65,7 @@ class ItemTextField extends StatelessWidget {
                 hintStyle: TextStyle(
                   color: Color(hintTextColor ?? 0xFF8E8E93),
                   fontSize: hintTextFontSize,
-                  fontWeight: hintTextFontWeight ?? FontWeight.w500,
+                  fontWeight: hintTextFontWeight ?? .w500,
                 ),
                 filled: true,
                 fillColor: backgroundColor ?? Colors.white,

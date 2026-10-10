@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -11,6 +12,7 @@ import 'package:stride/features/route/route_cubit/route_state.dart';
 import 'package:stride/features/route/widgets/route_card_skeleton.dart';
 import 'package:stride/features/route/widgets/route_card_item.dart';
 import 'package:stride/widgets/item_card_switch.dart';
+import 'package:stride/widgets/language_switch_button.dart'; // <-- Thêm import này
 
 class MyRouteScreen extends StatefulWidget {
   const MyRouteScreen({super.key});
@@ -23,7 +25,6 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
   @override
   void initState() {
     super.initState();
-    // Tải danh sách lộ trình ngay khi vào màn hình
     context.read<RouteCubit>().loadRoutes();
   }
 
@@ -32,20 +33,17 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
       final startDate = DateTime.parse(start);
       final endDate = DateTime.parse(end);
 
-      // Thêm 0 trước ngày, tháng là hàng đơn vị
       final startDayMonth =
           "${startDate.day.toString().padLeft(2, '0')}/${startDate.month.toString().padLeft(2, '0')}";
       final endDayMonth =
           "${endDate.day.toString().padLeft(2, '0')}/${endDate.month.toString().padLeft(2, '0')}";
 
-      // Kiểm tra ngày bắt đầu và kết thúc có trong cùng năm
       if (startDate.year == endDate.year) {
         return "$startDayMonth - $endDayMonth/${endDate.year}";
       } else {
         return "$startDayMonth/${startDate.year} - $endDayMonth/${endDate.year}";
       }
     } catch (e) {
-      // Trả về chuỗi gốc nếu parse lỗi để tránh crash app
       return "$start - $end";
     }
   }
@@ -94,51 +92,56 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                     ],
                   ),
                 ),
+                // Sử dụng LanguageSwitchButton đã tách rời
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const LanguageSwitchButton(),
+                    const SizedBox(width: 10),
+                    BlocBuilder<AuthCubit, AuthState>(
+                      builder: (context, authState) {
+                        final user = authState.user;
+                        final initials = user?.displayInitials;
 
-                // Avatar & Menu tài khoản người dùng
-                BlocBuilder<AuthCubit, AuthState>(
-                  builder: (context, authState) {
-                    final user = authState.user;
-                    final initials = user?.displayInitials;
-
-                    return Theme(
-                      data: Theme.of(context).copyWith(
-                        splashColor: Colors.transparent,
-                        highlightColor: Colors.transparent,
-                        hoverColor: Colors.transparent,
-                      ),
-                      child: InkWell(
-                        onTap: () => context.push('/profile'),
-                        child: CircleAvatar(
-                          radius: 21,
-                          backgroundColor: const Color(0xFFE7EDD9),
-                          child: Text(
-                            initials ?? '',
-                            style: Theme.of(context).textTheme.titleLarge
-                                ?.copyWith(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.bold,
-                                  color: const Color(0xFF526C30),
-                                ),
+                        return Theme(
+                          data: Theme.of(context).copyWith(
+                            splashColor: Colors.transparent,
+                            highlightColor: Colors.transparent,
+                            hoverColor: Colors.transparent,
                           ),
-                        ),
-                      ),
-                    );
-                  },
+                          child: InkWell(
+                            onTap: () => context.push('/profile'),
+                            child: CircleAvatar(
+                              radius: 21,
+                              backgroundColor: const Color(0xFFE7EDD9),
+                              child: Text(
+                                initials ?? '',
+                                style: Theme.of(context).textTheme.titleLarge
+                                    ?.copyWith(
+                                      fontSize: 13,
+                                      fontWeight: .bold,
+                                      color: const Color(0xFF526C30),
+                                    ),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
                 ),
               ],
             ),
           ),
         ),
         body: RefreshIndicator(
-          color: const Color(0xFF526C30), // Màu biểu tượng xoay
-          backgroundColor: Colors.white, // Màu nền hình tròn
+          color: const Color(0xFF526C30),
+          backgroundColor: Colors.white,
           strokeWidth: 2.5,
           onRefresh: () async {
             await context.read<RouteCubit>().loadRoutes();
           },
           child: SingleChildScrollView(
-            // Giúp màn hình luôn kéo xuống được kể cả khi nội dung ngắn hơn màn hình
             physics: const AlwaysScrollableScrollPhysics(),
             child: Padding(
               padding: const EdgeInsets.only(
@@ -153,11 +156,11 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                     children: [
                       Expanded(
                         child: Text(
-                          "THỨ HAI, 14 THÁNG 9",
+                          'my_route.date_placeholder'.tr(),
                           style: Theme.of(context).textTheme.labelLarge
                               ?.copyWith(
                                 fontSize: 11,
-                                fontWeight: FontWeight.w600,
+                                fontWeight: .w600,
                                 color: const Color(0xFF768079),
                               ),
                         ),
@@ -170,10 +173,10 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                     crossAxisAlignment: .center,
                     children: [
                       Text(
-                        "Lộ trình của tôi",
+                        'my_route.title'.tr(),
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           fontSize: 26,
-                          fontWeight: FontWeight.w700,
+                          fontWeight: .w700,
                           color: const Color(0xFF1C2520),
                         ),
                       ),
@@ -198,27 +201,24 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                       ),
                     ],
                   ),
-
                   const SizedBox(height: 16),
-                  // Danh sách lộ trình
                   SizedBox(
                     height: 255,
                     child: BlocBuilder<RouteCubit, RouteState>(
                       builder: (context, routeState) {
                         if (routeState.listStatus == RouteStatus.loading ||
                             routeState.listStatus == RouteStatus.initial) {
-                          return const Center(
-                            child: const RouteCardSkeletonList(),
-                          );
+                          return const Center(child: RouteCardSkeletonList());
                         }
 
                         if (routeState.listStatus == RouteStatus.failure) {
                           return Center(
                             child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisAlignment: .center,
                               children: [
                                 Text(
-                                  routeState.errorMessage ?? 'Có lỗi xảy ra',
+                                  routeState.errorMessage ??
+                                      'my_route.error_occurred'.tr(),
                                   textAlign: TextAlign.center,
                                   style: const TextStyle(
                                     color: Color(0xFFE57373),
@@ -233,7 +233,7 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                                     Icons.refresh_rounded,
                                     size: 18,
                                   ),
-                                  label: const Text("Thử lại"),
+                                  label: Text('my_route.retry'.tr()),
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: const Color(0xFF1C2520),
                                     foregroundColor: Colors.white,
@@ -247,7 +247,6 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                           );
                         }
 
-                        // Danh sách lộ trình trống
                         if (routeState.routes.isEmpty) {
                           return Container(
                             decoration: BoxDecoration(
@@ -257,10 +256,10 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                               ),
                               color: Colors.white,
                             ),
-                            child: const Center(
+                            child: Center(
                               child: Text(
-                                "Bạn chưa có lộ trình tập luyện nào.",
-                                style: TextStyle(
+                                'my_route.empty_routes'.tr(),
+                                style: const TextStyle(
                                   color: Color(0xFF768079),
                                   fontSize: 14,
                                 ),
@@ -269,7 +268,6 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                           );
                         }
 
-                        // Hiển thị danh sách cuộn ngang
                         return ListView.separated(
                           scrollDirection: Axis.horizontal,
                           clipBehavior: Clip.none,
@@ -292,7 +290,6 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                       },
                     ),
                   ),
-
                   const SizedBox(height: 30),
                   Column(
                     children: [
@@ -300,22 +297,22 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                         mainAxisAlignment: .spaceBetween,
                         children: [
                           Text(
-                            "Hôm nay",
+                            'my_route.today'.tr(),
                             style: Theme.of(context).textTheme.titleLarge
                                 ?.copyWith(
                                   fontSize: 19,
-                                  fontWeight: FontWeight.w700,
+                                  fontWeight: .w700,
                                   color: const Color(0xFF1C2520),
                                 ),
                           ),
                           InkWell(
                             onTap: () => context.push('/appointment'),
                             child: Text(
-                              "Xem lịch",
+                              'my_route.view_schedule'.tr(),
                               style: Theme.of(context).textTheme.titleLarge
                                   ?.copyWith(
                                     fontSize: 13,
-                                    fontWeight: FontWeight.w700,
+                                    fontWeight: .w700,
                                     color: const Color(0xFF526C30),
                                   ),
                             ),
@@ -368,7 +365,7 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                                             ?.copyWith(
                                               color: const Color(0xFF1C2520),
                                               fontSize: 23,
-                                              fontWeight: FontWeight.w700,
+                                              fontWeight: .w700,
                                             ),
                                       ),
                                       Container(
@@ -385,28 +382,28 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                                           ),
                                         ),
                                         child: Text(
-                                          "60 phút",
+                                          'my_route.duration_minutes'.tr(),
                                           style: Theme.of(context)
                                               .textTheme
                                               .labelLarge
                                               ?.copyWith(
                                                 color: const Color(0xFF768079),
                                                 fontSize: 11,
-                                                fontWeight: FontWeight.w600,
+                                                fontWeight: .w600,
                                               ),
                                         ),
                                       ),
                                     ],
                                   ),
                                   Text(
-                                    "Thân trên & core",
+                                    'my_route.body_part'.tr(),
                                     style: Theme.of(context)
                                         .textTheme
                                         .labelLarge
                                         ?.copyWith(
                                           color: const Color(0xFF1C2520),
                                           fontSize: 16,
-                                          fontWeight: FontWeight.w600,
+                                          fontWeight: .w600,
                                         ),
                                   ),
                                   Row(
@@ -416,14 +413,14 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                                       ),
                                       const SizedBox(width: 10),
                                       Text(
-                                        "Nhắc trước 15 phút",
+                                        'my_route.reminder_notice'.tr(),
                                         style: Theme.of(context)
                                             .textTheme
                                             .labelLarge
                                             ?.copyWith(
                                               color: const Color(0xFF768079),
                                               fontSize: 12,
-                                              fontWeight: FontWeight.w400,
+                                              fontWeight: .w400,
                                             ),
                                       ),
                                     ],
@@ -444,12 +441,12 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                         crossAxisAlignment: .center,
                         children: [
                           Text(
-                            "Nhìn lại hành trình",
+                            'my_route.review_journey'.tr(),
                             style: Theme.of(context).textTheme.titleLarge
                                 ?.copyWith(
                                   color: const Color(0xFF1C2520),
                                   fontSize: 19,
-                                  fontWeight: FontWeight.w700,
+                                  fontWeight: .w700,
                                 ),
                           ),
                           InkWell(
@@ -506,37 +503,41 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                                         ),
                                       ),
                                       child: Text(
-                                        "TUẦN 4",
+                                        'my_route.week_label'.tr(),
                                         style: Theme.of(context)
                                             .textTheme
                                             .labelMedium
                                             ?.copyWith(
                                               color: const Color(0xFF526C30),
                                               fontSize: 11,
-                                              fontWeight: FontWeight.w600,
+                                              fontWeight: .w600,
                                             ),
                                       ),
                                     ),
                                     Text(
-                                      "Đều đặn hơn mỗi tuần",
+                                      'my_route.week_title'.tr(),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
                                       style: Theme.of(context)
                                           .textTheme
                                           .labelMedium
                                           ?.copyWith(
                                             color: const Color(0xFF1C2520),
                                             fontSize: 14,
-                                            fontWeight: FontWeight.w600,
+                                            fontWeight: .w600,
                                           ),
                                     ),
                                     Text(
-                                      "3 buổi tập · 1 cập nhật",
+                                      'my_route.week_desc'.tr(),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
                                       style: Theme.of(context)
                                           .textTheme
                                           .labelMedium
                                           ?.copyWith(
                                             color: const Color(0xFF768079),
                                             fontSize: 12,
-                                            fontWeight: FontWeight.w400,
+                                            fontWeight: .w400,
                                           ),
                                     ),
                                   ],
@@ -549,7 +550,6 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                     ],
                   ),
                   const SizedBox(height: 30),
-
                   BlocBuilder<ReminderCubit, ReminderState>(
                     buildWhen: (prev, curr) =>
                         prev.settings.enabled != curr.settings.enabled,

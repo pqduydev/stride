@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
@@ -12,8 +13,7 @@ import 'package:stride/widgets/item_app_bar_title.dart';
 import 'package:stride/widgets/item_bottom_button.dart';
 
 class AddImageScreen extends StatefulWidget {
-  final int
-  maxImages; // Số ảnh tối đa khi chọn thêm (được thêm và được chọn khác nhau)
+  final int maxImages;
 
   const AddImageScreen({super.key, this.maxImages = 4});
 
@@ -23,14 +23,10 @@ class AddImageScreen extends StatefulWidget {
 
 class _AddImageScreenState extends State<AddImageScreen> {
   final _picker = PhotoPickerService();
-  // Ảnh được chụp/chọn trong lần thêm ảnh này (được chọn không giới hạn)
   final List<PickedMedia> _picked = [];
-  // Danh sách path của các ảnh được tick thêm (không trùng, giới hạn số ảnh được thêm)
   final Set<String> _selected = {};
 
-  int get _remaining =>
-      widget.maxImages -
-      _selected.length; // Tính số lượng ảnh còn lại được phép thêm
+  int get _remaining => widget.maxImages - _selected.length;
 
   @override
   void initState() {
@@ -38,26 +34,24 @@ class _AddImageScreenState extends State<AddImageScreen> {
     _recoverLostPhotos();
   }
 
-  // Lấy lại ảnh bị "rơi"
   Future<void> _recoverLostPhotos() async {
     final result = await _picker.retrieveLostPhotos();
     if (result.accepted.isEmpty || !mounted) return;
     _addPicked(result.accepted);
   }
 
-  // Cập nhật danh sách đã chọn và được thêm
   void _addPicked(List<PickedMedia> photos) {
     setState(() {
       _picked.insertAll(0, photos);
-      // Ảnh mới được tick sẵn. Dựa trên _remaining để quyết số lượng ảnh sẽ được tick
       _selected.addAll(photos.map((file) => file.path).take(_remaining));
     });
   }
 
-  // Chụp ảnh
   Future<void> _takePhoto() async {
     if (_remaining < 0) {
-      _showMessage('Bạn chỉ thêm được tối đa ${widget.maxImages} ảnh.');
+      _showMessage(
+        tr('add_image.error_max_limit', args: [widget.maxImages.toString()]),
+      );
       return;
     }
 
@@ -71,10 +65,11 @@ class _AddImageScreenState extends State<AddImageScreen> {
     }
   }
 
-  // Chọn ảnh từ thư viện
   Future<void> _pickFromGallery() async {
     if (_remaining < 0) {
-      _showMessage('Bạn chỉ thêm được tối đa ${widget.maxImages} ảnh.');
+      _showMessage(
+        tr('add_image.error_max_limit', args: [widget.maxImages.toString()]),
+      );
       return;
     }
 
@@ -88,7 +83,6 @@ class _AddImageScreenState extends State<AddImageScreen> {
     }
   }
 
-  // Bỏ/tick thêm ảnh
   void _toggle(String path) {
     setState(() {
       if (_selected.contains(path)) {
@@ -99,7 +93,6 @@ class _AddImageScreenState extends State<AddImageScreen> {
     });
   }
 
-  // Hiện thông báo
   void _showMessage(String message) {
     if (!mounted) return;
     AppToast.showError(context, message);
@@ -110,29 +103,30 @@ class _AddImageScreenState extends State<AddImageScreen> {
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
-        child: AppbarCustom(title: ItemAppBarTitle(data: 'Thêm hình ảnh')),
+        child: AppbarCustom(
+          title: ItemAppBarTitle(data: 'add_image.title'.tr()),
+        ),
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.fromLTRB(20, 0, 20, 30),
+          padding: const EdgeInsets.fromLTRB(20, 0, 20, 30),
           child: Column(
             crossAxisAlignment: .start,
             children: [
               Text(
-                "Chọn ảnh để lưu vào nhật ký.",
-                style: TextStyle(
-                  color: const Color(0xFF768079),
+                'add_image.subtitle'.tr(),
+                style: const TextStyle(
+                  color: Color(0xFF768079),
                   fontSize: 14,
                   fontWeight: .w400,
                 ),
               ),
               const SizedBox(height: 20),
-
               InkWell(
                 onTap: _takePhoto,
                 child: Container(
                   height: 61,
-                  padding: EdgeInsets.all(20),
+                  padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
                     color: const Color(0xFFEEF4E5),
                     borderRadius: BorderRadius.circular(12),
@@ -147,9 +141,9 @@ class _AddImageScreenState extends State<AddImageScreen> {
                       ),
                       const SizedBox(width: 10),
                       Text(
-                        "Chụp ảnh mới",
-                        style: TextStyle(
-                          color: const Color(0xFF526C30),
+                        'add_image.btn_camera'.tr(),
+                        style: const TextStyle(
+                          color: Color(0xFF526C30),
                           fontSize: 16,
                           fontWeight: .w600,
                         ),
@@ -163,9 +157,9 @@ class _AddImageScreenState extends State<AddImageScreen> {
                 crossAxisAlignment: .start,
                 children: [
                   Text(
-                    "Ảnh gần đây",
-                    style: TextStyle(
-                      color: const Color(0xFF1C2520),
+                    'add_image.section_recent'.tr(),
+                    style: const TextStyle(
+                      color: Color(0xFF1C2520),
                       fontSize: 18,
                       fontWeight: .w700,
                     ),
@@ -186,7 +180,6 @@ class _AddImageScreenState extends State<AddImageScreen> {
                           onTap: () => _toggle(photo.path),
                         ),
                       ],
-
                       GestureDetector(
                         onTap: () {},
                         child: Container(
@@ -208,8 +201,8 @@ class _AddImageScreenState extends State<AddImageScreen> {
                                 ),
                                 const SizedBox(height: 20),
                                 Text(
-                                  "Ảnh của bạn",
-                                  style: TextStyle(
+                                  'add_image.btn_gallery'.tr(),
+                                  style: const TextStyle(
                                     color: Color(0xFF768079),
                                     fontSize: 12,
                                     fontWeight: .w400,
@@ -226,22 +219,26 @@ class _AddImageScreenState extends State<AddImageScreen> {
               ),
               const SizedBox(height: 30),
               Text(
-                """Lưu lại những khoảnh khắc trên hành trình. Bạn có thể thêm ảnh phòng tập, bài tập hoặc ảnh ghi lại sự thay đổi của mình.""",
-                style: TextStyle(
+                'add_image.description'.tr(),
+                style: const TextStyle(
                   color: Color(0xFF768079),
                   fontSize: 14,
                   fontWeight: .w400,
                 ),
-                textDirection: .ltr,
               ),
             ],
           ),
         ),
       ),
       bottomNavigationBar: Padding(
-        padding: EdgeInsets.fromLTRB(20, 20, 20, 30),
+        padding: const EdgeInsets.fromLTRB(20, 20, 20, 30),
         child: ItemBottomButton(
-          text: _selected.isEmpty ? 'Chọn ảnh' : 'Thêm ${_selected.length} ảnh',
+          text: _selected.isEmpty
+              ? 'add_image.btn_select'.tr()
+              : tr(
+                  'add_image.btn_add_count',
+                  args: [_selected.length.toString()],
+                ),
           onTap: () => context.pop(
             _picked.where((file) => _selected.contains(file.path)).toList(),
           ),
@@ -271,11 +268,7 @@ class _PhotoTile extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(13),
-            child: Image.file(
-              File(path),
-              fit: BoxFit.cover,
-              cacheWidth: 400, // chỉ giải mã ảnh nhỏ cho ô lưới → đỡ tốn RAM
-            ),
+            child: Image.file(File(path), fit: BoxFit.cover, cacheWidth: 400),
           ),
           if (selected)
             Positioned(

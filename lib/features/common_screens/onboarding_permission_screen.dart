@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -20,7 +21,6 @@ class _OnboardingPermissionScreenState
     BuildContext context, {
     required bool shouldRequest,
   }) async {
-    // Chặn người dùng spam click nhiều lần
     if (_isProcessing) return;
 
     setState(() {
@@ -35,7 +35,6 @@ class _OnboardingPermissionScreenState
         return;
       }
 
-      // 1. Kiểm tra trạng thái TRƯỚC KHI gọi request()
       final initialCameraStatus = await Permission.camera.status;
       final initialNotificationStatus = await Permission.notification.status;
 
@@ -44,7 +43,6 @@ class _OnboardingPermissionScreenState
       final wasNotificationPermanentlyDenied =
           initialNotificationStatus.isPermanentlyDenied;
 
-      // 2. Chỉ gọi request() đối với các quyền CHƯA bị chặn vĩnh viễn từ trước
       if (!wasCameraPermanentlyDenied) {
         await Permission.camera.request();
       }
@@ -54,7 +52,6 @@ class _OnboardingPermissionScreenState
 
       if (!context.mounted) return;
 
-      // 3. CHỈ hiện Dialog mở Cài đặt nếu quyền đó ĐÃ BỊ CHẶN VĨNH VIỄN TỪ TRƯỚC
       if (wasCameraPermanentlyDenied || wasNotificationPermanentlyDenied) {
         final shouldOpenSettings = await _showPermanentlyDeniedDialog(context);
         if (shouldOpenSettings == true) {
@@ -62,7 +59,6 @@ class _OnboardingPermissionScreenState
         }
       }
 
-      // 4. Lưu trạng thái hoàn tất và chuyển vào màn hình chính
       if (context.mounted) {
         await _finishOnboarding(context);
       }
@@ -79,32 +75,34 @@ class _OnboardingPermissionScreenState
     await context.read<AuthCubit>().completePermissionOnboarding();
   }
 
-  // Dialog thông báo khi bị từ chối vĩnh viễn
   Future<bool?> _showPermanentlyDeniedDialog(BuildContext context) {
     return showDialog<bool>(
       context: context,
-      barrierDismissible: false, // Bắt buộc người dùng tương tác với Dialog
+      barrierDismissible: false,
       builder: (ctx) => AlertDialog(
-        title: const Text(
-          'Cần mở Cài đặt thiết bị',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        title: Text(
+          'onboarding_permission.dialog_title'.tr(),
+          style: const TextStyle(fontSize: 18, fontWeight: .bold),
         ),
-        content: const Text(
-          'Một số quyền truy cập đã bị tắt trước đó. Bạn có muốn mở Cài đặt ứng dụng để bật thủ công không?',
-          style: TextStyle(fontSize: 14, color: Color(0xFF768079)),
+        content: Text(
+          'onboarding_permission.dialog_content'.tr(),
+          style: const TextStyle(fontSize: 14, color: Color(0xFF768079)),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Để sau', style: TextStyle(color: Colors.grey)),
+            child: Text(
+              'onboarding_permission.dialog_cancel'.tr(),
+              style: const TextStyle(color: Colors.grey),
+            ),
           ),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text(
-              'Mở Cài đặt',
-              style: TextStyle(
+            child: Text(
+              'onboarding_permission.dialog_open_settings'.tr(),
+              style: const TextStyle(
                 color: Color(0xFF526C30),
-                fontWeight: FontWeight.bold,
+                fontWeight: .bold,
               ),
             ),
           ),
@@ -121,55 +119,48 @@ class _OnboardingPermissionScreenState
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: .start,
             children: [
-              const Text(
-                'Cá nhân hóa\ntrải nghiệm của bạn',
-                style: TextStyle(
+              Text(
+                'onboarding_permission.title'.tr(),
+                style: const TextStyle(
                   color: Color(0xFF1C2520),
                   fontSize: 34,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: .w700,
                 ),
               ),
               const SizedBox(height: 15),
-              const Text(
-                'Stride cần một số quyền truy cập để giúp hành trình của bạn trọn vẹn nhất.',
-                style: TextStyle(
+              Text(
+                'onboarding_permission.subtitle'.tr(),
+                style: const TextStyle(
                   color: Color(0xFF768079),
                   fontSize: 15,
-                  fontWeight: FontWeight.w400,
+                  fontWeight: .w400,
                 ),
               ),
               const SizedBox(height: 40),
-
               _buildInfoRow(
-                title: 'Máy ảnh',
-                description: 'Chụp ảnh và lưu trữ nhật ký hình ảnh trong tiến trình của bạn.',
+                title: 'onboarding_permission.camera_title'.tr(),
+                description: 'onboarding_permission.camera_desc'.tr(),
                 icon: Icons.camera_alt_outlined,
               ),
               const SizedBox(height: 25),
-
               _buildInfoRow(
-                title: 'Thông báo',
-                description: 'Nhận lời nhắc về lịch hẹn và các mục tiêu đã lên kế hoạch.',
+                title: 'onboarding_permission.notification_title'.tr(),
+                description: 'onboarding_permission.notification_desc'.tr(),
                 icon: Icons.notifications_none_outlined,
               ),
-
               const Spacer(),
-
-              // Nút Cho phép
               ItemBottomButton(
-                text: 'Cấp quyền truy cập',
+                text: 'onboarding_permission.btn_allow'.tr(),
                 isLoading: _isProcessing,
                 onTap: _isProcessing
                     ? null
                     : () => _handlePermissions(context, shouldRequest: true),
               ),
               const SizedBox(height: 15),
-
-              // Nút Bỏ qua (Để sau)
               ItemBottomButton(
-                text: 'Để sau',
+                text: 'onboarding_permission.btn_skip'.tr(),
                 backgroundColor: const Color(0xFFFFFFFF),
                 textColor: const Color(0xFF768079),
                 borderColor: Colors.transparent,
@@ -191,12 +182,12 @@ class _OnboardingPermissionScreenState
     required IconData icon,
   }) {
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: .start,
       children: [
         Container(
           width: 44,
           height: 44,
-          alignment: Alignment.center,
+          alignment: .center,
           decoration: BoxDecoration(
             color: const Color(0xFFEEF4E5),
             borderRadius: BorderRadius.circular(12),
@@ -206,14 +197,14 @@ class _OnboardingPermissionScreenState
         const SizedBox(width: 15),
         Expanded(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: .start,
             children: [
               Text(
                 title,
                 style: const TextStyle(
                   color: Color(0xFF1C2520),
                   fontSize: 16,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: .w600,
                 ),
               ),
               const SizedBox(height: 4),
@@ -222,7 +213,7 @@ class _OnboardingPermissionScreenState
                 style: const TextStyle(
                   color: Color(0xFF768079),
                   fontSize: 14,
-                  fontWeight: FontWeight.w400,
+                  fontWeight: .w400,
                 ),
               ),
             ],

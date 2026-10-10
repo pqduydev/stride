@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:stride/widgets/appbar_custom.dart';
@@ -13,31 +14,31 @@ class EmailVerificationScreen extends StatelessWidget {
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
-        child: AppbarCustom(title: ItemAppBarTitle(data: 'Dữ liệu của bạn')),
+        child: AppbarCustom(
+          title: ItemAppBarTitle(data: 'email_verification.appbar_title'.tr()),
+        ),
       ),
-
       body: Padding(
-        padding: EdgeInsetsGeometry.only(top: 15, left: 20, right: 20),
+        padding: const EdgeInsets.only(top: 15, left: 20, right: 20),
         child: Column(
           crossAxisAlignment: .start,
           children: [
             Text(
-              'Chỉ còn một bước để bảo vệ tài khoản.',
-              style: TextStyle(
+              'email_verification.subtitle'.tr(),
+              style: const TextStyle(
                 color: Color(0xFF768079),
                 fontSize: 14,
                 fontWeight: .w400,
               ),
             ),
-
             Center(
               child: Container(
                 width: 100,
                 height: 100,
-                margin: EdgeInsets.only(top: 60, bottom: 50),
+                margin: const EdgeInsets.only(top: 60, bottom: 50),
                 alignment: .center,
                 decoration: BoxDecoration(
-                  color: Color(0xFFEEF4E5),
+                  color: const Color(0xFFEEF4E5),
                   borderRadius: BorderRadius.circular(50),
                 ),
                 child: SvgPicture.asset(
@@ -47,40 +48,35 @@ class EmailVerificationScreen extends StatelessWidget {
                 ),
               ),
             ),
-
             Text(
-              'Kiểm tra hộp thư của bạn',
-              style: TextStyle(
+              'email_verification.title'.tr(),
+              style: const TextStyle(
                 color: Color(0xFF1C2520),
                 fontSize: 24,
                 fontWeight: .w700,
               ),
             ),
-
             const SizedBox(height: 10),
             Text(
-              'Liên kết xác thực đã được gửi đến\nminhan@example.com.',
-              style: TextStyle(
+              'email_verification.desc'.tr(),
+              style: const TextStyle(
                 color: Color(0xFF768079),
                 fontSize: 14,
                 fontWeight: .w400,
               ),
             ),
-
             ItemInfomation(
-              title: 'Tiếp tục sau khi xác thực',
-              info: 'Mở email và chạm vào liên kết.\nSau đó quay lại Stride để tiếp tục.',
+              title: 'email_verification.info_title'.tr(),
+              info: 'email_verification.info_desc'.tr(),
             ),
-
             const SizedBox(height: 80),
-            ItemBottomButton(text: 'Tôi đã xác thực email'),
-
+            ItemBottomButton(text: 'email_verification.btn_verify'.tr()),
             const SizedBox(height: 30),
             InkWell(
               child: Center(
                 child: Text(
-                  'Gửi lại email',
-                  style: TextStyle(
+                  'email_verification.resend'.tr(),
+                  style: const TextStyle(
                     color: Color(0xFF526C30),
                     fontSize: 13,
                     fontWeight: .w600,

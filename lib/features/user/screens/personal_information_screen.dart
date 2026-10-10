@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -24,7 +25,6 @@ class PersonalInformationScreen extends StatefulWidget {
 class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  // Khai báo các Controller
   late TextEditingController _usernameController;
   late TextEditingController _dateJoinedController;
   late TextEditingController _lastNameController;
@@ -37,7 +37,6 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
 
   DateTime? _selectedDateOfBirth;
 
-  // Biến lưu trữ trạng thái ban đầu để so sánh Validator
   late String _initialLastName;
   late String _initialFirstName;
   late String _initialEmail;
@@ -51,7 +50,6 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
     context.read<UserCubit>().resetStatus();
     final user = context.read<AuthCubit>().state.user;
 
-    // Lưu lại trạng thái gốc của các trường bắt buộc
     _initialLastName = user?.lastName ?? '';
     _initialFirstName = user?.firstName ?? '';
     _initialEmail = user?.email ?? '';
@@ -59,7 +57,6 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
     _initialHeight = user?.heightCm?.toString().split('.').first ?? '';
     _initialWeight = user?.weightKg?.toString().split('.').first ?? '';
 
-    // Khởi tạo Controller
     _usernameController = TextEditingController(text: user?.username ?? '');
 
     String joinedStr = '';
@@ -122,68 +119,56 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
     }
 
     if (!_formKey.currentState!.validate()) {
-      AppToast.showError(context, 'Vui lòng kiểm tra lại các trường bị lỗi.');
-
+      AppToast.showError(context, 'personal_info.error_check_fields'.tr());
       return;
     }
 
-    // Lấy dữ liệu người dùng đang lưu local để so sánh cập nhật
     final currentUser = context.read<AuthCubit>().state.user;
     final Map<String, dynamic> changedFields = {};
 
-    // 1. First Name
     final currentFirstName = _firstNameController.text.trim();
     if (currentFirstName != (currentUser?.firstName ?? '')) {
       changedFields['first_name'] = currentFirstName;
     }
 
-    // 2. Last Name
     final currentLastName = _lastNameController.text.trim();
     if (currentLastName != (currentUser?.lastName ?? '')) {
       changedFields['last_name'] = currentLastName;
     }
 
-    // 3. Email
     final currentEmail = _emailController.text.trim();
     if (currentEmail != (currentUser?.email ?? '')) {
       changedFields['email'] = currentEmail;
     }
 
-    // 4. Phone
     final currentPhone = _phoneController.text.trim();
     if (currentPhone != (currentUser?.phone ?? '')) {
       changedFields['phone'] = currentPhone;
     }
 
-    // 5. Date of Birth (Định dạng YYYY-MM-DD theo API spec)
     if (_selectedDateOfBirth != currentUser?.dateOfBirth) {
       changedFields['date_of_birth'] = _selectedDateOfBirth != null
           ? DateFormat('yyyy-MM-dd').format(_selectedDateOfBirth!)
           : null;
     }
 
-    // 6. Height
     final currentHeight = double.tryParse(_heightController.text.trim());
     if (currentHeight != currentUser?.heightCm) {
       changedFields['height_cm'] = currentHeight;
     }
 
-    // 7. Weight
     final currentWeight = double.tryParse(_weightController.text.trim());
     if (currentWeight != currentUser?.weightKg) {
       changedFields['weight_kg'] = currentWeight;
     }
 
-    // 8. Bio
     final currentBio = _bioController.text.trim();
     if (currentBio != (currentUser?.bio ?? '')) {
       changedFields['bio'] = currentBio;
     }
 
-    // Kiểm tra người dùng có thay đổi thông tin chưa
     if (changedFields.isEmpty) {
-      AppToast.showWarning(context, 'Không có thông tin nào thay đổi.');
-
+      AppToast.showWarning(context, 'personal_info.warning_no_changes'.tr());
       return;
     }
 
@@ -192,25 +177,24 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Giới hạn 16 tuổi cho DatePicker
     final today = DateTime.now();
     final maxAllowedDate = DateTime(today.year - 16, today.month, today.day);
 
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
-        child: AppbarCustom(title: ItemAppBarTitle(data: 'Thông tin cá nhân')),
+        child: AppbarCustom(
+          title: ItemAppBarTitle(data: 'personal_info.appbar_title'.tr()),
+        ),
       ),
       body: BlocListener<UserCubit, UserState>(
         listener: (context, state) {
           if (state.status == UserStatus.success) {
             if (state.user != null) {
-              // Đồng bộ dữ liệu mới nhất sang AuthCubit
               context.read<AuthCubit>().updateUserInMemory(state.user!);
             }
 
-            AppToast.showSuccess(context, 'Cập nhật thông tin thành công!');
-
+            AppToast.showSuccess(context, 'personal_info.success_update'.tr());
             context.pop();
           } else if (state.status == UserStatus.failure) {
             _formKey.currentState?.validate();
@@ -230,22 +214,19 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
             child: Column(
               crossAxisAlignment: .start,
               children: [
-                const Text(
-                  'Thông tin giúp nhắc hẹn và gợi ý phù hợp.',
-                  style: TextStyle(
+                Text(
+                  'personal_info.subtitle'.tr(),
+                  style: const TextStyle(
                     color: Color(0xFF768079),
                     fontSize: 14,
-                    fontWeight: FontWeight.w400,
+                    fontWeight: .w400,
                   ),
                 ),
-
                 BlocBuilder<UserCubit, UserState>(
                   builder: (context, userState) {
                     final isLoading = userState.status == UserStatus.loading;
-
                     final user =
                         userState.user ?? context.read<AuthCubit>().state.user;
-
                     final initials = user?.displayInitials;
 
                     return AbsorbPointer(
@@ -272,7 +253,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                                   style: const TextStyle(
                                     color: Color(0xFF526C30),
                                     fontSize: 22,
-                                    fontWeight: FontWeight.w700,
+                                    fontWeight: .w700,
                                   ),
                                 ),
                               ),
@@ -280,7 +261,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
 
                             // Username
                             ItemCustomTextField(
-                              label: 'Tên người dùng',
+                              label: 'personal_info.username'.tr(),
                               controller: _usernameController,
                               readOnly: true,
                               backgroundColor: 0xFFEEF4E5,
@@ -289,7 +270,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
 
                             // Date Joined
                             ItemCustomTextField(
-                              label: 'Ngày tham gia',
+                              label: 'personal_info.date_joined'.tr(),
                               controller: _dateJoinedController,
                               readOnly: true,
                               backgroundColor: 0xFFEEF4E5,
@@ -298,7 +279,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
 
                             // Last Name
                             ItemCustomTextField(
-                              label: 'Họ',
+                              label: 'personal_info.last_name.label'.tr(),
                               controller: _lastNameController,
                               suffixIcon: SvgPicture.asset(
                                 "assets/icons/ic_user.svg",
@@ -306,19 +287,15 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                                 height: 19,
                               ),
                               validator: (_) {
-                                // Lấy dữ liệu hiện tại
                                 final currentValue = _lastNameController.text
                                     .trim();
-
                                 if (currentValue.isEmpty) {
-                                  // Nếu ban đầu có dữ liệu mà giờ xóa rỗng -> Lỗi
                                   if (_initialLastName.isNotEmpty) {
-                                    return 'Vui lòng không để trống họ';
+                                    return 'personal_info.last_name.error_empty'
+                                        .tr();
                                   }
-                                  // Nếu ban đầu rỗng sẵn -> Hợp lệ
                                   return null;
                                 }
-
                                 final fieldErrors = context
                                     .read<UserCubit>()
                                     .state
@@ -337,7 +314,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
 
                             // First Name
                             ItemCustomTextField(
-                              label: 'Tên',
+                              label: 'personal_info.first_name.label'.tr(),
                               controller: _firstNameController,
                               suffixIcon: SvgPicture.asset(
                                 "assets/icons/ic_user.svg",
@@ -345,19 +322,15 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                                 height: 19,
                               ),
                               validator: (_) {
-                                // Lấy dữ liệu hiện tại
                                 final currentValue = _firstNameController.text
                                     .trim();
-
                                 if (currentValue.isEmpty) {
-                                  // Nếu ban đầu có dữ liệu mà giờ xóa rỗng -> Lỗi
                                   if (_initialFirstName.isNotEmpty) {
-                                    return 'Vui lòng không để trống tên';
+                                    return 'personal_info.first_name.error_empty'
+                                        .tr();
                                   }
-                                  // Nếu ban đầu rỗng sẵn -> Hợp lệ
                                   return null;
                                 }
-
                                 final fieldErrors = context
                                     .read<UserCubit>()
                                     .state
@@ -376,7 +349,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
 
                             // Email
                             ItemCustomTextField(
-                              label: 'Email liên hệ',
+                              label: 'personal_info.email.label'.tr(),
                               controller: _emailController,
                               suffixIcon: SvgPicture.asset(
                                 "assets/icons/ic_mail.svg",
@@ -385,26 +358,22 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                               ),
                               keyboardType: TextInputType.emailAddress,
                               validator: (_) {
-                                // Lấy dữ liệu hiện tại
                                 final currentValue = _emailController.text
                                     .trim();
-
                                 if (currentValue.isEmpty) {
-                                  // Nếu ban đầu có dữ liệu mà giờ xóa rỗng -> Lỗi
                                   if (_initialEmail.isNotEmpty) {
-                                    return 'Vui lòng không để trống email';
+                                    return 'personal_info.email.error_empty'
+                                        .tr();
                                   }
-                                  // Nếu ban đầu rỗng sẵn -> Hợp lệ
                                   return null;
                                 }
-
                                 final emailRegex = RegExp(
                                   r'^[a-z0-9_\-\.]+@([a-z0-9\-]+\.)+[a-z]{2,4}$',
                                 );
                                 if (!emailRegex.hasMatch(currentValue)) {
-                                  return 'Email không đúng định dạng';
+                                  return 'personal_info.email.error_format'
+                                      .tr();
                                 }
-
                                 final fieldErrors = context
                                     .read<UserCubit>()
                                     .state
@@ -423,7 +392,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
 
                             // Phone
                             ItemCustomTextField(
-                              label: 'Số điện thoại (+84)',
+                              label: 'personal_info.phone.label'.tr(),
                               controller: _phoneController,
                               suffixIcon: SvgPicture.asset(
                                 "assets/icons/ic_phone.svg",
@@ -432,24 +401,20 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                               ),
                               keyboardType: TextInputType.phone,
                               validator: (_) {
-                                // Lấy dữ liệu hiện tại
                                 final currentValue = _phoneController.text
                                     .trim();
-
                                 if (currentValue.isEmpty) {
-                                  // Nếu ban đầu có dữ liệu mà giờ xóa rỗng -> Lỗi
                                   if (_initialPhone.isNotEmpty) {
-                                    return 'Vui lòng không để trống số điện thoại';
+                                    return 'personal_info.phone.error_empty'
+                                        .tr();
                                   }
-                                  // Nếu ban đầu rỗng sẵn -> Hợp lệ
                                   return null;
                                 }
-
                                 final phoneRegex = RegExp(r'^[35789]\d{8}$');
                                 if (!phoneRegex.hasMatch(currentValue)) {
-                                  return 'Số điện thoại không hợp lệ';
+                                  return 'personal_info.phone.error_format'
+                                      .tr();
                                 }
-
                                 final fieldErrors = context
                                     .read<UserCubit>()
                                     .state
@@ -467,15 +432,13 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
 
                             // Date of Birth
                             ItemDateTime(
-                              label: 'Ngày sinh',
+                              label: 'personal_info.dob'.tr(),
                               initialDate: _selectedDateOfBirth,
                               lastDate: maxAllowedDate,
                               onDateSelected: (date) {
                                 setState(() {
                                   _selectedDateOfBirth = date;
                                 });
-
-                                // Xóa lỗi nếu đang có lỗi API
                                 final state = context.read<UserCubit>().state;
                                 if (state.status == UserStatus.failure ||
                                     (state.fieldErrors?.isNotEmpty ?? false)) {
@@ -491,34 +454,28 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                               children: [
                                 Expanded(
                                   child: ItemCustomTextField(
-                                    label: 'Chiều cao (cm)',
+                                    label: 'personal_info.height.label'.tr(),
                                     controller: _heightController,
                                     keyboardType:
                                         const TextInputType.numberWithOptions(
                                           decimal: true,
                                         ),
                                     validator: (_) {
-                                      // Lấy dữ liệu hiện tại
                                       final currentValue = _heightController
                                           .text
                                           .trim();
-
-                                      // Kiểm tra rỗng khi ban đầu đã có dữ liệu
                                       if (currentValue.isEmpty) {
-                                        // Nếu ban đầu có dữ liệu mà giờ xóa rỗng -> Lỗi
                                         if (_initialHeight.isNotEmpty) {
-                                          return 'Vui lòng không để trống chiều cao';
+                                          return 'personal_info.height.error_empty'
+                                              .tr();
                                         }
-                                        // Nếu ban đầu rỗng sẵn -> Hợp lệ
                                         return null;
                                       }
-
-                                      // Kiểm tra kiểu dữ liệu số
                                       if (double.tryParse(currentValue) ==
                                           null) {
-                                        return 'Phải là số';
+                                        return 'personal_info.error_must_be_number'
+                                            .tr();
                                       }
-
                                       final fieldErrors = context
                                           .read<UserCubit>()
                                           .state
@@ -540,35 +497,28 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                                 const SizedBox(width: 16),
                                 Expanded(
                                   child: ItemCustomTextField(
-                                    label: 'Cân nặng (kg)',
+                                    label: 'personal_info.weight.label'.tr(),
                                     controller: _weightController,
                                     keyboardType:
                                         const TextInputType.numberWithOptions(
                                           decimal: true,
                                         ),
                                     validator: (_) {
-                                      // Lấy dữ liệu hiện tại
                                       final currentValue = _weightController
                                           .text
                                           .trim();
-
-                                      // Kiểm tra rỗng khi ban đầu đã có dữ liệu
                                       if (currentValue.isEmpty) {
-                                        // Nếu ban đầu có dữ liệu mà giờ xóa rỗng -> Lỗi
                                         if (_initialWeight.isNotEmpty) {
-                                          return 'Vui lòng không để trống cân nặng';
+                                          return 'personal_info.weight.error_empty'
+                                              .tr();
                                         }
-                                        // Nếu ban đầu rỗng sẵn -> Hợp lệ
-
                                         return null;
                                       }
-
-                                      // Kiểm tra kiểu dữ liệu số
                                       if (double.tryParse(currentValue) ==
                                           null) {
-                                        return 'Phải là số';
+                                        return 'personal_info.error_must_be_number'
+                                            .tr();
                                       }
-
                                       final fieldErrors = context
                                           .read<UserCubit>()
                                           .state
@@ -593,7 +543,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
 
                             // Bio
                             ItemCustomTextField(
-                              label: 'Tiểu sử',
+                              label: 'personal_info.bio'.tr(),
                               controller: _bioController,
                               textInputAction: TextInputAction.done,
                               height: 120,
@@ -636,7 +586,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
               top: 20,
             ),
             child: ItemBottomButton(
-              text: 'Lưu thay đổi',
+              text: 'personal_info.btn_save'.tr(),
               isLoading: isLoading,
               onTap: isLoading ? null : _submit,
             ),

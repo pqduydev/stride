@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:stride/widgets/appbar_custom.dart';
 import 'package:stride/widgets/item_app_bar_title.dart';
@@ -13,56 +14,57 @@ class RouteDetailsScreen extends StatelessWidget {
       child: Scaffold(
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(kToolbarHeight),
-          child: AppbarCustom(title: ItemAppBarTitle(data: 'Lộ trình tập gym')),
+          child: AppbarCustom(
+            title: ItemAppBarTitle(data: 'route_details.appbar_title'.tr()),
+          ),
         ),
         body: Padding(
-          padding: EdgeInsets.only(left: 20, right: 20, bottom: 20),
+          padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
           child: Column(
             crossAxisAlignment: .start,
             children: [
               Container(
                 width: 183,
                 height: 25,
-                padding: EdgeInsets.symmetric(horizontal: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 10),
                 alignment: .center,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(7),
                   color: const Color(0xFFEEF4E5),
                 ),
                 child: Text(
-                  "SỨC KHỎE & THỂ CHẤT",
-                  style: TextStyle(
-                    color: const Color(0xFF526C30),
+                  'route_details.tag_health'.tr(),
+                  style: const TextStyle(
+                    color: Color(0xFF526C30),
                     fontSize: 11,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: .w600,
                   ),
                 ),
               ),
               const SizedBox(height: 15),
               Text(
-                "Tập luyện bền bỉ",
-                style: TextStyle(
-                  color: const Color(0xFF1C2520),
+                'route_details.title_main'.tr(),
+                style: const TextStyle(
+                  color: Color(0xFF1C2520),
                   fontSize: 29,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: .w700,
                 ),
               ),
               const SizedBox(height: 5),
               Text(
-                "3 tháng tạo thói quen, từng bước tiến bộ.",
-                style: TextStyle(
-                  color: const Color(0xFF768079),
+                'route_details.subtitle'.tr(),
+                style: const TextStyle(
+                  color: Color(0xFF768079),
                   fontSize: 14,
-                  fontWeight: FontWeight.w400,
+                  fontWeight: .w400,
                 ),
               ),
-              // Khung anh
               const SizedBox(height: 20),
               Container(
                 width: double.infinity,
                 height: 145,
                 decoration: BoxDecoration(
-                  image: DecorationImage(
+                  image: const DecorationImage(
                     image: AssetImage('assets/images/img_background.jpg'),
                     fit: BoxFit.cover,
                   ),
@@ -76,32 +78,34 @@ class RouteDetailsScreen extends StatelessWidget {
                       width: 157,
                       height: 25,
                       alignment: .center,
-                      margin: EdgeInsets.only(left: 15, bottom: 10),
+                      margin: const EdgeInsets.only(left: 15, bottom: 10),
                       decoration: BoxDecoration(
                         color: const Color(0xFFFFFFFF),
                         borderRadius: BorderRadius.circular(7),
                       ),
-                      child: Text(
+                      child: const Text(
                         "17/08 – 17/11/2026",
                         style: TextStyle(
                           color: Color(0xFF1C2520),
                           fontSize: 11,
-                          fontWeight: FontWeight.w600,
+                          fontWeight: .w600,
                         ),
                       ),
                     ),
                   ],
                 ),
               ),
-              // Thoi gian tap luyen
               const SizedBox(height: 20),
               Container(
                 height: 81,
-                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 10,
+                  horizontal: 15,
+                ),
                 decoration: BoxDecoration(
-                  color: Color(0xFFFFFFFF),
+                  color: const Color(0xFFFFFFFF),
                   borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: Color(0xFFE8ECE8), width: 1),
+                  border: Border.all(color: const Color(0xFFE8ECE8), width: 1),
                 ),
                 child: Row(
                   mainAxisAlignment: .spaceBetween,
@@ -109,21 +113,21 @@ class RouteDetailsScreen extends StatelessWidget {
                     Column(
                       crossAxisAlignment: .start,
                       children: [
-                        Text(
+                        const Text(
                           "12 / 40",
                           style: TextStyle(
                             color: Color(0xFF1C2520),
                             fontSize: 21,
-                            fontWeight: FontWeight.w700,
+                            fontWeight: .w700,
                           ),
                         ),
                         const SizedBox(height: 5),
                         Text(
-                          "buổi hoàn thành",
-                          style: TextStyle(
+                          'route_details.completed_sessions'.tr(),
+                          style: const TextStyle(
                             color: Color(0xFF768079),
                             fontSize: 11,
-                            fontWeight: FontWeight.w400,
+                            fontWeight: .w400,
                           ),
                         ),
                       ],
@@ -132,20 +136,20 @@ class RouteDetailsScreen extends StatelessWidget {
                       crossAxisAlignment: .start,
                       children: [
                         Text(
-                          "3 buổi",
-                          style: TextStyle(
+                          "3 ${'route_details.weekly_unit'.tr()}",
+                          style: const TextStyle(
                             color: Color(0xFF1C2520),
                             fontSize: 21,
-                            fontWeight: FontWeight.w700,
+                            fontWeight: .w700,
                           ),
                         ),
                         const SizedBox(height: 5),
                         Text(
-                          "Mỗi tuần",
-                          style: TextStyle(
+                          'route_details.weekly_frequency'.tr(),
+                          style: const TextStyle(
                             color: Color(0xFF768079),
                             fontSize: 11,
-                            fontWeight: FontWeight.w400,
+                            fontWeight: .w400,
                           ),
                         ),
                       ],
@@ -153,21 +157,21 @@ class RouteDetailsScreen extends StatelessWidget {
                     Column(
                       crossAxisAlignment: .start,
                       children: [
-                        Text(
+                        const Text(
                           "64",
                           style: TextStyle(
                             color: Color(0xFF1C2520),
                             fontSize: 21,
-                            fontWeight: FontWeight.w700,
+                            fontWeight: .w700,
                           ),
                         ),
                         const SizedBox(height: 5),
                         Text(
-                          "ngày còn lại",
-                          style: TextStyle(
+                          'route_details.remaining_days'.tr(),
+                          style: const TextStyle(
                             color: Color(0xFF768079),
                             fontSize: 11,
-                            fontWeight: FontWeight.w400,
+                            fontWeight: .w400,
                           ),
                         ),
                       ],
@@ -175,7 +179,6 @@ class RouteDetailsScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              // Tabbar
               const SizedBox(height: 20),
               Expanded(
                 child: Column(
@@ -183,10 +186,10 @@ class RouteDetailsScreen extends StatelessWidget {
                   children: [
                     Container(
                       height: 42,
-                      padding: EdgeInsets.all(5),
+                      padding: const EdgeInsets.all(5),
                       alignment: .center,
                       decoration: BoxDecoration(
-                        color: Color(0xFFEBEEE9),
+                        color: const Color(0xFFEBEEE9),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: TabBar(
@@ -195,20 +198,20 @@ class RouteDetailsScreen extends StatelessWidget {
                         overlayColor: WidgetStateProperty.all(
                           Colors.transparent,
                         ),
-                        labelStyle: TextStyle(
+                        labelStyle: const TextStyle(
                           color: Color(0xFF1C2520),
                           fontSize: 13,
-                          fontWeight: FontWeight.w600,
+                          fontWeight: .w600,
                         ),
-                        unselectedLabelColor: Color(0xFF768079),
+                        unselectedLabelColor: const Color(0xFF768079),
                         indicator: BoxDecoration(
-                          color: Color(0xFFFFFFFF),
+                          color: const Color(0xFFFFFFFF),
                           borderRadius: BorderRadius.circular(9),
                         ),
                         tabs: [
-                          Tab(text: "Tổng quan"),
-                          Tab(text: "Lịch tập"),
-                          Tab(text: "Nhật ký"),
+                          Tab(text: 'route_details.tab_overview'.tr()),
+                          Tab(text: 'route_details.tab_schedule'.tr()),
+                          Tab(text: 'route_details.tab_diary'.tr()),
                         ],
                       ),
                     ),
@@ -216,9 +219,11 @@ class RouteDetailsScreen extends StatelessWidget {
                     Expanded(
                       child: TabBarView(
                         children: [
-                          _OverView(),
-                          Center(child: Text("Lịch tâp")),
-                          Center(child: Text("Nhật ký")),
+                          const _OverView(),
+                          Center(
+                            child: Text('route_details.tab_schedule'.tr()),
+                          ),
+                          Center(child: Text('route_details.tab_diary'.tr())),
                         ],
                       ),
                     ),
@@ -229,7 +234,7 @@ class RouteDetailsScreen extends StatelessWidget {
           ),
         ),
         bottomNavigationBar: ItemBottomButton(
-          text: "Xem lịch tập",
+          text: 'route_details.btn_view_schedule'.tr(),
           onTap: () {},
         ),
       ),
@@ -246,11 +251,11 @@ class _OverView extends StatelessWidget {
       crossAxisAlignment: .start,
       children: [
         Text(
-          "Cột mốc của bạn",
-          style: TextStyle(
+          'route_details.milestones_title'.tr(),
+          style: const TextStyle(
             color: Color(0xFF1C2520),
             fontSize: 18,
-            fontWeight: FontWeight.w700,
+            fontWeight: .w700,
           ),
         ),
         const SizedBox(height: 15),
@@ -259,23 +264,22 @@ class _OverView extends StatelessWidget {
             children: [
               _BuildTabViewContent(
                 number: "01",
-                title: "Xây dựng thói quen",
-                timeLine: "17/08 – 16/09",
+                title: 'route_details.milestone_1_title'.tr(),
+                timeLine: 'route_details.milestone_1_time'.tr(),
                 inProgress: true,
               ),
               const SizedBox(height: 15),
-
               _BuildTabViewContent(
                 number: "02",
-                title: "Ổn định nhịp tập",
-                timeLine: "17/09 – 16/10",
+                title: 'route_details.milestone_2_title'.tr(),
+                timeLine: 'route_details.milestone_2_time'.tr(),
                 inProgress: false,
               ),
               const SizedBox(height: 15),
               _BuildTabViewContent(
                 number: "03",
-                title: "Duy trì & đánh giá",
-                timeLine: "17/10 – 17/11",
+                title: 'route_details.milestone_3_title'.tr(),
+                timeLine: 'route_details.milestone_3_time'.tr(),
                 inProgress: false,
               ),
             ],
@@ -308,13 +312,17 @@ class _BuildTabViewContent extends StatelessWidget {
           width: 34,
           height: 34,
           child: CircleAvatar(
-            backgroundColor: inProgress ? Color(0xFFEEF4E5) : Color(0xFFECEFEB),
+            backgroundColor: inProgress
+                ? const Color(0xFFEEF4E5)
+                : const Color(0xFFECEFEB),
             child: Text(
               number,
               style: TextStyle(
-                color: inProgress ? Color(0xFF526C30) : Color(0xFF768079),
+                color: inProgress
+                    ? const Color(0xFF526C30)
+                    : const Color(0xFF768079),
                 fontSize: 12,
-                fontWeight: FontWeight.w700,
+                fontWeight: .w700,
               ),
             ),
           ),
@@ -326,18 +334,20 @@ class _BuildTabViewContent extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: TextStyle(
+                style: const TextStyle(
                   color: Color(0xFF1C2520),
                   fontSize: 15,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: .w600,
                 ),
               ),
               Text(
-                inProgress ? "$timeLine · Đang thực hiện" : timeLine,
-                style: TextStyle(
+                inProgress
+                    ? "$timeLine · ${'route_details.in_progress'.tr()}"
+                    : timeLine,
+                style: const TextStyle(
                   color: Color(0xFF768079),
                   fontSize: 12,
-                  fontWeight: FontWeight.w400,
+                  fontWeight: .w400,
                 ),
               ),
             ],

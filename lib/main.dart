@@ -165,8 +165,6 @@ class _MyAppState extends State<MyApp> {
           config: const ToastificationConfig(
             // Nếu user spam 10 lần, nó cũng chỉ hiện 3 cái.
             maxToastLimit: 3,
-
-            itemWidth: 300, // Chiều rộng tối đa của toast
           ),
           child: MaterialApp.router(
             title: 'Stride App',

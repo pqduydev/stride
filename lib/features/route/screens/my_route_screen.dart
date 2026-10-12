@@ -92,9 +92,9 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                     ],
                   ),
                 ),
-                // Sử dụng LanguageSwitchButton đã tách rời
+
                 Row(
-                  mainAxisSize: MainAxisSize.min,
+                  mainAxisSize: .min,
                   children: [
                     const LanguageSwitchButton(),
                     const SizedBox(width: 10),

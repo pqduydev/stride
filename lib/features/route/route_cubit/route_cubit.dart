@@ -26,6 +26,9 @@ class RouteCubit extends Cubit<RouteState> {
     );
 
     try {
+      final minDelay = Future.delayed(const Duration(milliseconds: 500));
+      await minDelay;
+
       final routes = await _routeRepository.fetchRoutes();
 
       emit(

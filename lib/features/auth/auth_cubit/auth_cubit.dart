@@ -48,7 +48,7 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   Future<void> checkAuthStatus() async {
-    // Khởi tạo thời gian delay chạy song song call API
+    // Khởi tạo thời gian delay tối thiểu 1s để màn hình Splash hiển thị mượt mà
     final minDelay = Future.delayed(const Duration(seconds: 1));
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("access_token");
@@ -58,39 +58,56 @@ class AuthCubit extends Cubit<AuthState> {
 
     if (isClosed) return;
 
+    // 1. KIỂM TRA DỮ LIỆU LOCAL TRƯỚC (Offline-First)
+    // Nếu có token và đã lưu thông tin user ở local, ta cho phép vào app ngay lập tức
+    // mà chưa cần bận tâm mạng có hay không.
     if (token != null && token.isNotEmpty && savedUser != null) {
       try {
-        final updateInfo = await _authRepository.getUser();
-
+        // Đợi đủ thời gian delay của Splash screen
+        await minDelay;
         if (isClosed) return;
 
-        // Đợi nốt 1s
-        await minDelay;
-
+        // Cho phép vào app trước với dữ liệu đã cache ở local để tối ưu trải nghiệm
         emit(
           state.copyWith(
             status: AuthStatus.authenticated,
-            user: updateInfo,
+            user: savedUser,
             hasSeenPermission: hasSeenPermission,
           ),
         );
-      } catch (_) {
-        // Kiểm tra trước khi emit trong catch
+
+        // Sau khi đã vào app, gọi ngầm API để đồng bộ thông tin mới nhất từ server (nếu có mạng)
+        final updateInfo = await _authRepository.getUser();
         if (isClosed) return;
 
-        await minDelay;
+        // Cập nhật lại thông tin mới nhất vào state và local
+        emit(state.copyWith(user: updateInfo));
+      } on ApiException catch (e) {
+        if (isClosed) return;
 
-        // Khi token khởi tạo hết hạn hoặc lỗi API -> Đưa về unauthenticated và dọn sạch error message
-        emit(
-          state.copyWith(
-            status: AuthStatus.unauthenticated,
-            fieldErrors: {},
-            clearErrorMessage: true,
-            hasSeenPermission: hasSeenPermission,
-          ),
-        );
+        // 2. PHÂN TÍCH LỖI API CHÍNH XÁC
+        // Chỉ khi server trả về mã 401 (Unauthorized - Token hết hạn/bị thu hồi) thì mới ép đăng xuất
+        if (e.statusCode == 401) {
+          await _authRepository.clearLocalData();
+          emit(
+            state.copyWith(
+              status: AuthStatus.unauthenticated,
+              fieldErrors: {},
+              clearErrorMessage: true,
+              hasSeenPermission: hasSeenPermission,
+            ),
+          );
+        }
+        // Các lỗi khác (như mất mạng, server 5xx, timeout khi gọi ngầm...)
+        // thì BỎ QUA, giữ nguyên trạng thái authenticated để user tiếp tục dùng app với dữ liệu cache.
+      } catch (_) {
+        // Lỗi kết nối mạng (SocketException, DioException connectionError...) khi gọi ngầm
+        // Cũng bỏ qua, không làm gián đoạn trải nghiệm của người dùng offline.
       }
     } else {
+      // Nếu không có token hoặc chưa từng đăng nhập -> Đẩy về màn hình đăng nhập/welcome
+      await minDelay;
+      if (isClosed) return;
       emit(
         state.copyWith(
           status: AuthStatus.unauthenticated,

@@ -46,6 +46,15 @@ class ApiException implements Exception {
 
   /// Bóc tách các dạng response lỗi từ server
   static ApiException _parseBadResponse(int? statusCode, dynamic data) {
+    // Ưu tiên bắt nhóm mã lỗi 5xx lên đầu tiên để xử lý triệt để
+    // các trường hợp server trả về trang HTML thô hoặc dữ liệu không phải JSON.
+    if (statusCode != null && statusCode >= 500) {
+      return ApiException(
+        message: 'api_exception.server_error'.tr(args: [statusCode.toString()]),
+        statusCode: statusCode,
+      );
+    }
+
     String message = 'api_exception.bad_response_default'.tr();
     Map<String, dynamic>? fieldErrors;
 
@@ -67,12 +76,6 @@ class ApiException implements Exception {
       else if (data.containsKey('non_field_errors')) {
         final errors = data['non_field_errors'];
         message = errors is List ? errors.join(', ') : errors.toString();
-      }
-      // Nếu là lỗi HTTP 500 Server Error
-      else if (statusCode != null && statusCode >= 500) {
-        message = 'api_exception.server_error'.tr(
-          args: [statusCode.toString()],
-        );
       }
     } else if (data is String && data.isNotEmpty) {
       message = data;

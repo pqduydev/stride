@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class DioClient {
   static final Dio instance = Dio(
     BaseOptions(
-      baseUrl: 'https://gympath-server-django.onrender.com/api/',
+      baseUrl: 'https://gym-path-server-django.vercel.app/api/',
       connectTimeout: const Duration(
         seconds: 15,
       ), // Thời gian chờ kết nối tối đa

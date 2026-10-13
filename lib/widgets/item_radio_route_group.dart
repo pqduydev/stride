@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:stride/core/theme/app_colors.dart';
 
 class ItemRadioRouteGroup extends StatelessWidget {
   final String selectedGoalKey;
@@ -22,6 +23,8 @@ class ItemRadioRouteGroup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>() ?? AppColors.light;
+
     return Column(
       crossAxisAlignment: .start,
       children: [
@@ -31,8 +34,8 @@ class ItemRadioRouteGroup extends StatelessWidget {
           children: [
             Text(
               "item_radio_route_group.section_title".tr(),
-              style: const TextStyle(
-                color: Color(0xFF768079),
+              style: TextStyle(
+                color: colors.muted,
                 fontSize: 13,
                 fontWeight: .w500,
               ),
@@ -41,17 +44,17 @@ class ItemRadioRouteGroup extends StatelessWidget {
               children: [
                 Text(
                   "item_radio_route_group.scroll_hint".tr(),
-                  style: const TextStyle(
-                    color: Color(0xFFB0B8B3),
+                  style: TextStyle(
+                    color: colors.muted,
                     fontSize: 11,
                     fontWeight: .w400,
                   ),
                 ),
                 const SizedBox(width: 4),
-                const Icon(
+                Icon(
                   Icons.arrow_forward_ios_rounded,
                   size: 10,
-                  color: Color(0xFFB0B8B3),
+                  color: colors.muted,
                 ),
               ],
             ),
@@ -79,12 +82,10 @@ class ItemRadioRouteGroup extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     height: 39,
                     decoration: BoxDecoration(
-                      color: Color(isSelected ? 0xFF1C2520 : 0xFFFFFFFF),
+                      color: isSelected ? colors.ink : colors.surface,
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(
-                        color: isSelected
-                            ? const Color(0xFF1C2520)
-                            : const Color(0xFFE8ECE8),
+                        color: isSelected ? colors.ink : colors.line,
                         width: 1,
                       ),
                     ),
@@ -92,7 +93,7 @@ class ItemRadioRouteGroup extends StatelessWidget {
                     child: Text(
                       translationKey.tr(),
                       style: TextStyle(
-                        color: Color(isSelected ? 0xFFFFFFFF : 0xFF768079),
+                        color: isSelected ? colors.surface : colors.muted,
                         fontSize: 13,
                         fontWeight: .w500,
                       ),

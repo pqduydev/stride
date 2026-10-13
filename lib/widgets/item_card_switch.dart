@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:stride/core/theme/app_colors.dart';
 
 class ItemCardSwitch extends StatelessWidget {
   final bool value;
@@ -10,12 +11,14 @@ class ItemCardSwitch extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>() ?? AppColors.light;
+
     return Container(
       height: 70,
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(14),
-        color: const Color(0xFFFFFFFF),
+        color: colors.surface,
       ),
       child: Row(
         mainAxisAlignment: .spaceBetween,
@@ -27,10 +30,7 @@ class ItemCardSwitch extends StatelessWidget {
                   'assets/icons/ic_bell.svg',
                   width: 25,
                   height: 25,
-                  colorFilter: const ColorFilter.mode(
-                    Color(0xFF526C30),
-                    BlendMode.srcIn,
-                  ),
+                  colorFilter: ColorFilter.mode(colors.green, BlendMode.srcIn),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
@@ -45,7 +45,7 @@ class ItemCardSwitch extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                         style: Theme.of(context).textTheme.labelMedium
                             ?.copyWith(
-                              color: const Color(0xFF1C2520),
+                              color: colors.ink,
                               fontSize: 16,
                               fontWeight: .w600,
                             ),
@@ -56,7 +56,7 @@ class ItemCardSwitch extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                          color: const Color(0xFF768079),
+                          color: colors.muted,
                           fontSize: 12,
                           fontWeight: .w400,
                         ),
@@ -76,10 +76,10 @@ class ItemCardSwitch extends StatelessWidget {
               child: Switch(
                 value: value,
                 onChanged: onChanged,
-                activeThumbColor: const Color(0xFFFFFFFF),
-                activeTrackColor: const Color(0xFFD2F36B),
-                inactiveThumbColor: const Color(0xFF768079),
-                inactiveTrackColor: const Color(0xFFF7F8FA),
+                activeThumbColor: colors.surface,
+                activeTrackColor: colors.accent,
+                inactiveThumbColor: colors.muted,
+                inactiveTrackColor: colors.background,
               ),
             ),
           ),

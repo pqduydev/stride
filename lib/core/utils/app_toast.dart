@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:toastification/toastification.dart';
+import 'package:stride/core/theme/app_colors.dart';
 
 class AppToast {
   static void _showCustomToast({
@@ -9,6 +10,7 @@ class AppToast {
     required Color backgroundColor,
     required IconData iconData,
   }) {
+    final colors = Theme.of(context).extension<AppColors>() ?? AppColors.light;
     toastification.showCustom(
       context: context,
       autoCloseDuration: const Duration(seconds: 3),
@@ -32,11 +34,11 @@ class AppToast {
                 decoration: BoxDecoration(
                   color: backgroundColor,
                   borderRadius: BorderRadius.circular(10.0),
-                  boxShadow: const [
+                  boxShadow: [
                     BoxShadow(
-                      color: Color(0x1A000000),
+                      color: colors.background.withValues(alpha: 0.1),
                       blurRadius: 8,
-                      offset: Offset(0, 2),
+                      offset: const Offset(0, 2),
                     ),
                   ],
                 ),
@@ -83,41 +85,45 @@ class AppToast {
   }
 
   static void showSuccess(BuildContext context, String message) {
+    final colors = Theme.of(context).extension<AppColors>() ?? AppColors.light;
     _showCustomToast(
       context: context,
       message: message,
-      primaryColor: const Color(0xFF526C30),
-      backgroundColor: const Color(0xFFEEF4E5),
+      primaryColor: colors.green,
+      backgroundColor: colors.avatarBackground,
       iconData: Icons.check_circle,
     );
   }
 
   static void showError(BuildContext context, String message) {
+    final colors = Theme.of(context).extension<AppColors>() ?? AppColors.light;
     _showCustomToast(
       context: context,
       message: message,
-      primaryColor: const Color(0xFFD32F2F),
-      backgroundColor: const Color(0xFFFDE8E8),
+      primaryColor: colors.error,
+      backgroundColor: colors.errorContainer,
       iconData: Icons.error,
     );
   }
 
   static void showWarning(BuildContext context, String message) {
+    final colors = Theme.of(context).extension<AppColors>() ?? AppColors.light;
     _showCustomToast(
       context: context,
       message: message,
-      primaryColor: const Color(0xFFE65100),
-      backgroundColor: const Color(0xFFFFF4E5),
+      primaryColor: colors.warning,
+      backgroundColor: colors.warningContainer,
       iconData: Icons.warning_rounded,
     );
   }
 
   static void showInfo(BuildContext context, String message) {
+    final colors = Theme.of(context).extension<AppColors>() ?? AppColors.light;
     _showCustomToast(
       context: context,
       message: message,
-      primaryColor: const Color(0xFF1565C0),
-      backgroundColor: const Color(0xFFE8F4FD),
+      primaryColor: colors.info,
+      backgroundColor: colors.infoContainer,
       iconData: Icons.info,
     );
   }

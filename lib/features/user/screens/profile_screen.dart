@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:stride/core/theme/app_colors.dart';
 import 'package:stride/features/auth/auth_cubit/auth_cubit.dart';
 import 'package:stride/features/auth/auth_cubit/auth_state.dart';
 import 'package:stride/widgets/appbar_custom.dart';
@@ -13,7 +14,10 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>() ?? AppColors.light;
+
     return Scaffold(
+      backgroundColor: colors.background,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: AppbarCustom(
@@ -39,13 +43,13 @@ class ProfileScreen extends StatelessWidget {
                       margin: const EdgeInsets.only(right: 20),
                       alignment: .center,
                       decoration: BoxDecoration(
-                        color: const Color(0xFFEEF4E5),
+                        color: colors.avatarBackground,
                         borderRadius: BorderRadius.circular(38),
                       ),
                       child: Text(
                         initials ?? '',
-                        style: const TextStyle(
-                          color: Color(0xFF526C30),
+                        style: TextStyle(
+                          color: colors.green,
                           fontSize: 23,
                           fontWeight: .w700,
                         ),
@@ -59,8 +63,8 @@ class ProfileScreen extends StatelessWidget {
                             name ?? '',
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              color: Color(0xFF1C2520),
+                            style: TextStyle(
+                              color: colors.ink,
                               fontSize: 25,
                               fontWeight: .w700,
                             ),
@@ -70,8 +74,8 @@ class ProfileScreen extends StatelessWidget {
                             user?.email ?? '',
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              color: Color(0xFF768079),
+                            style: TextStyle(
+                              color: colors.muted,
                               fontSize: 13,
                               fontWeight: .w400,
                             ),
@@ -88,9 +92,9 @@ class ProfileScreen extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
               margin: const EdgeInsets.only(top: 30),
               decoration: BoxDecoration(
-                color: const Color(0xFFFFFFFF),
+                color: colors.surface,
                 border: Border.all(
-                  color: const Color(0xFFE8ECE8),
+                  color: colors.line,
                   width: 1,
                   style: BorderStyle.solid,
                 ),
@@ -105,7 +109,7 @@ class ProfileScreen extends StatelessWidget {
                     margin: const EdgeInsets.only(right: 10),
                     alignment: .center,
                     decoration: BoxDecoration(
-                      color: const Color(0xFFEEF4E5),
+                      color: colors.avatarBackground,
                       borderRadius: BorderRadius.circular(11),
                     ),
                     child: SvgPicture.asset(
@@ -126,8 +130,8 @@ class ProfileScreen extends StatelessWidget {
                             children: [
                               Text(
                                 'profile.personal_info_title'.tr(),
-                                style: const TextStyle(
-                                  color: Color(0xFF1C2520),
+                                style: TextStyle(
+                                  color: colors.ink,
                                   fontSize: 15,
                                   fontWeight: .w600,
                                 ),
@@ -135,8 +139,8 @@ class ProfileScreen extends StatelessWidget {
                               const SizedBox(height: 5),
                               Text(
                                 'profile.personal_info_subtitle'.tr(),
-                                style: const TextStyle(
-                                  color: Color(0xFF768079),
+                                style: TextStyle(
+                                  color: colors.muted,
                                   fontSize: 12,
                                   fontWeight: .w400,
                                 ),
@@ -157,8 +161,8 @@ class ProfileScreen extends StatelessWidget {
                 onTap: () => context.push('/profile/change_password'),
                 child: Text(
                   'profile.change_password'.tr(),
-                  style: const TextStyle(
-                    color: Color(0xFF526C30),
+                  style: TextStyle(
+                    color: colors.green,
                     fontSize: 14,
                     fontWeight: .w700,
                   ),
@@ -171,8 +175,8 @@ class ProfileScreen extends StatelessWidget {
                 onTap: () => context.read<AuthCubit>().logout(),
                 child: Text(
                   'profile.logout'.tr(),
-                  style: const TextStyle(
-                    color: Color(0xFF526C30),
+                  style: TextStyle(
+                    color: colors.green,
                     fontSize: 14,
                     fontWeight: .w700,
                   ),

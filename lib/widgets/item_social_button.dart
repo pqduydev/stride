@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:stride/core/theme/app_colors.dart';
 
 class ItemSocialButton extends StatelessWidget {
   final String text;
   final Widget icon;
   final VoidCallback onTap;
-  final Color backgroundColor;
-  final Color textColor;
+  final Color? backgroundColor;
+  final Color? textColor;
   final Color? borderColor;
   final FontWeight? fontWeight;
 
@@ -14,18 +15,22 @@ class ItemSocialButton extends StatelessWidget {
     required this.text,
     required this.icon,
     required this.onTap,
-    this.backgroundColor = Colors.white,
-    this.textColor = const Color(0xFF1C2520),
+    this.backgroundColor,
+    this.textColor,
     this.borderColor,
     this.fontWeight = .w500,
   });
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>() ?? AppColors.light;
+    final resolvedBgColor = backgroundColor ?? colors.surface;
+    final resolvedTextColor = textColor ?? colors.ink;
+
     return Container(
       height: 50,
       decoration: BoxDecoration(
-        color: backgroundColor,
+        color: resolvedBgColor,
         borderRadius: BorderRadius.circular(13),
         border: borderColor != null
             ? Border.all(color: borderColor!, width: 1)
@@ -46,7 +51,7 @@ class ItemSocialButton extends StatelessWidget {
                     text,
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      color: textColor,
+                      color: resolvedTextColor,
                       fontSize: 15,
                       fontWeight: fontWeight,
                     ),

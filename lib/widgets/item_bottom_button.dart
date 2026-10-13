@@ -1,23 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:stride/core/theme/app_colors.dart';
 
 class ItemBottomButton extends StatefulWidget {
   final String text;
   final VoidCallback? onTap;
   final bool isLoading;
-  final Color backgroundColor;
-  final Color textColor;
+  final Color? backgroundColor;
+  final Color? textColor;
   final double borderWidth;
-  final Color borderColor;
+  final Color? borderColor;
 
   const ItemBottomButton({
     super.key,
     required this.text,
     this.onTap,
     this.isLoading = false,
-    this.backgroundColor = const Color(0xFFD2F36B),
-    this.textColor = const Color(0xFF1C2520),
+    this.backgroundColor,
+    this.textColor,
     this.borderWidth = 0,
-    this.borderColor = Colors.transparent,
+    this.borderColor,
   });
 
   @override
@@ -39,6 +40,16 @@ class _ItemBottomButtonState extends State<ItemBottomButton> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>() ?? AppColors.light;
+
+    final resolvedBgColor = widget.backgroundColor ?? colors.accent;
+    // Nếu dùng nền accent mặc định, sử dụng onAccent để màu chữ không bị chói ở Dark Mode
+    final defaultTextColor = resolvedBgColor == colors.accent
+        ? colors.onAccent
+        : colors.ink;
+    final resolvedTextColor = widget.textColor ?? defaultTextColor;
+    final resolvedBorderColor = widget.borderColor ?? Colors.transparent;
+
     return GestureDetector(
       onTapDown: (_) {
         if (_canPress) {
@@ -66,20 +77,20 @@ class _ItemBottomButtonState extends State<ItemBottomButton> {
           height: 50,
           alignment: .center,
           decoration: BoxDecoration(
-            color: widget.backgroundColor,
+            color: resolvedBgColor,
             borderRadius: BorderRadius.circular(13),
             border: Border.all(
-              color: widget.borderColor,
+              color: resolvedBorderColor,
               width: widget.borderWidth,
               style: BorderStyle.solid,
             ),
           ),
           child: widget.isLoading
-              ? const CircularProgressIndicator(color: Colors.white)
+              ? CircularProgressIndicator(color: colors.surface)
               : Text(
                   widget.text,
                   style: TextStyle(
-                    color: widget.textColor,
+                    color: resolvedTextColor,
                     fontSize: 15,
                     fontWeight: .w700,
                   ),

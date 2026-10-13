@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:stride/core/theme/app_colors.dart';
 
 class ItemCustomTextField extends StatefulWidget {
   final String label;
@@ -15,7 +16,7 @@ class ItemCustomTextField extends StatefulWidget {
   final bool readOnly;
   final int maxLines;
   final double height;
-  final int backgroundColor;
+  final int? backgroundColor;
 
   const ItemCustomTextField({
     super.key,
@@ -32,7 +33,7 @@ class ItemCustomTextField extends StatefulWidget {
     this.readOnly = false,
     this.maxLines = 1,
     this.height = 76.15,
-    this.backgroundColor = 0xFFFFFFFF,
+    this.backgroundColor,
   });
 
   @override
@@ -56,6 +57,11 @@ class _ItemCustomTextFieldState extends State<ItemCustomTextField> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>() ?? AppColors.light;
+    final resolvedBgColor = widget.backgroundColor != null
+        ? Color(widget.backgroundColor!)
+        : colors.surface;
+
     return FormField<String>(
       validator: widget.validator,
       builder: (field) {
@@ -76,12 +82,10 @@ class _ItemCustomTextFieldState extends State<ItemCustomTextField> {
                           vertical: 12,
                         ),
                         decoration: BoxDecoration(
-                          color: Color(widget.backgroundColor),
+                          color: resolvedBgColor,
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                            color: hasError
-                                ? Colors.redAccent
-                                : const Color(0xFFE8ECE8),
+                            color: hasError ? colors.error : colors.line,
                             width: 1,
                           ),
                         ),
@@ -91,8 +95,8 @@ class _ItemCustomTextFieldState extends State<ItemCustomTextField> {
                           children: [
                             Text(
                               widget.label,
-                              style: const TextStyle(
-                                color: Color(0xFF768079),
+                              style: TextStyle(
+                                color: colors.muted,
                                 fontSize: 12,
                                 fontWeight: .w500,
                               ),
@@ -114,15 +118,15 @@ class _ItemCustomTextFieldState extends State<ItemCustomTextField> {
                                     enableSuggestions: widget.enableSuggestions,
                                     onChanged: (value) =>
                                         field.didChange(value),
-                                    style: const TextStyle(
-                                      color: Color(0xFF1C2520),
+                                    style: TextStyle(
+                                      color: colors.ink,
                                       fontSize: 15,
                                       fontWeight: .w500,
                                     ),
                                     decoration: InputDecoration(
                                       hintText: widget.hintText,
-                                      hintStyle: const TextStyle(
-                                        color: Color(0xFFC4C9C5),
+                                      hintStyle: TextStyle(
+                                        color: colors.muted,
                                         fontSize: 15,
                                         fontWeight: .w400,
                                       ),
@@ -163,7 +167,7 @@ class _ItemCustomTextFieldState extends State<ItemCustomTextField> {
                 maintainState: true,
                 child: Text(
                   field.errorText ?? '',
-                  style: const TextStyle(color: Colors.redAccent, fontSize: 12),
+                  style: TextStyle(color: colors.error, fontSize: 12),
                 ),
               ),
             ),

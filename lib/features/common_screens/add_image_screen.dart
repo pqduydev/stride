@@ -4,6 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:stride/core/theme/app_colors.dart';
 import 'package:stride/core/utils/app_toast.dart';
 import 'package:stride/model/picked_media.dart';
 import 'package:stride/services/media_picker_exception.dart';
@@ -100,7 +101,10 @@ class _AddImageScreenState extends State<AddImageScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>() ?? AppColors.light;
+
     return Scaffold(
+      backgroundColor: colors.background,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: AppbarCustom(
@@ -115,8 +119,8 @@ class _AddImageScreenState extends State<AddImageScreen> {
             children: [
               Text(
                 'add_image.subtitle'.tr(),
-                style: const TextStyle(
-                  color: Color(0xFF768079),
+                style: TextStyle(
+                  color: colors.muted,
                   fontSize: 14,
                   fontWeight: .w400,
                 ),
@@ -128,7 +132,7 @@ class _AddImageScreenState extends State<AddImageScreen> {
                   height: 61,
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFEEF4E5),
+                    color: colors.avatarBackground,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
@@ -142,8 +146,8 @@ class _AddImageScreenState extends State<AddImageScreen> {
                       const SizedBox(width: 10),
                       Text(
                         'add_image.btn_camera'.tr(),
-                        style: const TextStyle(
-                          color: Color(0xFF526C30),
+                        style: TextStyle(
+                          color: colors.green,
                           fontSize: 16,
                           fontWeight: .w600,
                         ),
@@ -158,8 +162,8 @@ class _AddImageScreenState extends State<AddImageScreen> {
                 children: [
                   Text(
                     'add_image.section_recent'.tr(),
-                    style: const TextStyle(
-                      color: Color(0xFF1C2520),
+                    style: TextStyle(
+                      color: colors.ink,
                       fontSize: 18,
                       fontWeight: .w700,
                     ),
@@ -185,7 +189,7 @@ class _AddImageScreenState extends State<AddImageScreen> {
                         child: Container(
                           height: 180,
                           decoration: BoxDecoration(
-                            color: const Color(0xFFE9EEE4),
+                            color: colors.line,
                             borderRadius: BorderRadius.circular(13),
                           ),
                           child: InkWell(
@@ -202,8 +206,8 @@ class _AddImageScreenState extends State<AddImageScreen> {
                                 const SizedBox(height: 20),
                                 Text(
                                   'add_image.btn_gallery'.tr(),
-                                  style: const TextStyle(
-                                    color: Color(0xFF768079),
+                                  style: TextStyle(
+                                    color: colors.muted,
                                     fontSize: 12,
                                     fontWeight: .w400,
                                   ),
@@ -220,8 +224,8 @@ class _AddImageScreenState extends State<AddImageScreen> {
               const SizedBox(height: 30),
               Text(
                 'add_image.description'.tr(),
-                style: const TextStyle(
-                  color: Color(0xFF768079),
+                style: TextStyle(
+                  color: colors.muted,
                   fontSize: 14,
                   fontWeight: .w400,
                 ),
@@ -261,6 +265,8 @@ class _PhotoTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>() ?? AppColors.light;
+
     return GestureDetector(
       onTap: onTap,
       child: Stack(
@@ -276,7 +282,7 @@ class _PhotoTile extends StatelessWidget {
               right: 8,
               child: CircleAvatar(
                 radius: 13,
-                backgroundColor: const Color(0xFFD2F36B),
+                backgroundColor: colors.accent,
                 child: SvgPicture.asset(
                   'assets/icons/ic_check.svg',
                   width: 16,

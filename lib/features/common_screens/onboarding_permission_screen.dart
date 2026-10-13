@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:stride/core/theme/app_colors.dart';
 import 'package:stride/features/auth/auth_cubit/auth_cubit.dart';
 import 'package:stride/widgets/item_bottom_button.dart';
 
@@ -76,34 +77,34 @@ class _OnboardingPermissionScreenState
   }
 
   Future<bool?> _showPermanentlyDeniedDialog(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>() ?? AppColors.light;
+
     return showDialog<bool>(
       context: context,
       barrierDismissible: false,
       builder: (ctx) => AlertDialog(
+        backgroundColor: colors.surface,
         title: Text(
           'onboarding_permission.dialog_title'.tr(),
-          style: const TextStyle(fontSize: 18, fontWeight: .bold),
+          style: TextStyle(fontSize: 18, fontWeight: .bold, color: colors.ink),
         ),
         content: Text(
           'onboarding_permission.dialog_content'.tr(),
-          style: const TextStyle(fontSize: 14, color: Color(0xFF768079)),
+          style: TextStyle(fontSize: 14, color: colors.muted),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
             child: Text(
               'onboarding_permission.dialog_cancel'.tr(),
-              style: const TextStyle(color: Colors.grey),
+              style: TextStyle(color: colors.muted),
             ),
           ),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(true),
             child: Text(
               'onboarding_permission.dialog_open_settings'.tr(),
-              style: const TextStyle(
-                color: Color(0xFF526C30),
-                fontWeight: .bold,
-              ),
+              style: TextStyle(color: colors.green, fontWeight: .bold),
             ),
           ),
         ],
@@ -113,8 +114,10 @@ class _OnboardingPermissionScreenState
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>() ?? AppColors.light;
+
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFFFF),
+      backgroundColor: colors.surface,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
@@ -123,8 +126,8 @@ class _OnboardingPermissionScreenState
             children: [
               Text(
                 'onboarding_permission.title'.tr(),
-                style: const TextStyle(
-                  color: Color(0xFF1C2520),
+                style: TextStyle(
+                  color: colors.ink,
                   fontSize: 34,
                   fontWeight: .w700,
                 ),
@@ -132,8 +135,8 @@ class _OnboardingPermissionScreenState
               const SizedBox(height: 15),
               Text(
                 'onboarding_permission.subtitle'.tr(),
-                style: const TextStyle(
-                  color: Color(0xFF768079),
+                style: TextStyle(
+                  color: colors.muted,
                   fontSize: 15,
                   fontWeight: .w400,
                 ),
@@ -143,12 +146,14 @@ class _OnboardingPermissionScreenState
                 title: 'onboarding_permission.camera_title'.tr(),
                 description: 'onboarding_permission.camera_desc'.tr(),
                 icon: Icons.camera_alt_outlined,
+                colors: colors,
               ),
               const SizedBox(height: 25),
               _buildInfoRow(
                 title: 'onboarding_permission.notification_title'.tr(),
                 description: 'onboarding_permission.notification_desc'.tr(),
                 icon: Icons.notifications_none_outlined,
+                colors: colors,
               ),
               const Spacer(),
               ItemBottomButton(
@@ -161,8 +166,8 @@ class _OnboardingPermissionScreenState
               const SizedBox(height: 15),
               ItemBottomButton(
                 text: 'onboarding_permission.btn_skip'.tr(),
-                backgroundColor: const Color(0xFFFFFFFF),
-                textColor: const Color(0xFF768079),
+                backgroundColor: colors.surface,
+                textColor: colors.muted,
                 borderColor: Colors.transparent,
                 borderWidth: 0,
                 onTap: _isProcessing
@@ -180,6 +185,7 @@ class _OnboardingPermissionScreenState
     required String title,
     required String description,
     required IconData icon,
+    required AppColors colors,
   }) {
     return Row(
       crossAxisAlignment: .start,
@@ -189,10 +195,10 @@ class _OnboardingPermissionScreenState
           height: 44,
           alignment: .center,
           decoration: BoxDecoration(
-            color: const Color(0xFFEEF4E5),
+            color: colors.avatarBackground,
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Icon(icon, color: const Color(0xFF526C30)),
+          child: Icon(icon, color: colors.green),
         ),
         const SizedBox(width: 15),
         Expanded(
@@ -201,8 +207,8 @@ class _OnboardingPermissionScreenState
             children: [
               Text(
                 title,
-                style: const TextStyle(
-                  color: Color(0xFF1C2520),
+                style: TextStyle(
+                  color: colors.ink,
                   fontSize: 16,
                   fontWeight: .w600,
                 ),
@@ -210,8 +216,8 @@ class _OnboardingPermissionScreenState
               const SizedBox(height: 4),
               Text(
                 description,
-                style: const TextStyle(
-                  color: Color(0xFF768079),
+                style: TextStyle(
+                  color: colors.muted,
                   fontSize: 14,
                   fontWeight: .w400,
                 ),

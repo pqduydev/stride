@@ -1,8 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:stride/core/theme/app_colors.dart';
 
 class CustomScheduleCalendar extends StatefulWidget {
   final DateTime selectedDay; // Ngày đang được chọn
@@ -53,13 +53,15 @@ class _CustomScheduleCalendarState extends State<CustomScheduleCalendar>
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>() ?? AppColors.light;
+
     return Column(
       children: [
         // TabBar
         Container(
           height: 48,
           decoration: BoxDecoration(
-            color: const Color(0xFFEFEFE9),
+            color: colors.line,
             borderRadius: BorderRadius.circular(12),
           ),
           padding: const EdgeInsets.all(4),
@@ -69,11 +71,11 @@ class _CustomScheduleCalendarState extends State<CustomScheduleCalendar>
             dividerColor: Colors.transparent,
             overlayColor: WidgetStateProperty.all(Colors.transparent),
             indicator: BoxDecoration(
-              color: Colors.white,
+              color: colors.surface,
               borderRadius: BorderRadius.circular(10),
             ),
-            labelColor: const Color(0xFF1C2520),
-            unselectedLabelColor: const Color(0xFF768079),
+            labelColor: colors.ink,
+            unselectedLabelColor: colors.muted,
             labelStyle: const TextStyle(fontWeight: .w600, fontSize: 14),
             unselectedLabelStyle: const TextStyle(
               fontWeight: .w500,
@@ -140,10 +142,10 @@ class _CustomScheduleCalendarState extends State<CustomScheduleCalendar>
                 children: [
                   Text(
                     formattedMonthYear,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 20,
                       fontWeight: .w700,
-                      color: Color(0xFF1C2520),
+                      color: colors.ink,
                     ),
                   ),
                   SvgPicture.asset(
@@ -169,8 +171,8 @@ class _CustomScheduleCalendarState extends State<CustomScheduleCalendar>
               return Center(
                 child: Text(
                   text,
-                  style: const TextStyle(
-                    color: Color(0xFF768079),
+                  style: TextStyle(
+                    color: colors.muted,
                     fontWeight: .w500,
                     fontSize: 12,
                   ),
@@ -190,15 +192,15 @@ class _CustomScheduleCalendarState extends State<CustomScheduleCalendar>
                 return Positioned(
                   bottom: 5,
                   child: Row(
-                    mainAxisSize: MainAxisSize.min,
+                    mainAxisSize: .min,
                     children: List.generate(
                       displayCount,
                       (index) => Container(
                         margin: const EdgeInsets.symmetric(horizontal: 1.5),
                         width: 5,
                         height: 5,
-                        decoration: const BoxDecoration(
-                          color: Color(0xFF526C30),
+                        decoration: BoxDecoration(
+                          color: colors.green,
                           shape: BoxShape.circle,
                         ),
                       ),
@@ -211,14 +213,20 @@ class _CustomScheduleCalendarState extends State<CustomScheduleCalendar>
             },
           ),
 
-          calendarStyle: const CalendarStyle(
+          calendarStyle: CalendarStyle(
             selectedDecoration: BoxDecoration(
-              color: Color(0xFF1C2520),
+              color: colors.ink,
               shape: BoxShape.circle,
             ),
-            todayDecoration: BoxDecoration(color: Colors.transparent),
+            // Sử dụng màu nền tối để chữ nổi bật và rõ nét trên nền tròn sáng (colors.ink)
+            selectedTextStyle: TextStyle(
+              color: colors.background,
+              fontSize: 14,
+              fontWeight: .w700,
+            ),
+            todayDecoration: const BoxDecoration(color: Colors.transparent),
             todayTextStyle: TextStyle(
-              color: Color(0xFF1C2520),
+              color: colors.ink,
               fontSize: 14,
               fontWeight: .w400,
             ),
@@ -236,17 +244,14 @@ class _CustomScheduleCalendarState extends State<CustomScheduleCalendar>
                   width: 6,
                   height: 6,
                   decoration: BoxDecoration(
-                    color: const Color(0xFF526C30),
+                    color: colors.green,
                     borderRadius: BorderRadius.circular(3),
                   ),
                 ),
                 const SizedBox(width: 8),
                 Text(
                   'calendar.has_workout'.tr(),
-                  style: const TextStyle(
-                    color: Color(0xFF768079),
-                    fontSize: 13,
-                  ),
+                  style: TextStyle(color: colors.muted, fontSize: 13),
                 ),
               ],
             ),
@@ -257,17 +262,14 @@ class _CustomScheduleCalendarState extends State<CustomScheduleCalendar>
                   width: 6,
                   height: 6,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFCBD2C9),
+                    color: colors.muted,
                     borderRadius: BorderRadius.circular(3),
                   ),
                 ),
                 const SizedBox(width: 8),
                 Text(
                   'calendar.rest_day'.tr(),
-                  style: const TextStyle(
-                    color: Color(0xFF768079),
-                    fontSize: 13,
-                  ),
+                  style: TextStyle(color: colors.muted, fontSize: 13),
                 ),
               ],
             ),

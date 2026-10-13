@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:stride/core/theme/app_colors.dart';
 import 'package:stride/widgets/appbar_custom.dart';
 import 'package:stride/widgets/item_app_bar_title.dart';
 import 'package:stride/widgets/item_bottom_button.dart';
@@ -12,7 +13,10 @@ class LoginWithAppleScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>() ?? AppColors.light;
+
     return Scaffold(
+      backgroundColor: colors.background,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: AppbarCustom(
@@ -26,8 +30,8 @@ class LoginWithAppleScreen extends StatelessWidget {
           children: [
             Text(
               'login_apple.subtitle'.tr(),
-              style: const TextStyle(
-                color: Color(0xFF768079),
+              style: TextStyle(
+                color: colors.muted,
                 fontSize: 14,
                 fontWeight: .w400,
               ),
@@ -39,7 +43,7 @@ class LoginWithAppleScreen extends StatelessWidget {
                 margin: const EdgeInsets.only(top: 60, bottom: 50),
                 alignment: .center,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFEEF4E5),
+                  color: colors.avatarBackground,
                   borderRadius: BorderRadius.circular(50),
                 ),
                 child: SvgPicture.asset(
@@ -54,8 +58,8 @@ class LoginWithAppleScreen extends StatelessWidget {
                 children: [
                   Text(
                     'login_apple.title'.tr(),
-                    style: const TextStyle(
-                      color: Color(0xFF1C2520),
+                    style: TextStyle(
+                      color: colors.ink,
                       fontSize: 24,
                       fontWeight: .w700,
                     ),
@@ -63,8 +67,8 @@ class LoginWithAppleScreen extends StatelessWidget {
                   const SizedBox(height: 10),
                   Text(
                     'login_apple.desc'.tr(),
-                    style: const TextStyle(
-                      color: Color(0xFF768079),
+                    style: TextStyle(
+                      color: colors.muted,
                       fontSize: 14,
                       fontWeight: .w400,
                     ),
@@ -84,8 +88,8 @@ class LoginWithAppleScreen extends StatelessWidget {
               child: Center(
                 child: Text(
                   'login_apple.other_method'.tr(),
-                  style: const TextStyle(
-                    color: Color(0xFF526C30),
+                  style: TextStyle(
+                    color: colors.green,
                     fontSize: 13,
                     fontWeight: .w600,
                   ),

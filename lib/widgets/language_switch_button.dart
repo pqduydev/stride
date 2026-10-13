@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:stride/core/theme/app_colors.dart';
 
 class LanguageSwitchButton extends StatelessWidget {
   final double? width;
@@ -9,6 +10,7 @@ class LanguageSwitchButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>() ?? AppColors.light;
     final currentLocale = context.locale;
     final isVietnamese = currentLocale.languageCode == 'vi';
 
@@ -21,7 +23,7 @@ class LanguageSwitchButton extends StatelessWidget {
       child: PopupMenuButton<Locale>(
         offset: const Offset(0, 40),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        color: Colors.white,
+        color: colors.surface,
         elevation: 4,
         onSelected: (Locale locale) async {
           if (context.locale != locale) {
@@ -34,9 +36,12 @@ class LanguageSwitchButton extends StatelessWidget {
             child: Row(
               mainAxisAlignment: .spaceBetween,
               children: [
-                const Text('Tiếng Việt', style: TextStyle(fontSize: 14)),
+                Text(
+                  'Tiếng Việt',
+                  style: TextStyle(fontSize: 14, color: colors.ink),
+                ),
                 if (isVietnamese)
-                  const Icon(Icons.check, color: Color(0xFF526C30), size: 18),
+                  Icon(Icons.check, color: colors.green, size: 18),
               ],
             ),
           ),
@@ -45,9 +50,12 @@ class LanguageSwitchButton extends StatelessWidget {
             child: Row(
               mainAxisAlignment: .spaceBetween,
               children: [
-                const Text('English', style: TextStyle(fontSize: 14)),
+                Text(
+                  'English',
+                  style: TextStyle(fontSize: 14, color: colors.ink),
+                ),
                 if (!isVietnamese)
-                  const Icon(Icons.check, color: Color(0xFF526C30), size: 18),
+                  Icon(Icons.check, color: colors.green, size: 18),
               ],
             ),
           ),
@@ -60,10 +68,10 @@ class LanguageSwitchButton extends StatelessWidget {
               : const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
           alignment: .center,
           decoration: BoxDecoration(
-            color: const Color(0xFFEEF4E5),
+            color: colors.avatarBackground,
             borderRadius: BorderRadius.circular(width != null ? 7 : 20),
             border: Border.all(
-              color: const Color(0xFF526C30).withValues(alpha: 0.3),
+              color: colors.green.withValues(alpha: 0.3),
               width: 1,
             ),
           ),
@@ -75,13 +83,13 @@ class LanguageSwitchButton extends StatelessWidget {
                 'assets/images/img_language.png',
                 width: 16,
                 height: 16,
-                color: const Color(0xFF526C30),
+                color: colors.green,
               ),
               const SizedBox(width: 5),
               Text(
                 isVietnamese ? 'VI' : 'EN',
-                style: const TextStyle(
-                  color: Color(0xFF526C30),
+                style: TextStyle(
+                  color: colors.green,
                   fontSize: 12,
                   fontWeight: .w700,
                 ),

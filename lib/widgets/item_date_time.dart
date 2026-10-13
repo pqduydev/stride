@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:stride/core/theme/app_colors.dart';
 
 // ignore: must_be_immutable
 class ItemDateTime extends StatefulWidget {
@@ -77,13 +78,15 @@ class _ItemDateTimeState extends State<ItemDateTime> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>() ?? AppColors.light;
+
     return Column(
       crossAxisAlignment: .start,
       children: [
         Text(
           widget.label,
-          style: const TextStyle(
-            color: Color(0xFF768079),
+          style: TextStyle(
+            color: colors.muted,
             fontSize: 13,
             fontWeight: .w500,
           ),
@@ -93,34 +96,28 @@ class _ItemDateTimeState extends State<ItemDateTime> {
           width: double.infinity,
           height: 49,
           decoration: BoxDecoration(
-            color: const Color(0xFFFFFFFF),
+            color: colors.surface,
             borderRadius: BorderRadius.circular(11),
           ),
           child: TextField(
             onTap: openSelectDayTime,
             controller: _controller,
             readOnly: true,
-            style: const TextStyle(
-              color: Color(0xFF1C2520),
+            style: TextStyle(
+              color: colors.ink,
               fontSize: 14,
               fontWeight: .w500,
             ),
             decoration: InputDecoration(
               hintText: DateFormat("dd/MM/yyyy").format(DateTime.now()),
               filled: true,
-              fillColor: const Color(0xFFFFFFFF),
+              fillColor: colors.surface,
               enabledBorder: OutlineInputBorder(
-                borderSide: const BorderSide(
-                  color: Color(0xFFE8ECE8),
-                  width: 1,
-                ),
+                borderSide: BorderSide(color: colors.line, width: 1),
                 borderRadius: BorderRadius.circular(12),
               ),
               focusedBorder: OutlineInputBorder(
-                borderSide: const BorderSide(
-                  color: Color(0xFFE8ECE8),
-                  width: 1,
-                ),
+                borderSide: BorderSide(color: colors.line, width: 1),
                 borderRadius: BorderRadius.circular(12),
               ),
             ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:stride/core/theme/app_colors.dart';
 
 class ItemInfomation extends StatelessWidget {
   const ItemInfomation({super.key, required this.title, required this.info});
@@ -8,13 +9,15 @@ class ItemInfomation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>() ?? AppColors.light;
+
     return Container(
       width: double.infinity,
       height: 107,
-      padding: EdgeInsets.all(15),
-      margin: EdgeInsets.only(top: 40),
+      padding: const EdgeInsets.all(15),
+      margin: const EdgeInsets.only(top: 40),
       decoration: BoxDecoration(
-        color: Color(0xFFEEF4E5),
+        color: colors.avatarBackground,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -24,7 +27,7 @@ class ItemInfomation extends StatelessWidget {
           Text(
             title,
             style: TextStyle(
-              color: Color(0xFF526C30),
+              color: colors.green,
               fontSize: 14,
               fontWeight: .w600,
             ),
@@ -32,7 +35,7 @@ class ItemInfomation extends StatelessWidget {
           Text(
             info,
             style: TextStyle(
-              color: Color(0xFF768079),
+              color: colors.muted,
               fontSize: 13,
               fontWeight: .w400,
             ),

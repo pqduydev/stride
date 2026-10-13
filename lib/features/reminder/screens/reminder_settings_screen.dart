@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:intl/intl.dart';
+import 'package:stride/core/theme/app_colors.dart';
 import 'package:stride/core/utils/app_toast.dart';
 import 'package:stride/core/utils/reminder_time_calculator.dart';
 import 'package:stride/features/reminder/reminder_cubit/reminder_cubit.dart';
@@ -40,7 +40,10 @@ class _ReminderSettingsScreenState extends State<ReminderSettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>() ?? AppColors.light;
+
     return Scaffold(
+      backgroundColor: colors.background,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: AppbarCustom(
@@ -77,7 +80,9 @@ class _ReminderSettingsScreenState extends State<ReminderSettingsScreen> {
         builder: (context, state) {
           if (state.status == ReminderStatus.initial ||
               state.status == ReminderStatus.loading) {
-            return const Center(child: CircularProgressIndicator());
+            return Center(
+              child: CircularProgressIndicator(color: colors.green),
+            );
           }
 
           final cubit = context.read<ReminderCubit>();
@@ -100,8 +105,8 @@ class _ReminderSettingsScreenState extends State<ReminderSettingsScreen> {
               // GIỜ TẬP
               Text(
                 'reminder_settings.section_time'.tr(),
-                style: const TextStyle(
-                  color: Color(0xFF768079),
+                style: TextStyle(
+                  color: colors.muted,
                   fontSize: 12,
                   fontWeight: .w600,
                 ),
@@ -109,10 +114,10 @@ class _ReminderSettingsScreenState extends State<ReminderSettingsScreen> {
               Container(
                 margin: const EdgeInsets.only(top: 15, bottom: 25),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFFFFFF),
+                  color: colors.surface,
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                    color: const Color(0xFFE8ECE8),
+                    color: colors.line,
                     width: 1,
                     style: BorderStyle.solid,
                   ),
@@ -135,7 +140,11 @@ class _ReminderSettingsScreenState extends State<ReminderSettingsScreen> {
                     child: Text(
                       '${_two(settings.hour)} : ${_two(settings.minute)}',
                       textAlign: TextAlign.center,
-                      style: const TextStyle(fontSize: 48, fontWeight: .w700),
+                      style: TextStyle(
+                        fontSize: 48,
+                        fontWeight: .w700,
+                        color: colors.ink,
+                      ),
                     ),
                   ),
                 ),
@@ -144,8 +153,8 @@ class _ReminderSettingsScreenState extends State<ReminderSettingsScreen> {
               // LẶP LẠI MỖI TUẦN
               Text(
                 'reminder_settings.repeat_weekly'.tr(),
-                style: const TextStyle(
-                  color: Color(0xFF1C2520),
+                style: TextStyle(
+                  color: colors.ink,
                   fontSize: 15,
                   fontWeight: .w600,
                 ),
@@ -157,13 +166,13 @@ class _ReminderSettingsScreenState extends State<ReminderSettingsScreen> {
                   for (final entry in _weekdayKeys.entries)
                     ChoiceChip(
                       showCheckmark: false,
-                      backgroundColor: const Color(0xFFFFFFFF),
-                      selectedColor: const Color(0xFF1C2520),
+                      backgroundColor: colors.surface,
+                      selectedColor: colors.ink,
                       label: Text(entry.value.tr()),
                       labelStyle: TextStyle(
                         color: settings.weekdays.contains(entry.key)
-                            ? const Color(0xFFFFFFFF)
-                            : const Color(0xFF768079),
+                            ? colors.surface
+                            : colors.muted,
                         fontWeight: .w500,
                       ),
                       selected: settings.weekdays.contains(entry.key),
@@ -174,7 +183,7 @@ class _ReminderSettingsScreenState extends State<ReminderSettingsScreen> {
                       side: BorderSide(
                         color: settings.weekdays.contains(entry.key)
                             ? Colors.transparent
-                            : const Color(0xFFE8ECE8),
+                            : colors.line,
                         width: 1,
                       ),
                     ),
@@ -185,8 +194,8 @@ class _ReminderSettingsScreenState extends State<ReminderSettingsScreen> {
               // NHẮC TRƯỚC
               Text(
                 'reminder_settings.remind_before'.tr(),
-                style: const TextStyle(
-                  color: Color(0xFF768079),
+                style: TextStyle(
+                  color: colors.muted,
                   fontSize: 13,
                   fontWeight: .w500,
                 ),
@@ -198,14 +207,15 @@ class _ReminderSettingsScreenState extends State<ReminderSettingsScreen> {
                   vertical: 2.0,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: colors.surface,
                   borderRadius: BorderRadius.circular(12.0),
-                  border: Border.all(color: Colors.grey.shade300, width: 1.0),
+                  border: Border.all(color: colors.line, width: 1.0),
                 ),
                 child: DropdownButtonHideUnderline(
                   child: DropdownButton<int>(
                     value: settings.minutesBefore,
                     isExpanded: true,
+                    dropdownColor: colors.surface,
                     icon: SvgPicture.asset(
                       'assets/icons/ic_chevron_down.svg',
                       width: 20,
@@ -217,9 +227,9 @@ class _ReminderSettingsScreenState extends State<ReminderSettingsScreen> {
                           value: m,
                           child: Text(
                             _minutesLabel(m),
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 15,
-                              color: Color(0xFF1C2520),
+                              color: colors.ink,
                               fontWeight: .w500,
                             ),
                           ),
@@ -239,8 +249,8 @@ class _ReminderSettingsScreenState extends State<ReminderSettingsScreen> {
                     : next == null
                     ? 'reminder_settings.status_no_date'.tr()
                     : _formatNext(next),
-                style: const TextStyle(
-                  color: Color(0xFF526C30),
+                style: TextStyle(
+                  color: colors.green,
                   fontSize: 12,
                   fontWeight: .w500,
                 ),

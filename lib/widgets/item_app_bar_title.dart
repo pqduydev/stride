@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:stride/core/theme/app_colors.dart';
 
 class ItemAppBarTitle extends StatelessWidget {
   final String data;
@@ -8,15 +9,13 @@ class ItemAppBarTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>() ?? AppColors.light;
+
     return Padding(
       padding: EdgeInsetsGeometry.only(left: padding!),
       child: Text(
         data,
-        style: TextStyle(
-          color: Color(0xFF1C2520),
-          fontSize: 19,
-          fontWeight: .w700,
-        ),
+        style: TextStyle(color: colors.ink, fontSize: 19, fontWeight: .w700),
       ),
     );
   }

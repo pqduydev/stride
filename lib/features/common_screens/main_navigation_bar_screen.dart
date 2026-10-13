@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:stride/core/theme/app_colors.dart';
 import 'package:stride/features/appointment/screens/appointment_screen.dart';
 import 'package:stride/features/diary/screen/diary_screen.dart';
 import 'package:stride/features/reminder/screens/reminder_settings_screen.dart';
@@ -49,6 +50,7 @@ class _MainNavigationBarScreenState extends State<MainNavigationBarScreen> {
   Widget _buildCuttomIconSvg({
     required String assetName,
     required bool isSelected,
+    required AppColors colors,
   }) {
     return Container(
       width: 40,
@@ -56,7 +58,7 @@ class _MainNavigationBarScreenState extends State<MainNavigationBarScreen> {
       alignment: .center,
       margin: const EdgeInsets.only(bottom: 5),
       decoration: BoxDecoration(
-        color: isSelected ? const Color(0xFFD2F36B) : Colors.transparent,
+        color: isSelected ? colors.accent : Colors.transparent,
         borderRadius: BorderRadius.circular(10),
       ),
       child: SvgPicture.asset(
@@ -64,7 +66,7 @@ class _MainNavigationBarScreenState extends State<MainNavigationBarScreen> {
         width: 21,
         height: 21,
         colorFilter: ColorFilter.mode(
-          isSelected ? const Color(0xFF1C2520) : const Color(0xFF8E8E93),
+          isSelected ? colors.onAccent : colors.muted,
           BlendMode.srcIn,
         ),
       ),
@@ -73,8 +75,8 @@ class _MainNavigationBarScreenState extends State<MainNavigationBarScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Ép widget lắng nghe thay đổi locale để tự động rebuild ngay lập tức khi đổi ngôn ngữ
     context.locale;
+    final colors = Theme.of(context).extension<AppColors>() ?? AppColors.light;
 
     final itemList = [
       _Items(
@@ -103,25 +105,27 @@ class _MainNavigationBarScreenState extends State<MainNavigationBarScreen> {
           currentIndex: _selectedIndex,
           onTap: _onTabTapped,
           type: BottomNavigationBarType.fixed,
-          selectedItemColor: const Color(0xFF1C2520),
-          unselectedItemColor: const Color(0xFF8E8E93),
+          selectedItemColor: colors.ink,
+          unselectedItemColor: colors.muted,
           showUnselectedLabels: true,
           selectedLabelStyle: const TextStyle(fontSize: 11, fontWeight: .w600),
           unselectedLabelStyle: const TextStyle(
             fontSize: 11,
             fontWeight: .w400,
           ),
-          backgroundColor: const Color(0xFFFFFFFF),
+          backgroundColor: colors.surface,
           items: [
             for (_Items item in itemList)
               BottomNavigationBarItem(
                 icon: _buildCuttomIconSvg(
                   assetName: item.assetName,
                   isSelected: false,
+                  colors: colors,
                 ),
                 activeIcon: _buildCuttomIconSvg(
                   assetName: item.assetName,
                   isSelected: true,
+                  colors: colors,
                 ),
                 label: item.label,
               ),

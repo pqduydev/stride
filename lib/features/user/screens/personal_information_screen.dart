@@ -266,7 +266,8 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                               label: 'personal_info.username'.tr(),
                               controller: _usernameController,
                               readOnly: true,
-                              backgroundColor: colors.avatarBackground.value,
+                              backgroundColor: colors.avatarBackground
+                                  .toARGB32(),
                             ),
                             const SizedBox(height: 5),
 
@@ -275,7 +276,8 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                               label: 'personal_info.date_joined'.tr(),
                               controller: _dateJoinedController,
                               readOnly: true,
-                              backgroundColor: colors.avatarBackground.value,
+                              backgroundColor: colors.avatarBackground
+                                  .toARGB32(),
                             ),
                             const SizedBox(height: 5),
 

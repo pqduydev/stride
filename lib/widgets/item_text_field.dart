@@ -66,7 +66,7 @@ class ItemTextField extends StatelessWidget {
               decoration: InputDecoration(
                 hintText: hintText,
                 hintStyle: TextStyle(
-                  color: Color(hintTextColor ?? colors.muted.value),
+                  color: Color(hintTextColor ?? colors.muted.toARGB32()),
                   fontSize: hintTextFontSize,
                   fontWeight: hintTextFontWeight ?? .w500,
                 ),

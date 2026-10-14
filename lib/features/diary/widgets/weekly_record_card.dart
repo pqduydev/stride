@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:stride/core/theme/app_colors.dart';
 
 class WeeklyRecordCard extends StatelessWidget {
   final String imagePath;
@@ -15,13 +16,15 @@ class WeeklyRecordCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>() ?? AppColors.light;
+
     return Container(
       height: 228,
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: const Color(0xFFFFFFFF),
+        color: colors.surface,
         borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: const Color(0xFFE8ECE8), width: 1),
+        border: Border.all(color: colors.line, width: 1),
       ),
       child: Column(
         mainAxisAlignment: .spaceBetween,
@@ -40,9 +43,9 @@ class WeeklyRecordCard extends StatelessWidget {
                   errorBuilder: (context, error, stackTrace) {
                     return Container(
                       height: 140,
-                      color: Colors.grey[300],
+                      color: colors.line,
                       alignment: .center,
-                      child: const Icon(Icons.image, color: Colors.grey),
+                      child: Icon(Icons.image, color: colors.muted),
                     );
                   },
                 ),
@@ -56,13 +59,13 @@ class WeeklyRecordCard extends StatelessWidget {
                     vertical: 6,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: colors.surface,
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Text(
                     'weekly_record_card.illustration'.tr(),
-                    style: const TextStyle(
-                      color: Color(0xFF768079),
+                    style: TextStyle(
+                      color: colors.muted,
                       fontSize: 11,
                       fontWeight: .w600,
                     ),
@@ -78,8 +81,8 @@ class WeeklyRecordCard extends StatelessWidget {
                 title,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  color: Color(0xFF1C2520),
+                style: TextStyle(
+                  color: colors.ink,
                   fontSize: 17,
                   fontWeight: .w600,
                 ),
@@ -89,8 +92,8 @@ class WeeklyRecordCard extends StatelessWidget {
                 description,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  color: Color(0xFF768079),
+                style: TextStyle(
+                  color: colors.muted,
                   fontSize: 13,
                   fontWeight: .w400,
                   height: 1.4,

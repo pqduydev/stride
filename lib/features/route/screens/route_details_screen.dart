@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:stride/core/theme/app_colors.dart';
 import 'package:stride/widgets/appbar_custom.dart';
 import 'package:stride/widgets/item_app_bar_title.dart';
 import 'package:stride/widgets/item_bottom_button.dart';
@@ -9,9 +10,12 @@ class RouteDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>() ?? AppColors.light;
+
     return DefaultTabController(
       length: 3,
       child: Scaffold(
+        backgroundColor: colors.background,
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(kToolbarHeight),
           child: AppbarCustom(
@@ -30,12 +34,12 @@ class RouteDetailsScreen extends StatelessWidget {
                 alignment: .center,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(7),
-                  color: const Color(0xFFEEF4E5),
+                  color: colors.avatarBackground,
                 ),
                 child: Text(
                   'route_details.tag_health'.tr(),
-                  style: const TextStyle(
-                    color: Color(0xFF526C30),
+                  style: TextStyle(
+                    color: colors.green,
                     fontSize: 11,
                     fontWeight: .w600,
                   ),
@@ -44,8 +48,8 @@ class RouteDetailsScreen extends StatelessWidget {
               const SizedBox(height: 15),
               Text(
                 'route_details.title_main'.tr(),
-                style: const TextStyle(
-                  color: Color(0xFF1C2520),
+                style: TextStyle(
+                  color: colors.ink,
                   fontSize: 29,
                   fontWeight: .w700,
                 ),
@@ -53,8 +57,8 @@ class RouteDetailsScreen extends StatelessWidget {
               const SizedBox(height: 5),
               Text(
                 'route_details.subtitle'.tr(),
-                style: const TextStyle(
-                  color: Color(0xFF768079),
+                style: TextStyle(
+                  color: colors.muted,
                   fontSize: 14,
                   fontWeight: .w400,
                 ),
@@ -80,13 +84,13 @@ class RouteDetailsScreen extends StatelessWidget {
                       alignment: .center,
                       margin: const EdgeInsets.only(left: 15, bottom: 10),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFFFFFFF),
+                        color: colors.surface,
                         borderRadius: BorderRadius.circular(7),
                       ),
-                      child: const Text(
+                      child: Text(
                         "17/08 – 17/11/2026",
                         style: TextStyle(
-                          color: Color(0xFF1C2520),
+                          color: colors.ink,
                           fontSize: 11,
                           fontWeight: .w600,
                         ),
@@ -103,9 +107,9 @@ class RouteDetailsScreen extends StatelessWidget {
                   horizontal: 15,
                 ),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFFFFFF),
+                  color: colors.surface,
                   borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: const Color(0xFFE8ECE8), width: 1),
+                  border: Border.all(color: colors.line, width: 1),
                 ),
                 child: Row(
                   mainAxisAlignment: .spaceBetween,
@@ -113,10 +117,10 @@ class RouteDetailsScreen extends StatelessWidget {
                     Column(
                       crossAxisAlignment: .start,
                       children: [
-                        const Text(
+                        Text(
                           "12 / 40",
                           style: TextStyle(
-                            color: Color(0xFF1C2520),
+                            color: colors.ink,
                             fontSize: 21,
                             fontWeight: .w700,
                           ),
@@ -124,8 +128,8 @@ class RouteDetailsScreen extends StatelessWidget {
                         const SizedBox(height: 5),
                         Text(
                           'route_details.completed_sessions'.tr(),
-                          style: const TextStyle(
-                            color: Color(0xFF768079),
+                          style: TextStyle(
+                            color: colors.muted,
                             fontSize: 11,
                             fontWeight: .w400,
                           ),
@@ -137,8 +141,8 @@ class RouteDetailsScreen extends StatelessWidget {
                       children: [
                         Text(
                           "3 ${'route_details.weekly_unit'.tr()}",
-                          style: const TextStyle(
-                            color: Color(0xFF1C2520),
+                          style: TextStyle(
+                            color: colors.ink,
                             fontSize: 21,
                             fontWeight: .w700,
                           ),
@@ -146,8 +150,8 @@ class RouteDetailsScreen extends StatelessWidget {
                         const SizedBox(height: 5),
                         Text(
                           'route_details.weekly_frequency'.tr(),
-                          style: const TextStyle(
-                            color: Color(0xFF768079),
+                          style: TextStyle(
+                            color: colors.muted,
                             fontSize: 11,
                             fontWeight: .w400,
                           ),
@@ -157,10 +161,10 @@ class RouteDetailsScreen extends StatelessWidget {
                     Column(
                       crossAxisAlignment: .start,
                       children: [
-                        const Text(
+                        Text(
                           "64",
                           style: TextStyle(
-                            color: Color(0xFF1C2520),
+                            color: colors.ink,
                             fontSize: 21,
                             fontWeight: .w700,
                           ),
@@ -168,8 +172,8 @@ class RouteDetailsScreen extends StatelessWidget {
                         const SizedBox(height: 5),
                         Text(
                           'route_details.remaining_days'.tr(),
-                          style: const TextStyle(
-                            color: Color(0xFF768079),
+                          style: TextStyle(
+                            color: colors.muted,
                             fontSize: 11,
                             fontWeight: .w400,
                           ),
@@ -189,7 +193,7 @@ class RouteDetailsScreen extends StatelessWidget {
                       padding: const EdgeInsets.all(5),
                       alignment: .center,
                       decoration: BoxDecoration(
-                        color: const Color(0xFFEBEEE9),
+                        color: colors.line,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: TabBar(
@@ -198,14 +202,14 @@ class RouteDetailsScreen extends StatelessWidget {
                         overlayColor: WidgetStateProperty.all(
                           Colors.transparent,
                         ),
-                        labelStyle: const TextStyle(
-                          color: Color(0xFF1C2520),
+                        labelStyle: TextStyle(
+                          color: colors.ink,
                           fontSize: 13,
                           fontWeight: .w600,
                         ),
-                        unselectedLabelColor: const Color(0xFF768079),
+                        unselectedLabelColor: colors.muted,
                         indicator: BoxDecoration(
-                          color: const Color(0xFFFFFFFF),
+                          color: colors.surface,
                           borderRadius: BorderRadius.circular(9),
                         ),
                         tabs: [
@@ -247,16 +251,14 @@ class _OverView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>() ?? AppColors.light;
+
     return Column(
       crossAxisAlignment: .start,
       children: [
         Text(
           'route_details.milestones_title'.tr(),
-          style: const TextStyle(
-            color: Color(0xFF1C2520),
-            fontSize: 18,
-            fontWeight: .w700,
-          ),
+          style: TextStyle(color: colors.ink, fontSize: 18, fontWeight: .w700),
         ),
         const SizedBox(height: 15),
         Expanded(
@@ -305,6 +307,8 @@ class _BuildTabViewContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>() ?? AppColors.light;
+
     return Row(
       mainAxisAlignment: .center,
       children: [
@@ -312,15 +316,11 @@ class _BuildTabViewContent extends StatelessWidget {
           width: 34,
           height: 34,
           child: CircleAvatar(
-            backgroundColor: inProgress
-                ? const Color(0xFFEEF4E5)
-                : const Color(0xFFECEFEB),
+            backgroundColor: inProgress ? colors.avatarBackground : colors.line,
             child: Text(
               number,
               style: TextStyle(
-                color: inProgress
-                    ? const Color(0xFF526C30)
-                    : const Color(0xFF768079),
+                color: inProgress ? colors.green : colors.muted,
                 fontSize: 12,
                 fontWeight: .w700,
               ),
@@ -334,8 +334,8 @@ class _BuildTabViewContent extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: const TextStyle(
-                  color: Color(0xFF1C2520),
+                style: TextStyle(
+                  color: colors.ink,
                   fontSize: 15,
                   fontWeight: .w600,
                 ),
@@ -344,8 +344,8 @@ class _BuildTabViewContent extends StatelessWidget {
                 inProgress
                     ? "$timeLine · ${'route_details.in_progress'.tr()}"
                     : timeLine,
-                style: const TextStyle(
-                  color: Color(0xFF768079),
+                style: TextStyle(
+                  color: colors.muted,
                   fontSize: 12,
                   fontWeight: .w400,
                 ),

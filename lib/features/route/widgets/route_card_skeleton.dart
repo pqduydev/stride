@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:stride/core/theme/app_colors.dart';
 
 /// Widget danh sách ngang hiển thị các thẻ Skeleton khi đang tải dữ liệu
 class RouteCardSkeletonList extends StatelessWidget {
@@ -24,17 +25,18 @@ class RouteCardSkeletonItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>() ?? AppColors.light;
     final double cardWidth = MediaQuery.of(context).size.width - 60;
 
     return Shimmer.fromColors(
-      baseColor: const Color(0xFFE2E8E3),
-      highlightColor: const Color(0xFFF5F8F5),
+      baseColor: colors.skeletonBase,
+      highlightColor: colors.skeletonHighlight,
       period: const Duration(milliseconds: 1200),
       child: Container(
         width: cardWidth,
         decoration: BoxDecoration(
           borderRadius: const BorderRadius.all(Radius.circular(20)),
-          border: Border.all(color: const Color(0xFFE8ECE8), width: 1),
+          border: Border.all(color: colors.line, width: 1),
         ),
         child: Column(
           children: [
@@ -42,9 +44,9 @@ class RouteCardSkeletonItem extends StatelessWidget {
             Container(
               width: double.infinity,
               height: 140,
-              decoration: const BoxDecoration(
-                color: Color(0xFFC0CAC2), // Màu đậm riêng biệt cho phần Ảnh
-                borderRadius: BorderRadius.all(Radius.circular(20)),
+              decoration: BoxDecoration(
+                color: colors.skeletonImage, // Màu đậm riêng biệt cho phần Ảnh
+                borderRadius: const BorderRadius.all(Radius.circular(20)),
               ),
             ),
 
@@ -62,7 +64,7 @@ class RouteCardSkeletonItem extends StatelessWidget {
                         width: 95,
                         height: 15,
                         decoration: BoxDecoration(
-                          color: const Color(0xFFD4DCD5),
+                          color: colors.skeletonLine,
                           borderRadius: BorderRadius.circular(4),
                         ),
                       ),
@@ -70,7 +72,7 @@ class RouteCardSkeletonItem extends StatelessWidget {
                         width: 75,
                         height: 16,
                         decoration: BoxDecoration(
-                          color: const Color(0xFFD4DCD5),
+                          color: colors.skeletonLine,
                           borderRadius: BorderRadius.circular(4),
                         ),
                       ),
@@ -83,7 +85,7 @@ class RouteCardSkeletonItem extends StatelessWidget {
                     height: 7,
                     width: double.infinity,
                     decoration: BoxDecoration(
-                      color: const Color(0xFFE8ECE8),
+                      color: colors.line,
                       borderRadius: BorderRadius.circular(5),
                     ),
                   ),
@@ -97,7 +99,7 @@ class RouteCardSkeletonItem extends StatelessWidget {
                         width: 50,
                         height: 14,
                         decoration: BoxDecoration(
-                          color: const Color(0xFFD4DCD5),
+                          color: colors.skeletonLine,
                           borderRadius: BorderRadius.circular(4),
                         ),
                       ),
@@ -105,7 +107,7 @@ class RouteCardSkeletonItem extends StatelessWidget {
                         width: 35,
                         height: 16,
                         decoration: BoxDecoration(
-                          color: const Color(0xFFD4DCD5),
+                          color: colors.skeletonLine,
                           borderRadius: BorderRadius.circular(4),
                         ),
                       ),

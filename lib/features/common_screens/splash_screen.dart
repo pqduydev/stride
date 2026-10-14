@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:stride/core/theme/app_colors.dart';
 import 'package:stride/features/auth/auth_cubit/auth_cubit.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
@@ -22,20 +23,22 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>() ?? AppColors.light;
+
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFFFF),
+      backgroundColor: colors.surface,
       body: Center(
         child: SvgPicture.asset('assets/branding/splash_icon.svg')
             .animate()
             .fade(duration: 800.ms, curve: Curves.easeOut)
             .slideY(
-              begin: 0.3, // Trượt từ dưới lên (30% so với vị trí gốc)
+              begin: 0.3,
               end: 0.0,
               duration: 800.ms,
               curve: Curves.easeOutCubic,
             )
             .scale(
-              begin: const Offset(0.7, 0.7), // Hơi phóng to nhẹ tạo chiều sâu
+              begin: const Offset(0.7, 0.7),
               end: const Offset(1.0, 1.0),
               duration: 800.ms,
               curve: Curves.easeOutCubic,

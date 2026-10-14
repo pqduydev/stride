@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:stride/core/theme/app_colors.dart';
 import 'package:stride/core/utils/app_toast.dart';
 import 'package:stride/core/utils/instant_obscure_controller.dart';
 import 'package:stride/features/user/user_cubit/user_cubit.dart';
@@ -78,7 +79,10 @@ class _ChangePasswordState extends State<ChangePassword> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>() ?? AppColors.light;
+
     return Scaffold(
+      backgroundColor: colors.background,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: AppbarCustom(
@@ -124,7 +128,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                             margin: const EdgeInsets.only(top: 80, bottom: 50),
                             alignment: .center,
                             decoration: BoxDecoration(
-                              color: const Color(0xFFEEF4E5),
+                              color: colors.avatarBackground,
                               borderRadius: BorderRadius.circular(50),
                             ),
                             child: SvgPicture.asset(
@@ -152,7 +156,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                               _obscureOldPassword
                                   ? Icons.visibility_off
                                   : Icons.visibility,
-                              color: const Color(0xFF768079),
+                              color: colors.muted,
                               size: 19,
                             ),
                           ),
@@ -200,7 +204,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                               _obscureNewPassword
                                   ? Icons.visibility_off
                                   : Icons.visibility,
-                              color: const Color(0xFF768079),
+                              color: colors.muted,
                               size: 19,
                             ),
                           ),
@@ -257,7 +261,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                               _obscureConfirmNewPassword
                                   ? Icons.visibility_off
                                   : Icons.visibility,
-                              color: const Color(0xFF768079),
+                              color: colors.muted,
                               size: 19,
                             ),
                           ),

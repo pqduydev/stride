@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:stride/core/theme/app_colors.dart';
 import 'package:stride/core/utils/app_toast.dart';
 import 'package:stride/features/auth/auth_cubit/auth_cubit.dart';
 import 'package:stride/features/user/user_cubit/user_cubit.dart';
@@ -176,10 +177,12 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>() ?? AppColors.light;
     final today = DateTime.now();
     final maxAllowedDate = DateTime(today.year - 16, today.month, today.day);
 
     return Scaffold(
+      backgroundColor: colors.background,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: AppbarCustom(
@@ -215,8 +218,8 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
               children: [
                 Text(
                   'personal_info.subtitle'.tr(),
-                  style: const TextStyle(
-                    color: Color(0xFF768079),
+                  style: TextStyle(
+                    color: colors.muted,
                     fontSize: 14,
                     fontWeight: .w400,
                   ),
@@ -244,13 +247,13 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                                 ),
                                 alignment: .center,
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFFEEF4E5),
+                                  color: colors.avatarBackground,
                                   borderRadius: BorderRadius.circular(38),
                                 ),
                                 child: Text(
                                   initials ?? '',
-                                  style: const TextStyle(
-                                    color: Color(0xFF526C30),
+                                  style: TextStyle(
+                                    color: colors.green,
                                     fontSize: 22,
                                     fontWeight: .w700,
                                   ),
@@ -263,7 +266,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                               label: 'personal_info.username'.tr(),
                               controller: _usernameController,
                               readOnly: true,
-                              backgroundColor: 0xFFEEF4E5,
+                              backgroundColor: colors.avatarBackground.value,
                             ),
                             const SizedBox(height: 5),
 
@@ -272,7 +275,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                               label: 'personal_info.date_joined'.tr(),
                               controller: _dateJoinedController,
                               readOnly: true,
-                              backgroundColor: 0xFFEEF4E5,
+                              backgroundColor: colors.avatarBackground.value,
                             ),
                             const SizedBox(height: 5),
 

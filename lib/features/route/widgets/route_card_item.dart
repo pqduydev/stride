@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:stride/core/theme/app_colors.dart';
 import 'package:stride/model/route_model.dart';
 
 class RouteCardItem extends StatelessWidget {
@@ -15,13 +16,15 @@ class RouteCardItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>() ?? AppColors.light;
+
     return Container(
       width: MediaQuery.of(context).size.width - 60,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colors.surface,
         borderRadius: const BorderRadius.all(Radius.circular(20)),
         border: Border.all(
-          color: const Color(0xFFE8ECE8),
+          color: colors.line,
           width: 1,
           style: BorderStyle.solid,
         ),
@@ -43,7 +46,7 @@ class RouteCardItem extends StatelessWidget {
               ),
               child: Container(
                 decoration: BoxDecoration(
-                  color: const Color(0xFF202C25).withValues(alpha: 0.64),
+                  color: colors.ink.withValues(alpha: 0.64),
                   borderRadius: const BorderRadius.all(Radius.circular(20)),
                 ),
                 child: Padding(
@@ -59,9 +62,11 @@ class RouteCardItem extends StatelessWidget {
                       Container(
                         height: 25,
                         padding: const EdgeInsets.symmetric(horizontal: 10),
-                        decoration: const BoxDecoration(
-                          color: Color(0xFFD2F36B),
-                          borderRadius: BorderRadius.all(Radius.circular(6)),
+                        decoration: BoxDecoration(
+                          color: colors.accent,
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(6),
+                          ),
                         ),
                         child: Center(
                           widthFactor: 1,
@@ -76,7 +81,7 @@ class RouteCardItem extends StatelessWidget {
                                 ?.copyWith(
                                   fontSize: 11,
                                   fontWeight: .w600,
-                                  color: const Color(0xFF1C2520),
+                                  color: colors.onAccent,
                                 ),
                           ),
                         ),
@@ -91,7 +96,7 @@ class RouteCardItem extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                             style: Theme.of(context).textTheme.titleLarge
                                 ?.copyWith(
-                                  color: const Color(0xFFFFFFFF),
+                                  color: colors.surface,
                                   fontSize: 25,
                                   fontWeight: .w700,
                                 ),
@@ -103,7 +108,7 @@ class RouteCardItem extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                             style: Theme.of(context).textTheme.labelSmall
                                 ?.copyWith(
-                                  color: const Color(0xFFE4EBE3),
+                                  color: colors.surface,
                                   fontSize: 12,
                                   fontWeight: .w400,
                                 ),
@@ -131,7 +136,7 @@ class RouteCardItem extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                           style: Theme.of(context).textTheme.labelSmall
                               ?.copyWith(
-                                color: const Color(0xFF768079),
+                                color: colors.muted,
                                 fontSize: 13,
                                 fontWeight: .w400,
                               ),
@@ -143,7 +148,7 @@ class RouteCardItem extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                          color: const Color(0xFF1C2520),
+                          color: colors.ink,
                           fontSize: 14,
                           fontWeight: .w700,
                         ),
@@ -154,17 +159,19 @@ class RouteCardItem extends StatelessWidget {
                   Container(
                     height: 7,
                     width: double.infinity,
-                    decoration: const BoxDecoration(
-                      color: Color(0xFFE8ECE8),
-                      borderRadius: BorderRadius.all(Radius.circular(5)),
+                    decoration: BoxDecoration(
+                      color: colors.line,
+                      borderRadius: const BorderRadius.all(Radius.circular(5)),
                     ),
                     child: FractionallySizedBox(
                       alignment: .centerLeft,
                       widthFactor: 0.37,
                       child: Container(
-                        decoration: const BoxDecoration(
-                          color: Color(0xFF526C30),
-                          borderRadius: BorderRadius.all(Radius.circular(5)),
+                        decoration: BoxDecoration(
+                          color: colors.green,
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(5),
+                          ),
                         ),
                       ),
                     ),
@@ -181,7 +188,7 @@ class RouteCardItem extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                           style: Theme.of(context).textTheme.labelSmall
                               ?.copyWith(
-                                color: const Color(0xFF768079),
+                                color: colors.muted,
                                 fontSize: 13,
                                 fontWeight: .w400,
                               ),
@@ -193,7 +200,7 @@ class RouteCardItem extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                          color: const Color(0xFF526C30),
+                          color: colors.green,
                           fontSize: 14,
                           fontWeight: .w700,
                         ),

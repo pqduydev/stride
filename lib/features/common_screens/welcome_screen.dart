@@ -1,7 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:stride/core/theme/app_colors.dart';
+import 'package:stride/core/theme/theme_cubit.dart';
 import 'package:stride/widgets/item_bottom_button.dart';
 import 'package:stride/widgets/language_switch_button.dart';
 
@@ -12,12 +15,13 @@ class WelcomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // Ép widget lắng nghe thay đổi locale để tự động rebuild ngay lập tức khi đổi ngôn ngữ
     context.locale;
+    final colors = Theme.of(context).extension<AppColors>() ?? AppColors.light;
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
+      backgroundColor: colors.background,
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(
-          100,
-        ), // Tăng chiều cao để chứa 2 hàng riêng biệt
+        preferredSize: const Size.fromHeight(100),
         child: AppBar(
           forceMaterialTransparency: true,
           scrolledUnderElevation: 0,
@@ -58,13 +62,13 @@ class WelcomeScreen extends StatelessWidget {
                         height: 25,
                         alignment: .center,
                         decoration: BoxDecoration(
-                          color: const Color(0xFFEEF4E5),
+                          color: colors.avatarBackground,
                           borderRadius: BorderRadius.circular(7),
                         ),
                         child: Text(
                           'welcome.badge'.tr(),
-                          style: const TextStyle(
-                            color: Color(0xFF526C30),
+                          style: TextStyle(
+                            color: colors.green,
                             fontSize: 11,
                             fontWeight: .w600,
                           ),
@@ -73,10 +77,39 @@ class WelcomeScreen extends StatelessWidget {
                     ],
                   ),
                   // HÀNG 2: Nút chuyển đổi ngôn ngữ nằm tách biệt ở bên dưới (căn lề phải)
+                  const SizedBox(height: 5),
                   Row(
                     mainAxisAlignment: .end,
-                    children: const [
-                      LanguageSwitchButton(width: 103, height: 25),
+                    children: [
+                      // Nút đổi giao diện chỉ có icon, đặt song song và cùng kích thước (width: 103, height: 25) với nút ngôn ngữ
+                      InkWell(
+                        onTap: () {
+                          context.read<ThemeCubit>().toggleTheme(!isDarkMode);
+                        },
+                        borderRadius: BorderRadius.circular(20),
+                        child: Container(
+                          width: 70,
+                          height: 25,
+                          alignment: .center,
+                          decoration: BoxDecoration(
+                            color: colors.avatarBackground,
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                              color: colors.green.withValues(alpha: 0.3),
+                              width: 1,
+                            ),
+                          ),
+                          child: Icon(
+                            isDarkMode
+                                ? Icons.dark_mode_rounded
+                                : Icons.light_mode_rounded,
+                            size: 16,
+                            color: colors.green,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      const LanguageSwitchButton(width: 103, height: 25),
                     ],
                   ),
                 ],
@@ -93,8 +126,8 @@ class WelcomeScreen extends StatelessWidget {
             children: [
               Text(
                 'welcome.title'.tr(),
-                style: const TextStyle(
-                  color: Color(0xFF1C2520),
+                style: TextStyle(
+                  color: colors.ink,
                   fontSize: 34,
                   fontWeight: .w700,
                 ),
@@ -102,8 +135,8 @@ class WelcomeScreen extends StatelessWidget {
               const SizedBox(height: 15),
               Text(
                 'welcome.subtitle'.tr(),
-                style: const TextStyle(
-                  color: Color(0xFF768079),
+                style: TextStyle(
+                  color: colors.muted,
                   fontSize: 15,
                   fontWeight: .w400,
                 ),
@@ -114,8 +147,9 @@ class WelcomeScreen extends StatelessWidget {
                 height: 200,
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF202C25),
+                  color: colors.surface,
                   borderRadius: BorderRadius.circular(24),
+                  border: Border.all(color: colors.line, width: 1),
                 ),
                 child: Column(
                   mainAxisAlignment: .spaceBetween,
@@ -128,7 +162,7 @@ class WelcomeScreen extends StatelessWidget {
                           alignment: .center,
                           margin: const EdgeInsets.only(right: 15),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF526C30),
+                            color: colors.green,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: SvgPicture.asset(
@@ -142,16 +176,16 @@ class WelcomeScreen extends StatelessWidget {
                           children: [
                             Text(
                               'welcome.feature_1_title'.tr(),
-                              style: const TextStyle(
-                                color: Color(0xFFFFFFFF),
+                              style: TextStyle(
+                                color: colors.ink,
                                 fontSize: 15,
                                 fontWeight: .w600,
                               ),
                             ),
                             Text(
                               'welcome.feature_1_desc'.tr(),
-                              style: const TextStyle(
-                                color: Color(0xFFFFFFFF),
+                              style: TextStyle(
+                                color: colors.muted,
                                 fontSize: 12,
                                 fontWeight: .w400,
                               ),
@@ -168,7 +202,7 @@ class WelcomeScreen extends StatelessWidget {
                           alignment: .center,
                           margin: const EdgeInsets.only(right: 15),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF526C30),
+                            color: colors.green,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: SvgPicture.asset(
@@ -182,16 +216,16 @@ class WelcomeScreen extends StatelessWidget {
                           children: [
                             Text(
                               'welcome.feature_2_title'.tr(),
-                              style: const TextStyle(
-                                color: Color(0xFFFFFFFF),
+                              style: TextStyle(
+                                color: colors.ink,
                                 fontSize: 15,
                                 fontWeight: .w600,
                               ),
                             ),
                             Text(
                               'welcome.feature_2_desc'.tr(),
-                              style: const TextStyle(
-                                color: Color(0xFFFFFFFF),
+                              style: TextStyle(
+                                color: colors.muted,
                                 fontSize: 12,
                                 fontWeight: .w400,
                               ),
@@ -208,7 +242,7 @@ class WelcomeScreen extends StatelessWidget {
                           alignment: .center,
                           margin: const EdgeInsets.only(right: 15),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF526C30),
+                            color: colors.green,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: SvgPicture.asset(
@@ -222,16 +256,16 @@ class WelcomeScreen extends StatelessWidget {
                           children: [
                             Text(
                               'welcome.feature_3_title'.tr(),
-                              style: const TextStyle(
-                                color: Color(0xFFFFFFFF),
+                              style: TextStyle(
+                                color: colors.ink,
                                 fontSize: 15,
                                 fontWeight: .w600,
                               ),
                             ),
                             Text(
                               'welcome.feature_3_desc'.tr(),
-                              style: const TextStyle(
-                                color: Color(0xFFFFFFFF),
+                              style: TextStyle(
+                                color: colors.muted,
                                 fontSize: 12,
                                 fontWeight: .w400,
                               ),
@@ -251,9 +285,9 @@ class WelcomeScreen extends StatelessWidget {
               const SizedBox(height: 15),
               ItemBottomButton(
                 text: 'welcome.btn_login'.tr(),
-                backgroundColor: const Color(0xFFFFFFFF),
-                textColor: const Color(0xFF526C30),
-                borderColor: const Color(0xFFE8ECE8),
+                backgroundColor: colors.surface,
+                textColor: colors.green,
+                borderColor: colors.line,
                 borderWidth: 1,
                 onTap: () => context.push('/login'),
               ),
@@ -261,8 +295,8 @@ class WelcomeScreen extends StatelessWidget {
               Center(
                 child: Text(
                   'welcome.footer'.tr(),
-                  style: const TextStyle(
-                    color: Color(0xFF768079),
+                  style: TextStyle(
+                    color: colors.muted,
                     fontSize: 12,
                     fontWeight: .w400,
                   ),

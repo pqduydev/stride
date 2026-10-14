@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
+import 'package:stride/core/theme/app_colors.dart';
 import 'package:stride/core/utils/app_toast.dart';
 import 'package:stride/core/utils/time_utils.dart';
 import 'package:stride/model/route_model.dart';
@@ -106,6 +106,8 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
   }
 
   void _showDeleteConfirmDialog(BuildContext context, RouteModel route) {
+    final colors = Theme.of(context).extension<AppColors>() ?? AppColors.light;
+
     showDialog(
       context: context,
       builder: (dialogContext) {
@@ -113,7 +115,7 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
-          backgroundColor: Colors.white,
+          backgroundColor: colors.surface,
           elevation: 0,
           child: Padding(
             padding: const EdgeInsets.all(20.0),
@@ -123,23 +125,23 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
                 Container(
                   width: 48,
                   height: 48,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFFFDE8E8),
+                  decoration: BoxDecoration(
+                    color: colors.errorContainer,
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.delete_outline_rounded,
-                    color: Color(0xFFE53935),
+                    color: colors.danger,
                     size: 24,
                   ),
                 ),
                 const SizedBox(height: 16),
                 Text(
                   'route_create.delete_dialog_title'.tr(),
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 18,
                     fontWeight: .w700,
-                    color: Color(0xFF1C2520),
+                    color: colors.ink,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -147,19 +149,16 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
                 RichText(
                   textAlign: TextAlign.center,
                   text: TextSpan(
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 14,
-                      color: Color(0xFF768079),
+                      color: colors.muted,
                       height: 1.4,
                     ),
                     children: [
                       TextSpan(text: 'route_create.delete_dialog_prefix'.tr()),
                       TextSpan(
                         text: '"${route.title}"',
-                        style: const TextStyle(
-                          fontWeight: .w700,
-                          color: Color(0xFF1C2520),
-                        ),
+                        style: TextStyle(fontWeight: .w700, color: colors.ink),
                       ),
                       TextSpan(text: 'route_create.delete_dialog_suffix'.tr()),
                     ],
@@ -173,17 +172,17 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
                         onPressed: () => Navigator.pop(dialogContext),
                         style: OutlinedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 12),
-                          side: const BorderSide(color: Color(0xFFE8ECE8)),
+                          side: BorderSide(color: colors.line),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
                         child: Text(
                           'route_create.btn_cancel'.tr(),
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 14,
                             fontWeight: .w600,
-                            color: Color(0xFF768079),
+                            color: colors.muted,
                           ),
                         ),
                       ),
@@ -199,7 +198,7 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
                         },
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 12),
-                          backgroundColor: const Color(0xFFE53935),
+                          backgroundColor: colors.danger,
                           elevation: 0,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
@@ -207,10 +206,10 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
                         ),
                         child: Text(
                           'route_create.btn_confirm_delete'.tr(),
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 14,
                             fontWeight: .w600,
-                            color: Colors.white,
+                            color: colors.surface,
                           ),
                         ),
                       ),
@@ -227,6 +226,8 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>() ?? AppColors.light;
+
     return BlocConsumer<RouteCubit, RouteState>(
       listenWhen: (previous, current) =>
           previous.actionStatus == RouteStatus.loading &&
@@ -254,6 +255,7 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
       },
       builder: (context, state) {
         return Scaffold(
+          backgroundColor: colors.background,
           appBar: PreferredSize(
             preferredSize: const Size.fromHeight(kToolbarHeight),
             child: AppbarCustom(
@@ -275,8 +277,8 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
                   children: [
                     Text(
                       'route_create.subtitle'.tr(),
-                      style: const TextStyle(
-                        color: Color(0xFF768079),
+                      style: TextStyle(
+                        color: colors.muted,
                         fontSize: 14,
                         fontWeight: .w400,
                       ),
@@ -284,8 +286,8 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
                     const SizedBox(height: 20),
                     Text(
                       'route_create.label_title'.tr(),
-                      style: const TextStyle(
-                        color: Color(0xFF768079),
+                      style: TextStyle(
+                        color: colors.muted,
                         fontSize: 13,
                         fontWeight: .w500,
                       ),
@@ -295,10 +297,10 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
                       hintText: 'route_create.hint_title'.tr(),
                       hintTextFontSize: 15,
                       controller: _titleController,
-                      textColor: const Color(0xFF1C2520),
+                      textColor: colors.ink,
                       textFontSize: 15,
                       textFontWeight: .w500,
-                      borderColor: const Color(0xFFE8ECE8),
+                      borderColor: colors.line,
                       borderWidth: 1,
                       borderStyle: 'solid',
                       validator: (value) {
@@ -335,10 +337,7 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
                         padding: const EdgeInsets.only(left: 12, top: 4),
                         child: Text(
                           (state.fieldErrors!['goal'] as List)[0],
-                          style: const TextStyle(
-                            color: Color(0xFFD32F2F),
-                            fontSize: 12,
-                          ),
+                          style: TextStyle(color: colors.error, fontSize: 12),
                         ),
                       ),
                     const SizedBox(height: 18),
@@ -388,8 +387,8 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
                                   child: Text(
                                     (state.fieldErrors!['start_date']
                                         as List)[0],
-                                    style: const TextStyle(
-                                      color: Color(0xFFD32F2F),
+                                    style: TextStyle(
+                                      color: colors.error,
                                       fontSize: 12,
                                     ),
                                   ),
@@ -431,8 +430,8 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
                                   ),
                                   child: Text(
                                     (state.fieldErrors!['end_date'] as List)[0],
-                                    style: const TextStyle(
-                                      color: Color(0xFFD32F2F),
+                                    style: TextStyle(
+                                      color: colors.error,
                                       fontSize: 12,
                                     ),
                                   ),
@@ -451,15 +450,15 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
                       ),
                       alignment: .centerLeft,
                       decoration: BoxDecoration(
-                        color: const Color(0xFFEEF4E5),
+                        color: colors.avatarBackground,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Row(
                         children: [
                           Text(
                             'route_create.duration_prefix'.tr(),
-                            style: const TextStyle(
-                              color: Color(0xFF768079),
+                            style: TextStyle(
+                              color: colors.muted,
                               fontSize: 13,
                               fontWeight: .w500,
                             ),
@@ -468,8 +467,8 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
                           Expanded(
                             child: Text(
                               TimeUtils.formatDuration(_startDate, _endDate),
-                              style: const TextStyle(
-                                color: Color(0xFF202C25),
+                              style: TextStyle(
+                                color: colors.ink,
                                 fontSize: 15,
                                 fontWeight: .w500,
                               ),
@@ -483,8 +482,8 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
                     const SizedBox(height: 18),
                     Text(
                       'route_create.label_description'.tr(),
-                      style: const TextStyle(
-                        color: Color(0xFF768079),
+                      style: TextStyle(
+                        color: colors.muted,
                         fontSize: 13,
                         fontWeight: .w500,
                       ),
@@ -494,10 +493,10 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
                       hintText: 'route_create.hint_description'.tr(),
                       hintTextFontSize: 14,
                       controller: _descriptionController,
-                      textColor: const Color(0xFF1C2520),
+                      textColor: colors.ink,
                       textFontSize: 14,
                       textFontWeight: .w400,
-                      borderColor: const Color(0xFFE8ECE8),
+                      borderColor: colors.line,
                       borderWidth: 1,
                       borderStyle: 'solid',
                       maxLines: 3,
@@ -539,7 +538,8 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
                     if (isEditMode) ...[
                       ItemBottomButton(
                         text: 'route_create.btn_delete'.tr(),
-                        backgroundColor: const Color(0xFFFF5252),
+                        backgroundColor: colors.danger,
+                        textColor: colors.surface,
                         isLoading: isDeleting,
                         onTap: isGlobalLoading
                             ? null

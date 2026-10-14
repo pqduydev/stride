@@ -91,6 +91,12 @@ class ReminderCubit extends Cubit<ReminderState> {
     final settings = state.settings;
 
     if (settings.weekdays.isEmpty) {
+      // 1. Đưa về ready trước để ép status thay đổi, giúp Cubit nhận diện có state mới
+      emit(
+        state.copyWith(status: ReminderStatus.ready, clearErrorMessage: true),
+      );
+
+      // 2. Phát trạng thái lỗi để listener bắt được và hiển thị Toast
       emit(
         state.copyWith(
           status: ReminderStatus.failure,
@@ -123,6 +129,11 @@ class ReminderCubit extends Cubit<ReminderState> {
       );
     } catch (e) {
       if (isClosed) return;
+
+      // Tương tự cho trường hợp catch lỗi từ repository/scheduler
+      emit(
+        state.copyWith(status: ReminderStatus.ready, clearErrorMessage: true),
+      );
       emit(
         state.copyWith(
           status: ReminderStatus.failure,

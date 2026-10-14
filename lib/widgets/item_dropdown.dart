@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:stride/core/theme/app_colors.dart';
 
 class ItemDropdown extends StatelessWidget {
   final String selectedItem;
@@ -17,12 +18,14 @@ class ItemDropdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>() ?? AppColors.light;
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12),
       decoration: BoxDecoration(
-        color: const Color(0xFFFFFFFF),
+        color: colors.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFE8ECE8), width: 1),
+        border: Border.all(color: colors.line, width: 1),
       ),
       child: DropdownButtonHideUnderline(
         child: Row(
@@ -38,12 +41,10 @@ class ItemDropdown extends StatelessWidget {
                     ? selectedItem
                     : listDropdown.first,
                 isExpanded: true,
-                icon: const Icon(
-                  Icons.keyboard_arrow_down,
-                  color: Color(0xFF768079),
-                ),
-                style: const TextStyle(
-                  color: Color(0xFF1C2520),
+                dropdownColor: colors.surface,
+                icon: Icon(Icons.keyboard_arrow_down, color: colors.muted),
+                style: TextStyle(
+                  color: colors.ink,
                   fontSize: 15,
                   fontWeight: .w600,
                 ),

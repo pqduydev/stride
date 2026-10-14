@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:stride/core/theme/app_colors.dart';
 import 'package:stride/widgets/appbar_custom.dart';
 import 'package:stride/widgets/item_app_bar_title.dart';
 import 'package:stride/widgets/item_bottom_button.dart';
@@ -10,7 +11,10 @@ class PrivacyInformationScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>() ?? AppColors.light;
+
     return Scaffold(
+      backgroundColor: colors.background,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: AppbarCustom(
@@ -24,8 +28,8 @@ class PrivacyInformationScreen extends StatelessWidget {
           children: [
             Text(
               'privacy_info.subtitle'.tr(),
-              style: const TextStyle(
-                color: Color(0xFF768079),
+              style: TextStyle(
+                color: colors.muted,
                 fontSize: 14,
                 fontWeight: .w400,
               ),
@@ -36,7 +40,7 @@ class PrivacyInformationScreen extends StatelessWidget {
               padding: const EdgeInsets.all(15),
               margin: const EdgeInsets.only(top: 40),
               decoration: BoxDecoration(
-                color: const Color(0xFFEEF4E5),
+                color: colors.avatarBackground,
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Column(
@@ -45,16 +49,16 @@ class PrivacyInformationScreen extends StatelessWidget {
                 children: [
                   Text(
                     'privacy_info.sync_title'.tr(),
-                    style: const TextStyle(
-                      color: Color(0xFF526C30),
+                    style: TextStyle(
+                      color: colors.green,
                       fontSize: 14,
                       fontWeight: .w600,
                     ),
                   ),
                   Text(
                     'privacy_info.sync_desc'.tr(),
-                    style: const TextStyle(
-                      color: Color(0xFF768079),
+                    style: TextStyle(
+                      color: colors.muted,
                       fontSize: 13,
                       fontWeight: .w400,
                     ),
@@ -68,7 +72,7 @@ class PrivacyInformationScreen extends StatelessWidget {
               padding: const EdgeInsets.all(15),
               margin: const EdgeInsets.only(top: 35),
               decoration: BoxDecoration(
-                color: const Color(0xFFEEF4E5),
+                color: colors.avatarBackground,
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Column(
@@ -77,16 +81,16 @@ class PrivacyInformationScreen extends StatelessWidget {
                 children: [
                   Text(
                     'privacy_info.personalize_title'.tr(),
-                    style: const TextStyle(
-                      color: Color(0xFF526C30),
+                    style: TextStyle(
+                      color: colors.green,
                       fontSize: 14,
                       fontWeight: .w600,
                     ),
                   ),
                   Text(
                     'privacy_info.personalize_desc'.tr(),
-                    style: const TextStyle(
-                      color: Color(0xFF768079),
+                    style: TextStyle(
+                      color: colors.muted,
                       fontSize: 13,
                       fontWeight: .w400,
                     ),
@@ -100,7 +104,7 @@ class PrivacyInformationScreen extends StatelessWidget {
               padding: const EdgeInsets.all(15),
               margin: const EdgeInsets.only(top: 35),
               decoration: BoxDecoration(
-                color: const Color(0xFFEEF4E5),
+                color: colors.avatarBackground,
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Column(
@@ -109,16 +113,16 @@ class PrivacyInformationScreen extends StatelessWidget {
                 children: [
                   Text(
                     'privacy_info.health_title'.tr(),
-                    style: const TextStyle(
-                      color: Color(0xFF526C30),
+                    style: TextStyle(
+                      color: colors.green,
                       fontSize: 14,
                       fontWeight: .w600,
                     ),
                   ),
                   Text(
                     'privacy_info.health_desc'.tr(),
-                    style: const TextStyle(
-                      color: Color(0xFF768079),
+                    style: TextStyle(
+                      color: colors.muted,
                       fontSize: 13,
                       fontWeight: .w400,
                     ),

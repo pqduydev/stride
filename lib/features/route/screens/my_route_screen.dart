@@ -1,8 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:stride/core/theme/app_colors.dart';
+import 'package:stride/core/theme/theme_cubit.dart';
 import 'package:stride/features/auth/auth_cubit/auth_cubit.dart';
 import 'package:stride/features/auth/auth_cubit/auth_state.dart';
 import 'package:stride/features/reminder/reminder_cubit/reminder_cubit.dart';
@@ -12,7 +14,7 @@ import 'package:stride/features/route/route_cubit/route_state.dart';
 import 'package:stride/features/route/widgets/route_card_skeleton.dart';
 import 'package:stride/features/route/widgets/route_card_item.dart';
 import 'package:stride/widgets/item_card_switch.dart';
-import 'package:stride/widgets/language_switch_button.dart'; // <-- Thêm import này
+import 'package:stride/widgets/language_switch_button.dart';
 
 class MyRouteScreen extends StatefulWidget {
   const MyRouteScreen({super.key});
@@ -50,6 +52,9 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>() ?? AppColors.light;
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return BlocListener<AuthCubit, AuthState>(
       listener: (context, authState) {
         if (authState.status == AuthStatus.authenticated) {
@@ -57,6 +62,7 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
         }
       },
       child: Scaffold(
+        backgroundColor: colors.background,
         appBar: AppBar(
           forceMaterialTransparency: true,
           scrolledUnderElevation: 0,
@@ -75,8 +81,8 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                       SvgPicture.asset(
                         'assets/icons/ic_logo.svg',
                         height: 29,
-                        colorFilter: const ColorFilter.mode(
-                          Color(0xFF1C2520),
+                        colorFilter: ColorFilter.mode(
+                          colors.ink,
                           BlendMode.srcIn,
                         ),
                       ),
@@ -92,11 +98,36 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                     ],
                   ),
                 ),
-                // Sử dụng LanguageSwitchButton đã tách rời
+
                 Row(
-                  mainAxisSize: MainAxisSize.min,
+                  mainAxisSize: .min,
                   children: [
                     const LanguageSwitchButton(),
+                    const SizedBox(width: 8),
+                    InkWell(
+                      onTap: () {
+                        context.read<ThemeCubit>().toggleTheme(!isDarkMode);
+                      },
+                      borderRadius: BorderRadius.circular(20),
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: colors.avatarBackground,
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: colors.green.withValues(alpha: 0.3),
+                            width: 1,
+                          ),
+                        ),
+                        child: Icon(
+                          isDarkMode
+                              ? Icons.dark_mode_rounded
+                              : Icons.light_mode_rounded,
+                          size: 18,
+                          color: colors.green,
+                        ),
+                      ),
+                    ),
                     const SizedBox(width: 10),
                     BlocBuilder<AuthCubit, AuthState>(
                       builder: (context, authState) {
@@ -113,14 +144,14 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                             onTap: () => context.push('/profile'),
                             child: CircleAvatar(
                               radius: 21,
-                              backgroundColor: const Color(0xFFE7EDD9),
+                              backgroundColor: colors.avatarBackground,
                               child: Text(
                                 initials ?? '',
                                 style: Theme.of(context).textTheme.titleLarge
                                     ?.copyWith(
                                       fontSize: 13,
                                       fontWeight: .bold,
-                                      color: const Color(0xFF526C30),
+                                      color: colors.green,
                                     ),
                               ),
                             ),
@@ -135,8 +166,8 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
           ),
         ),
         body: RefreshIndicator(
-          color: const Color(0xFF526C30),
-          backgroundColor: Colors.white,
+          color: colors.green,
+          backgroundColor: colors.surface,
           strokeWidth: 2.5,
           onRefresh: () async {
             await context.read<RouteCubit>().loadRoutes();
@@ -161,7 +192,7 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                               ?.copyWith(
                                 fontSize: 11,
                                 fontWeight: .w600,
-                                color: const Color(0xFF768079),
+                                color: colors.muted,
                               ),
                         ),
                       ),
@@ -177,7 +208,7 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           fontSize: 26,
                           fontWeight: .w700,
-                          color: const Color(0xFF1C2520),
+                          color: colors.ink,
                         ),
                       ),
                       InkWell(
@@ -186,11 +217,11 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                           width: 40,
                           height: 40,
                           child: CircleAvatar(
-                            backgroundColor: const Color(0xFFD2F36B),
+                            backgroundColor: colors.accent,
                             child: SvgPicture.asset(
                               "assets/icons/ic_plus.svg",
-                              colorFilter: const ColorFilter.mode(
-                                Color(0xFF1C2520),
+                              colorFilter: ColorFilter.mode(
+                                colors.onAccent,
                                 BlendMode.srcIn,
                               ),
                               width: 21,
@@ -220,8 +251,8 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                                   routeState.errorMessage ??
                                       'my_route.error_occurred'.tr(),
                                   textAlign: TextAlign.center,
-                                  style: const TextStyle(
-                                    color: Color(0xFFE57373),
+                                  style: TextStyle(
+                                    color: colors.error,
                                     fontSize: 14,
                                   ),
                                 ),
@@ -235,8 +266,8 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                                   ),
                                   label: Text('my_route.retry'.tr()),
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color(0xFF1C2520),
-                                    foregroundColor: Colors.white,
+                                    backgroundColor: colors.ink,
+                                    foregroundColor: colors.surface,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8),
                                     ),
@@ -251,16 +282,14 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                           return Container(
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(20),
-                              border: Border.all(
-                                color: const Color(0xFFE8ECE8),
-                              ),
-                              color: Colors.white,
+                              border: Border.all(color: colors.line),
+                              color: colors.surface,
                             ),
                             child: Center(
                               child: Text(
                                 'my_route.empty_routes'.tr(),
-                                style: const TextStyle(
-                                  color: Color(0xFF768079),
+                                style: TextStyle(
+                                  color: colors.muted,
                                   fontSize: 14,
                                 ),
                               ),
@@ -302,7 +331,7 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                                 ?.copyWith(
                                   fontSize: 19,
                                   fontWeight: .w700,
-                                  color: const Color(0xFF1C2520),
+                                  color: colors.ink,
                                 ),
                           ),
                           InkWell(
@@ -313,7 +342,7 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                                   ?.copyWith(
                                     fontSize: 13,
                                     fontWeight: .w700,
-                                    color: const Color(0xFF526C30),
+                                    color: colors.green,
                                   ),
                             ),
                           ),
@@ -324,12 +353,12 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                         height: 135,
                         padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFFFFFFF),
+                          color: colors.surface,
                           borderRadius: const BorderRadius.all(
                             Radius.circular(20),
                           ),
                           border: Border.all(
-                            color: const Color(0xFFE8ECE8),
+                            color: colors.line,
                             width: 1,
                             style: BorderStyle.solid,
                           ),
@@ -339,9 +368,9 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                             Container(
                               width: 5,
                               height: double.infinity,
-                              decoration: const BoxDecoration(
-                                color: Color(0xFFD2F36B),
-                                borderRadius: BorderRadius.vertical(
+                              decoration: BoxDecoration(
+                                color: colors.accent,
+                                borderRadius: const BorderRadius.vertical(
                                   top: Radius.circular(5),
                                   bottom: Radius.circular(5),
                                 ),
@@ -363,7 +392,7 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                                             .textTheme
                                             .labelLarge
                                             ?.copyWith(
-                                              color: const Color(0xFF1C2520),
+                                              color: colors.ink,
                                               fontSize: 23,
                                               fontWeight: .w700,
                                             ),
@@ -375,9 +404,9 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                                         padding: const EdgeInsets.only(
                                           left: 10,
                                         ),
-                                        decoration: const BoxDecoration(
-                                          color: Color(0xFFF7F8FA),
-                                          borderRadius: BorderRadius.all(
+                                        decoration: BoxDecoration(
+                                          color: colors.avatarBackground,
+                                          borderRadius: const BorderRadius.all(
                                             Radius.circular(7),
                                           ),
                                         ),
@@ -387,7 +416,7 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                                               .textTheme
                                               .labelLarge
                                               ?.copyWith(
-                                                color: const Color(0xFF768079),
+                                                color: colors.muted,
                                                 fontSize: 11,
                                                 fontWeight: .w600,
                                               ),
@@ -401,7 +430,7 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                                         .textTheme
                                         .labelLarge
                                         ?.copyWith(
-                                          color: const Color(0xFF1C2520),
+                                          color: colors.ink,
                                           fontSize: 16,
                                           fontWeight: .w600,
                                         ),
@@ -418,7 +447,7 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                                             .textTheme
                                             .labelLarge
                                             ?.copyWith(
-                                              color: const Color(0xFF768079),
+                                              color: colors.muted,
                                               fontSize: 12,
                                               fontWeight: .w400,
                                             ),
@@ -444,7 +473,7 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                             'my_route.review_journey'.tr(),
                             style: Theme.of(context).textTheme.titleLarge
                                 ?.copyWith(
-                                  color: const Color(0xFF1C2520),
+                                  color: colors.ink,
                                   fontSize: 19,
                                   fontWeight: .w700,
                                 ),
@@ -482,9 +511,9 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                             Expanded(
                               child: Container(
                                 padding: const EdgeInsets.all(10),
-                                decoration: const BoxDecoration(
-                                  color: Color(0xFFFFFFFF),
-                                  borderRadius: BorderRadius.all(
+                                decoration: BoxDecoration(
+                                  color: colors.surface,
+                                  borderRadius: const BorderRadius.all(
                                     Radius.circular(12),
                                   ),
                                 ),
@@ -496,9 +525,9 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                                       width: 69,
                                       height: 25,
                                       alignment: .center,
-                                      decoration: const BoxDecoration(
-                                        color: Color(0xFFEEF4E5),
-                                        borderRadius: BorderRadius.all(
+                                      decoration: BoxDecoration(
+                                        color: colors.avatarBackground,
+                                        borderRadius: const BorderRadius.all(
                                           Radius.circular(7),
                                         ),
                                       ),
@@ -508,7 +537,7 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                                             .textTheme
                                             .labelMedium
                                             ?.copyWith(
-                                              color: const Color(0xFF526C30),
+                                              color: colors.green,
                                               fontSize: 11,
                                               fontWeight: .w600,
                                             ),
@@ -522,7 +551,7 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                                           .textTheme
                                           .labelMedium
                                           ?.copyWith(
-                                            color: const Color(0xFF1C2520),
+                                            color: colors.ink,
                                             fontSize: 14,
                                             fontWeight: .w600,
                                           ),
@@ -535,7 +564,7 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                                           .textTheme
                                           .labelMedium
                                           ?.copyWith(
-                                            color: const Color(0xFF768079),
+                                            color: colors.muted,
                                             fontSize: 12,
                                             fontWeight: .w400,
                                           ),

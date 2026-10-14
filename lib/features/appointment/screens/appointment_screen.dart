@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:stride/core/theme/app_colors.dart';
 import 'package:stride/model/appointment_model.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:stride/widgets/appbar_custom.dart';
@@ -80,6 +81,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>() ?? AppColors.light;
+
     // Khởi tạo danh sách dropdown động theo ngôn ngữ hiện tại
     final listDropDown = [
       'appointment.dropdown_1'.tr(),
@@ -103,7 +106,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     final isToday = isSameDay(_selectedDate, DateTime.now());
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF7F8FA),
+      backgroundColor: colors.background,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: AppbarCustom(
@@ -140,7 +143,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                     },
                   ),
                   const SizedBox(height: 20),
-                  const Divider(height: 1, color: Color(0xFFE8ECE8)),
+                  Divider(height: 1, color: colors.line),
                 ],
               ),
             ),
@@ -153,14 +156,14 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                 minHeight: 50,
                 maxHeight: 50,
                 child: Container(
-                  color: const Color(0xFFF7F8FA),
+                  color: colors.background,
                   child: Row(
                     mainAxisAlignment: .spaceBetween,
                     children: [
                       Text(
                         _formatLocalizedHeaderDate(_selectedDate),
-                        style: const TextStyle(
-                          color: Color(0xFF1C2520),
+                        style: TextStyle(
+                          color: colors.ink,
                           fontSize: 18,
                           fontWeight: .w700,
                         ),
@@ -171,13 +174,13 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                           height: 25,
                           alignment: .center,
                           decoration: BoxDecoration(
-                            color: const Color(0xFFEEF4E5),
+                            color: colors.avatarBackground,
                             borderRadius: BorderRadius.circular(7),
                           ),
                           child: Text(
                             'appointment.today'.tr(),
-                            style: const TextStyle(
-                              color: Color(0xFF526C30),
+                            style: TextStyle(
+                              color: colors.green,
                               fontSize: 11,
                               fontWeight: .w600,
                             ),
@@ -203,10 +206,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                       child: Center(
                         child: Text(
                           'appointment.empty_schedules'.tr(),
-                          style: const TextStyle(
-                            color: Color(0xFF768079),
-                            fontSize: 14,
-                          ),
+                          style: TextStyle(color: colors.muted, fontSize: 14),
                         ),
                       ),
                     )
@@ -218,7 +218,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                           const SizedBox(height: 12),
                       itemBuilder: (context, index) {
                         final item = schedulesOfSelectedDay[index];
-                        return _buildScheduleCard(item);
+                        return _buildScheduleCard(item, colors);
                       },
                     ),
             ),
@@ -245,13 +245,13 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     return '$weekday, $dayMonth';
   }
 
-  Widget _buildScheduleCard(ScheduleModel item) {
+  Widget _buildScheduleCard(ScheduleModel item, AppColors colors) {
     return Container(
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: const Color(0xFFE8ECE8), width: 1),
+        border: Border.all(color: colors.line, width: 1),
       ),
       child: Row(
         mainAxisAlignment: .spaceBetween,
@@ -273,8 +273,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                     children: [
                       Text(
                         item.title,
-                        style: const TextStyle(
-                          color: Color(0xFF1C2520),
+                        style: TextStyle(
+                          color: colors.ink,
                           fontSize: 16,
                           fontWeight: .w600,
                         ),
@@ -282,8 +282,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                       const SizedBox(height: 8),
                       Text(
                         item.time,
-                        style: const TextStyle(
-                          color: Color(0xFF768079),
+                        style: TextStyle(
+                          color: colors.muted,
                           fontSize: 14,
                           fontWeight: .w400,
                         ),
@@ -303,8 +303,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                   const SizedBox(width: 10),
                   Text(
                     tr('appointment.reminder_at', args: [item.reminderTime]),
-                    style: const TextStyle(
-                      color: Color(0xFF768079),
+                    style: TextStyle(
+                      color: colors.muted,
                       fontSize: 13,
                       fontWeight: .w400,
                     ),

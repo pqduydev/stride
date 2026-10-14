@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:stride/core/theme/app_colors.dart';
 
 class ItemTextField extends StatelessWidget {
   final Color textColor;
@@ -43,6 +44,8 @@ class ItemTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>() ?? AppColors.light;
+
     return FormField<String>(
       initialValue: controller?.text,
       validator: validator,
@@ -63,46 +66,40 @@ class ItemTextField extends StatelessWidget {
               decoration: InputDecoration(
                 hintText: hintText,
                 hintStyle: TextStyle(
-                  color: Color(hintTextColor ?? 0xFF8E8E93),
+                  color: Color(hintTextColor ?? colors.muted.value),
                   fontSize: hintTextFontSize,
                   fontWeight: hintTextFontWeight ?? .w500,
                 ),
                 filled: true,
-                fillColor: backgroundColor ?? Colors.white,
+                fillColor: backgroundColor ?? colors.surface,
                 helperText: ' ',
                 helperStyle: const TextStyle(fontSize: 12, height: 1.2),
                 errorText: hasError ? field.errorText : null,
-                errorStyle: const TextStyle(
-                  color: Colors.redAccent,
+                errorStyle: TextStyle(
+                  color: colors.error,
                   fontSize: 12,
                   height: 1.2,
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderSide: BorderSide(
-                    color: borderColor ?? const Color(0xFF8E8E93),
+                    color: borderColor ?? colors.muted,
                     width: borderWidth ?? 1,
                   ),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(
-                    color: borderColor ?? const Color(0xFF8E8E93),
+                    color: borderColor ?? colors.muted,
                     width: borderWidth ?? 1,
                   ),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 errorBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(
-                    color: Colors.redAccent,
-                    width: 1,
-                  ),
+                  borderSide: BorderSide(color: colors.error, width: 1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 focusedErrorBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(
-                    color: Colors.redAccent,
-                    width: 1,
-                  ),
+                  borderSide: BorderSide(color: colors.error, width: 1),
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),

@@ -5,6 +5,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:stride/core/theme/app_colors.dart';
+import 'package:stride/core/theme/theme_cubit.dart';
 import 'package:stride/features/auth/auth_cubit/auth_cubit.dart';
 import 'package:stride/features/auth/auth_cubit/auth_state.dart';
 import 'package:stride/features/reminder/reminder_cubit/reminder_cubit.dart';
@@ -28,6 +31,9 @@ Future<void> main() async {
   // Bắt buộc khi cần gọi plugin trước runApp
   WidgetsFlutterBinding.ensureInitialized();
 
+  // Khởi tạo SharedPreferences để lưu trữ trạng thái local
+  final prefs = await SharedPreferences.getInstance();
+
   // Xin các quyền về thông báo
   await NotificationService.instance.init();
 
@@ -46,17 +52,16 @@ Future<void> main() async {
     EasyLocalization(
       supportedLocales: const [Locale('vi', 'VN'), Locale('en', 'US')],
       path: 'assets/translations',
-      fallbackLocale: const Locale(
-        'vi',
-        'VN',
-      ), // Ngôn ngữ mặc định nếu không tìm thấy
-      child: const MyApp(),
+      fallbackLocale: const Locale('vi', 'VN'),
+      child: MyApp(prefs: prefs),
     ),
   );
 }
 
 class MyApp extends StatefulWidget {
-  const MyApp({super.key});
+  final SharedPreferences prefs;
+
+  const MyApp({super.key, required this.prefs});
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -72,6 +77,7 @@ class _MyAppState extends State<MyApp> {
   late final UserCubit _userCubit;
   late final AppRouter _appRouter;
   late final ReminderCubit _reminderCubit;
+  late final ThemeCubit _themeCubit;
   late final PushService _pushService;
 
   StreamSubscription<Map<String, dynamic>>? _tapSub;
@@ -112,6 +118,8 @@ class _MyAppState extends State<MyApp> {
     )..load();
 
     // Bấm thông báo khi ứng dụng chạy nền
+    _themeCubit = ThemeCubit(widget.prefs);
+
     _tapSub = NotificationService.instance.onTap.listen((data) {
       // Chưa đăng nhập thì không mở màn nào (router sẽ đá về Welcome)
       if (_authCubit.state.status == AuthStatus.authenticated) {
@@ -128,6 +136,7 @@ class _MyAppState extends State<MyApp> {
     _routeCubit.close();
     _userCubit.close();
     _reminderCubit.close();
+    _themeCubit.close();
     _tapSub?.cancel();
     _authSub?.cancel();
     super.dispose();
@@ -139,8 +148,8 @@ class _MyAppState extends State<MyApp> {
     _lastAuthStatus = state.status;
 
     if (state.status == AuthStatus.authenticated) {
-      _reminderCubit.load(); // prefs có thể vừa đổi do đổi tài khoản
-      _pushService.syncToken(); // Đăng ký FCM Token với Backend khi đăng nhập/đăng nhập sẵn
+      _reminderCubit.load();
+      _pushService.syncToken();
     } else if (state.status == AuthStatus.unauthenticated) {
       NotificationService.instance.cancelAll();
     }
@@ -160,25 +169,55 @@ class _MyAppState extends State<MyApp> {
           BlocProvider.value(value: _routeCubit),
           BlocProvider.value(value: _userCubit),
           BlocProvider.value(value: _reminderCubit),
+          BlocProvider.value(value: _themeCubit),
         ],
         child: ToastificationWrapper(
-          config: const ToastificationConfig(
-            // Nếu user spam 10 lần, nó cũng chỉ hiện 3 cái.
-            maxToastLimit: 3,
-          ),
-          child: MaterialApp.router(
-            title: 'Stride App',
-            debugShowCheckedModeBanner: false,
-            localizationsDelegates: context.localizationDelegates,
-            supportedLocales: context.supportedLocales,
-            locale: context.locale,
-            theme: ThemeData(
-              colorScheme: ColorScheme.fromSeed(
-                seedColor: const Color(0xFFF7F8FA),
-              ),
-              fontFamily: 'Inter',
-            ),
-            routerConfig: _appRouter.router,
+          config: const ToastificationConfig(maxToastLimit: 3),
+          // Lắng nghe trạng thái ThemeMode để rebuild toàn bộ MaterialApp ngay lập tức
+          child: BlocBuilder<ThemeCubit, ThemeMode>(
+            builder: (context, themeMode) {
+              return MaterialApp.router(
+                title: 'Stride App',
+                debugShowCheckedModeBanner: false,
+                localizationsDelegates: context.localizationDelegates,
+                supportedLocales: context.supportedLocales,
+                locale: context.locale,
+
+                // 1. Cấu hình giao diện Sáng (Light Theme)
+                theme: ThemeData(
+                  useMaterial3: true,
+                  brightness: Brightness.light,
+                  scaffoldBackgroundColor: AppColors.light.background,
+                  colorScheme: ColorScheme.fromSeed(
+                    seedColor: AppColors.light.green,
+                    primary: AppColors.light.green,
+                    surface: AppColors.light.surface,
+                  ),
+                  fontFamily: 'Inter',
+                  extensions: const [AppColors.light],
+                ),
+
+                // 2. Cấu hình giao diện Tối (Dark Theme)
+                darkTheme: ThemeData(
+                  useMaterial3: true,
+                  brightness: Brightness.dark,
+                  scaffoldBackgroundColor: AppColors.dark.background,
+                  colorScheme: ColorScheme.fromSeed(
+                    seedColor: AppColors.dark.green,
+                    brightness: Brightness.dark,
+                    primary: AppColors.dark.green,
+                    surface: AppColors.dark.surface,
+                  ),
+                  fontFamily: 'Inter',
+                  extensions: const [AppColors.dark],
+                ),
+
+                // 3. Chế độ giao diện hiện tại
+                themeMode: themeMode,
+
+                routerConfig: _appRouter.router,
+              );
+            },
           ),
         ),
       ),

@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:stride/core/theme/app_colors.dart';
 import 'package:stride/features/diary/widgets/weekly_record_card.dart';
 import 'package:stride/widgets/appbar_custom.dart';
 import 'package:stride/widgets/item_app_bar_title.dart';
@@ -32,7 +33,10 @@ class _DiaryScreenState extends State<DiaryScreen>
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>() ?? AppColors.light;
+
     return Scaffold(
+      backgroundColor: colors.background,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: AppbarCustom(
@@ -53,13 +57,13 @@ class _DiaryScreenState extends State<DiaryScreen>
               const SizedBox(height: 15),
               Text(
                 'diary.subtitle'.tr(),
-                style: const TextStyle(color: Color(0xFF768079), fontSize: 14),
+                style: TextStyle(color: colors.muted, fontSize: 14),
               ),
               const SizedBox(height: 20),
               Container(
                 height: 48,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFEFEFEF),
+                  color: colors.line,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Padding(
@@ -70,18 +74,18 @@ class _DiaryScreenState extends State<DiaryScreen>
                     dividerColor: Colors.transparent,
                     overlayColor: WidgetStateProperty.all(Colors.transparent),
                     indicator: BoxDecoration(
-                      color: Colors.white,
+                      color: colors.surface,
                       borderRadius: BorderRadius.circular(8),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.05),
+                          color: colors.ink.withValues(alpha: 0.05),
                           blurRadius: 4,
                           offset: const Offset(0, 2),
                         ),
                       ],
                     ),
-                    labelColor: const Color(0xFF1C2520),
-                    unselectedLabelColor: const Color(0xFF768079),
+                    labelColor: colors.ink,
+                    unselectedLabelColor: colors.muted,
                     labelStyle: const TextStyle(
                       fontWeight: .w600,
                       fontSize: 14,
@@ -104,9 +108,9 @@ class _DiaryScreenState extends State<DiaryScreen>
                   if (_tabController.index == 0) {
                     return _buildWeeklyView(() {
                       context.push('/add_image');
-                    });
+                    }, colors);
                   } else {
-                    return _buildMonthlyView();
+                    return _buildMonthlyView(colors);
                   }
                 },
               ),
@@ -119,7 +123,7 @@ class _DiaryScreenState extends State<DiaryScreen>
 }
 
 // Nội dung Tab 1: "Theo tuần"
-Widget _buildWeeklyView(VoidCallback onTap) {
+Widget _buildWeeklyView(VoidCallback onTap, AppColors colors) {
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
     child: Column(
@@ -129,8 +133,9 @@ Widget _buildWeeklyView(VoidCallback onTap) {
           height: 100,
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: const Color(0xFF202C25),
+            color: colors.surface,
             borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: colors.line, width: 1),
           ),
           child: Column(
             crossAxisAlignment: .start,
@@ -150,8 +155,8 @@ Widget _buildWeeklyView(VoidCallback onTap) {
                       maxLines: 1, // Giới hạn đúng 1 dòng
                       overflow:
                           TextOverflow.ellipsis, // Cắt bớt và thêm dấu ...
-                      style: const TextStyle(
-                        color: Color(0xFFFFFFFF),
+                      style: TextStyle(
+                        color: colors.ink,
                         fontSize: 18,
                         fontWeight: .w600,
                       ),
@@ -162,7 +167,7 @@ Widget _buildWeeklyView(VoidCallback onTap) {
               const SizedBox(height: 12),
               Text(
                 'diary.weekly.banner_desc'.tr(),
-                style: const TextStyle(color: Color(0xFFB5B8B6), fontSize: 14),
+                style: TextStyle(color: colors.muted, fontSize: 14),
               ),
             ],
           ),
@@ -173,16 +178,16 @@ Widget _buildWeeklyView(VoidCallback onTap) {
           children: [
             Text(
               'diary.weekly.week_4_label'.tr(),
-              style: const TextStyle(
-                color: Color(0xFF1C2520),
+              style: TextStyle(
+                color: colors.ink,
                 fontSize: 20,
                 fontWeight: .w700,
               ),
             ),
             Text(
               'diary.weekly.week_4_date'.tr(),
-              style: const TextStyle(
-                color: Color(0xFF768079),
+              style: TextStyle(
+                color: colors.muted,
                 fontSize: 12,
                 fontWeight: .w400,
               ),
@@ -201,16 +206,16 @@ Widget _buildWeeklyView(VoidCallback onTap) {
           children: [
             Text(
               'diary.weekly.week_5_label'.tr(),
-              style: const TextStyle(
-                color: Color(0xFF1C2520),
+              style: TextStyle(
+                color: colors.ink,
                 fontSize: 20,
                 fontWeight: .w700,
               ),
             ),
             Text(
               'diary.weekly.week_5_date'.tr(),
-              style: const TextStyle(
-                color: Color(0xFF768079),
+              style: TextStyle(
+                color: colors.muted,
                 fontSize: 12,
                 fontWeight: .w400,
               ),
@@ -221,9 +226,9 @@ Widget _buildWeeklyView(VoidCallback onTap) {
         ItemBottomButton(
           text: 'diary.weekly.btn_add_update'.tr(),
           onTap: onTap,
-          backgroundColor: const Color(0xFFFFFFFF),
-          textColor: const Color(0xFF526C30),
-          borderColor: const Color(0xFFE8ECE8),
+          backgroundColor: colors.surface,
+          textColor: colors.green,
+          borderColor: colors.line,
           borderWidth: 1,
         ),
       ],
@@ -232,13 +237,13 @@ Widget _buildWeeklyView(VoidCallback onTap) {
 }
 
 // Nội dung Tab 2: "Theo tháng"
-Widget _buildMonthlyView() {
+Widget _buildMonthlyView(AppColors colors) {
   return Center(
     child: Padding(
       padding: const EdgeInsets.only(top: 40),
       child: Text(
         'diary.monthly.coming_soon'.tr(),
-        style: const TextStyle(color: Colors.grey),
+        style: TextStyle(color: colors.muted),
       ),
     ),
   );

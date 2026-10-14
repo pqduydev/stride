@@ -1,8 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:stride/core/theme/app_colors.dart';
 import 'package:stride/core/utils/app_toast.dart';
 import 'package:stride/features/auth/auth_cubit/auth_cubit.dart';
 import 'package:stride/features/auth/auth_cubit/auth_state.dart';
@@ -101,7 +102,11 @@ class _AuthScreenState extends State<AuthScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>() ?? AppColors.light;
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
+      backgroundColor: colors.background,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: AppbarCustom(
@@ -160,8 +165,8 @@ class _AuthScreenState extends State<AuthScreen> {
                         _isLogin
                             ? 'auth.login_welcome'.tr()
                             : 'auth.register_welcome'.tr(),
-                        style: const TextStyle(
-                          color: Color(0xFF768079),
+                        style: TextStyle(
+                          color: colors.muted,
                           fontSize: 14,
                           fontWeight: .w400,
                         ),
@@ -304,7 +309,7 @@ class _AuthScreenState extends State<AuthScreen> {
                             _obscurePassword
                                 ? Icons.visibility_off
                                 : Icons.visibility,
-                            color: const Color(0xFF768079),
+                            color: colors.muted,
                             size: 19,
                           ),
                         ),
@@ -351,7 +356,7 @@ class _AuthScreenState extends State<AuthScreen> {
                               _obscureConfirmPassword
                                   ? Icons.visibility_off
                                   : Icons.visibility,
-                              color: const Color(0xFF768079),
+                              color: colors.muted,
                               size: 19,
                             ),
                           ),
@@ -394,8 +399,8 @@ class _AuthScreenState extends State<AuthScreen> {
                                     context.push('/login/forget_password'),
                                 child: Text(
                                   'auth.actions.forgot_password'.tr(),
-                                  style: const TextStyle(
-                                    color: Color(0xFF526C30),
+                                  style: TextStyle(
+                                    color: colors.green,
                                     fontSize: 13,
                                     fontWeight: .w600,
                                   ),
@@ -411,8 +416,8 @@ class _AuthScreenState extends State<AuthScreen> {
                             const SizedBox(height: 15),
                             Text(
                               'auth.hints.password_hint'.tr(),
-                              style: const TextStyle(
-                                color: Color(0xFF768079),
+                              style: TextStyle(
+                                color: colors.muted,
                                 fontSize: 12,
                                 fontWeight: .w400,
                               ),
@@ -420,8 +425,8 @@ class _AuthScreenState extends State<AuthScreen> {
                             const SizedBox(height: 25),
                             Text(
                               'auth.terms.agreement_prefix'.tr(),
-                              style: const TextStyle(
-                                color: Color(0xFF768079),
+                              style: TextStyle(
+                                color: colors.muted,
                                 fontSize: 12,
                                 fontWeight: .w400,
                               ),
@@ -431,8 +436,8 @@ class _AuthScreenState extends State<AuthScreen> {
                               onTap: () => context.push('/register/privacy'),
                               child: Text(
                                 'auth.terms.agreement_link'.tr(),
-                                style: const TextStyle(
-                                  color: Color(0xFF526C30),
+                                style: TextStyle(
+                                  color: colors.green,
                                   fontSize: 12,
                                   fontWeight: .w600,
                                 ),
@@ -443,10 +448,8 @@ class _AuthScreenState extends State<AuthScreen> {
                         ),
 
                       if (isLoading)
-                        const Center(
-                          child: CircularProgressIndicator(
-                            color: Color(0xFF526C30),
-                          ),
+                        Center(
+                          child: CircularProgressIndicator(color: colors.green),
                         )
                       else
                         ItemBottomButton(
@@ -463,8 +466,8 @@ class _AuthScreenState extends State<AuthScreen> {
                             const SizedBox(height: 30),
                             Text(
                               'auth.social.divider'.tr(),
-                              style: const TextStyle(
-                                color: Color(0xFF768079),
+                              style: TextStyle(
+                                color: colors.muted,
                                 fontSize: 13.5,
                                 fontWeight: .w600,
                               ),
@@ -473,14 +476,14 @@ class _AuthScreenState extends State<AuthScreen> {
                             ItemSocialButton(
                               text: 'auth.social.phone'.tr(),
                               fontWeight: .w700,
-                              backgroundColor: const Color(0xFFFFFFFF),
-                              textColor: const Color(0xFF526C30),
+                              backgroundColor: colors.surface,
+                              textColor: colors.green,
                               icon: SvgPicture.asset(
                                 "assets/icons/ic_phone.svg",
                                 width: 20,
                                 height: 20,
                               ),
-                              borderColor: const Color(0xFFE8ECE8),
+                              borderColor: colors.line,
                               onTap: () => context.push(
                                 '/login/login_with_phone_number',
                               ),
@@ -490,27 +493,35 @@ class _AuthScreenState extends State<AuthScreen> {
                       const SizedBox(height: 15),
                       ItemSocialButton(
                         text: 'auth.social.google'.tr(),
-                        backgroundColor: const Color(0xFFFFFFFF),
-                        textColor: const Color(0xFF1F1F1F),
+                        backgroundColor: colors.surface,
+                        textColor: colors.ink,
                         icon: SvgPicture.asset(
                           "assets/icons/ic_google.svg",
                           width: 20,
                           height: 20,
                         ),
-                        borderColor: const Color(0xFF747775),
+                        borderColor: colors.muted,
                         onTap: () =>
                             context.push('/register/login_with_google'),
                       ),
                       const SizedBox(height: 15),
                       ItemSocialButton(
                         text: 'auth.social.apple'.tr(),
-                        backgroundColor: const Color(0xFF000000),
-                        textColor: const Color(0xFFFFFFFF),
+                        // Dùng màu surface cho nền ở Dark Mode và ink ở Light Mode để nút luôn nổi bật tương phản tốt
+                        backgroundColor: isDarkMode
+                            ? colors.surface
+                            : colors.ink,
+                        textColor: isDarkMode ? colors.ink : colors.surface,
                         icon: SvgPicture.asset(
                           "assets/icons/ic_apple.svg",
                           width: 20,
                           height: 20,
+                          colorFilter: ColorFilter.mode(
+                            isDarkMode ? colors.ink : colors.surface,
+                            BlendMode.srcIn,
+                          ),
                         ),
+                        borderColor: isDarkMode ? colors.line : null,
                         onTap: () => context.push('/register/login_with_apple'),
                       ),
                       const SizedBox(height: 35),
@@ -543,8 +554,8 @@ class _AuthScreenState extends State<AuthScreen> {
                               _isLogin
                                   ? 'auth.switches.to_register'.tr()
                                   : 'auth.switches.to_login'.tr(),
-                              style: const TextStyle(
-                                color: Color(0xFF526C30),
+                              style: TextStyle(
+                                color: colors.green,
                                 fontSize: 13,
                                 fontWeight: .w600,
                               ),

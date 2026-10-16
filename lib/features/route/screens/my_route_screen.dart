@@ -23,7 +23,11 @@ class MyRouteScreen extends StatefulWidget {
   State<MyRouteScreen> createState() => _MyRouteScreenState();
 }
 
-class _MyRouteScreenState extends State<MyRouteScreen> {
+class _MyRouteScreenState extends State<MyRouteScreen>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
   @override
   void initState() {
     super.initState();
@@ -52,6 +56,10 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(
+      context,
+    ); // Bắt buộc phải gọi khi dùng AutomaticKeepAliveClientMixin
+
     final colors = Theme.of(context).extension<AppColors>() ?? AppColors.light;
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 

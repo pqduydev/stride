@@ -78,13 +78,6 @@ class _ReminderSettingsScreenState extends State<ReminderSettingsScreen> {
           }
         },
         builder: (context, state) {
-          if (state.status == ReminderStatus.initial ||
-              state.status == ReminderStatus.loading) {
-            return Center(
-              child: CircularProgressIndicator(color: colors.green),
-            );
-          }
-
           final cubit = context.read<ReminderCubit>();
           final settings = state.settings;
           final next = ReminderTimeCalculator.nextReminder(

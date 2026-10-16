@@ -20,8 +20,9 @@ class MainNavigationBarScreen extends StatefulWidget {
 
 class _MainNavigationBarScreenState extends State<MainNavigationBarScreen> {
   late int _selectedIndex;
+  late final PageController _pageController;
 
-  List<Widget> get _pages => const [
+  final List<Widget> _pages = const [
     MyRouteScreen(),
     AppointmentScreen(),
     DiaryScreen(),
@@ -31,6 +32,7 @@ class _MainNavigationBarScreenState extends State<MainNavigationBarScreen> {
   @override
   void initState() {
     _selectedIndex = 0;
+    _pageController = PageController(initialPage: _selectedIndex);
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -41,10 +43,18 @@ class _MainNavigationBarScreenState extends State<MainNavigationBarScreen> {
     });
   }
 
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
   void _onTabTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
+    // Chuyển trang mượt mà hoặc dùng jumpToPage nếu không muốn hiệu ứng cuộn ngang
+    _pageController.jumpToPage(index);
   }
 
   Widget _buildCuttomIconSvg({
@@ -98,7 +108,12 @@ class _MainNavigationBarScreenState extends State<MainNavigationBarScreen> {
     ];
 
     return Scaffold(
-      body: IndexedStack(index: _selectedIndex, children: _pages),
+      // Sử dụng PageView để AutomaticKeepAliveClientMixin của MyRouteScreen có hiệu lực
+      body: PageView(
+        controller: _pageController,
+        physics: const NeverScrollableScrollPhysics(),
+        children: _pages,
+      ),
       bottomNavigationBar: SizedBox(
         height: 74,
         child: BottomNavigationBar(

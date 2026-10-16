@@ -98,7 +98,7 @@ class _MainNavigationBarScreenState extends State<MainNavigationBarScreen> {
     ];
 
     return Scaffold(
-      body: _pages[_selectedIndex],
+      body: IndexedStack(index: _selectedIndex, children: _pages),
       bottomNavigationBar: SizedBox(
         height: 74,
         child: BottomNavigationBar(

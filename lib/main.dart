@@ -172,7 +172,7 @@ class _MyAppState extends State<MyApp> {
           BlocProvider.value(value: _themeCubit),
         ],
         child: ToastificationWrapper(
-          config: const ToastificationConfig(maxToastLimit: 3),
+          config: const ToastificationConfig(maxToastLimit: 1),
           // Lắng nghe trạng thái ThemeMode để rebuild toàn bộ MaterialApp ngay lập tức
           child: BlocBuilder<ThemeCubit, ThemeMode>(
             builder: (context, themeMode) {

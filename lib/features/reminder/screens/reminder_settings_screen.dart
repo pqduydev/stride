@@ -59,19 +59,17 @@ class _ReminderSettingsScreenState extends State<ReminderSettingsScreen> {
           if (state.status == ReminderStatus.saved) {
             final message =
                 state.successMessage ?? 'reminder_settings.success_save'.tr();
-            final isDisabledAction =
-                message == "Đã tắt nhắc hẹn" ||
+
+            // Kiểm tra xem có phải hành động tắt nhắc hẹn không (hỗ trợ cả tiếng Việt & tiếng Anh)
+            final isDisableAction =
+                message == 'reminder_cubit.disabled'.tr() ||
                 message == 'reminder_settings.success_disable'.tr();
 
-            isDisabledAction
-                ? AppToast.showWarning(
-                    context,
-                    'reminder_settings.success_disable'.tr(),
-                  )
-                : AppToast.showSuccess(
-                    context,
-                    'reminder_settings.success_save'.tr(),
-                  );
+            if (isDisableAction) {
+              AppToast.showWarning(context, message);
+            } else {
+              AppToast.showSuccess(context, message); // Sẽ hiển thị chính xác "Đã bật nhắc hẹn" hoặc "Lưu nhắc hẹn thành công"
+            }
           } else if (state.status == ReminderStatus.failure &&
               state.errorMessage != null) {
             AppToast.showError(context, state.errorMessage!);
@@ -132,7 +130,7 @@ class _ReminderSettingsScreenState extends State<ReminderSettingsScreen> {
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     child: Text(
                       '${_two(settings.hour)} : ${_two(settings.minute)}',
-                      textAlign: TextAlign.center,
+                      textAlign: .center,
                       style: TextStyle(
                         fontSize: 48,
                         fontWeight: .w700,

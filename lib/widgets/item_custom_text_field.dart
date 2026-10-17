@@ -69,7 +69,7 @@ class _ItemCustomTextFieldState extends State<ItemCustomTextField> {
 
         return Column(
           crossAxisAlignment: .start,
-          mainAxisSize: MainAxisSize.min,
+          mainAxisSize: .min,
           children: [
             GestureDetector(
               onTap: () => _focusNode.requestFocus(),

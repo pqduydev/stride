@@ -1,9 +1,12 @@
+import 'dart:ui';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:stride/core/theme/app_colors.dart';
+import 'package:stride/core/utils/app_toast.dart';
 import 'package:stride/features/auth/auth_cubit/auth_cubit.dart';
 import 'package:stride/features/auth/auth_cubit/auth_state.dart';
 import 'package:stride/widgets/appbar_custom.dart';
@@ -16,176 +19,249 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<AppColors>() ?? AppColors.light;
 
-    return Scaffold(
-      backgroundColor: colors.background,
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(kToolbarHeight),
-        child: AppbarCustom(
-          title: ItemAppBarTitle(data: 'profile.appbar_title'.tr()),
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.only(top: 15, left: 20, right: 20),
-        child: Column(
-          children: [
-            BlocBuilder<AuthCubit, AuthState>(
-              builder: (context, authState) {
-                final user = authState.user;
-                final initials = user?.displayInitials;
-                final name = user?.displayName;
+    return BlocConsumer<AuthCubit, AuthState>(
+      listener: (context, state) {
+        if (state.status == AuthStatus.failure && state.errorMessage != null) {
+          AppToast.showError(context, state.errorMessage!);
+        }
+      },
+      builder: (context, state) {
+        final isLoading = state.status == AuthStatus.loading;
 
-                return Row(
-                  crossAxisAlignment: .center,
+        return Stack(
+          children: [
+            Scaffold(
+              backgroundColor: colors.background,
+              appBar: PreferredSize(
+                preferredSize: const Size.fromHeight(kToolbarHeight),
+                child: AppbarCustom(
+                  title: ItemAppBarTitle(data: 'profile.appbar_title'.tr()),
+                ),
+              ),
+              body: Padding(
+                padding: const EdgeInsets.only(top: 15, left: 20, right: 20),
+                child: Column(
                   children: [
+                    BlocBuilder<AuthCubit, AuthState>(
+                      builder: (context, authState) {
+                        final user = authState.user;
+                        final initials = user?.displayInitials;
+                        final name = user?.displayName;
+
+                        return Row(
+                          crossAxisAlignment: .center,
+                          children: [
+                            Container(
+                              width: 76,
+                              height: 76,
+                              margin: const EdgeInsets.only(right: 20),
+                              alignment: .center,
+                              decoration: BoxDecoration(
+                                color: colors.avatarBackground,
+                                borderRadius: BorderRadius.circular(38),
+                              ),
+                              child: Text(
+                                initials ?? '',
+                                style: TextStyle(
+                                  color: colors.green,
+                                  fontSize: 23,
+                                  fontWeight: .w700,
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: .start,
+                                children: [
+                                  Text(
+                                    name ?? '',
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      color: colors.ink,
+                                      fontSize: 25,
+                                      fontWeight: .w700,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 5),
+                                  Text(
+                                    user?.email ?? '',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      color: colors.muted,
+                                      fontSize: 13,
+                                      fontWeight: .w400,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
                     Container(
-                      width: 76,
-                      height: 76,
-                      margin: const EdgeInsets.only(right: 20),
-                      alignment: .center,
-                      decoration: BoxDecoration(
-                        color: colors.avatarBackground,
-                        borderRadius: BorderRadius.circular(38),
+                      height: 85,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 15,
                       ),
-                      child: Text(
-                        initials ?? '',
-                        style: TextStyle(
-                          color: colors.green,
-                          fontSize: 23,
-                          fontWeight: .w700,
+                      margin: const EdgeInsets.only(top: 30),
+                      decoration: BoxDecoration(
+                        color: colors.surface,
+                        border: Border.all(
+                          color: colors.line,
+                          width: 1,
+                          style: BorderStyle.solid,
+                        ),
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      child: Row(
+                        crossAxisAlignment: .start,
+                        children: [
+                          Container(
+                            width: 37,
+                            height: 37,
+                            margin: const EdgeInsets.only(right: 10),
+                            alignment: .center,
+                            decoration: BoxDecoration(
+                              color: colors.avatarBackground,
+                              borderRadius: BorderRadius.circular(11),
+                            ),
+                            child: SvgPicture.asset(
+                              'assets/icons/ic_user.svg',
+                              width: 19,
+                              height: 19,
+                            ),
+                          ),
+                          Expanded(
+                            child: InkWell(
+                              onTap: () =>
+                                  context.push('/profile/personal_information'),
+                              child: Row(
+                                mainAxisAlignment: .spaceBetween,
+                                children: [
+                                  Column(
+                                    crossAxisAlignment: .start,
+                                    children: [
+                                      Text(
+                                        'profile.personal_info_title'.tr(),
+                                        style: TextStyle(
+                                          color: colors.ink,
+                                          fontSize: 15,
+                                          fontWeight: .w600,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 5),
+                                      Text(
+                                        'profile.personal_info_subtitle'.tr(),
+                                        style: TextStyle(
+                                          color: colors.muted,
+                                          fontSize: 12,
+                                          fontWeight: .w400,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SvgPicture.asset(
+                                    'assets/icons/ic_chevron_right.svg',
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 50),
+                    Center(
+                      child: InkWell(
+                        onTap: () => context.push('/profile/change_password'),
+                        child: Text(
+                          'profile.change_password'.tr(),
+                          style: TextStyle(
+                            color: colors.green,
+                            fontSize: 14,
+                            fontWeight: .w700,
+                          ),
                         ),
                       ),
                     ),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: .start,
-                        children: [
-                          Text(
-                            name ?? '',
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              color: colors.ink,
-                              fontSize: 25,
-                              fontWeight: .w700,
-                            ),
+                    const SizedBox(height: 40),
+                    Center(
+                      child: InkWell(
+                        onTap: isLoading
+                            ? null
+                            : () => context.read<AuthCubit>().logout(),
+                        child: Text(
+                          'profile.logout'.tr(),
+                          style: TextStyle(
+                            color: isLoading ? colors.muted : colors.green,
+                            fontSize: 14,
+                            fontWeight: .w700,
                           ),
-                          const SizedBox(height: 5),
-                          Text(
-                            user?.email ?? '',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              color: colors.muted,
-                              fontSize: 13,
-                              fontWeight: .w400,
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
                     ),
                   ],
-                );
-              },
-            ),
-            Container(
-              height: 85,
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-              margin: const EdgeInsets.only(top: 30),
-              decoration: BoxDecoration(
-                color: colors.surface,
-                border: Border.all(
-                  color: colors.line,
-                  width: 1,
-                  style: BorderStyle.solid,
                 ),
-                borderRadius: BorderRadius.circular(14),
               ),
-              child: Row(
-                crossAxisAlignment: .start,
-                children: [
-                  Container(
-                    width: 37,
-                    height: 37,
-                    margin: const EdgeInsets.only(right: 10),
-                    alignment: .center,
-                    decoration: BoxDecoration(
-                      color: colors.avatarBackground,
-                      borderRadius: BorderRadius.circular(11),
-                    ),
-                    child: SvgPicture.asset(
-                      'assets/icons/ic_user.svg',
-                      width: 19,
-                      height: 19,
-                    ),
+            ),
+
+            // Lớp Overlay mờ + Loading Card
+            if (isLoading) ...[
+              BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+                child: const ModalBarrier(
+                  dismissible:
+                      false, // Ngăn người dùng chạm ra ngoài để đóng overlay
+                  color: Colors.black12,
+                ),
+              ),
+              Center(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 32,
+                    vertical: 24,
                   ),
-                  Expanded(
-                    child: InkWell(
-                      onTap: () =>
-                          context.push('/profile/personal_information'),
-                      child: Row(
-                        mainAxisAlignment: .spaceBetween,
-                        children: [
-                          Column(
-                            crossAxisAlignment: .start,
-                            children: [
-                              Text(
-                                'profile.personal_info_title'.tr(),
-                                style: TextStyle(
-                                  color: colors.ink,
-                                  fontSize: 15,
-                                  fontWeight: .w600,
-                                ),
-                              ),
-                              const SizedBox(height: 5),
-                              Text(
-                                'profile.personal_info_subtitle'.tr(),
-                                style: TextStyle(
-                                  color: colors.muted,
-                                  fontSize: 12,
-                                  fontWeight: .w400,
-                                ),
-                              ),
-                            ],
-                          ),
-                          SvgPicture.asset('assets/icons/ic_chevron_right.svg'),
-                        ],
+                  decoration: BoxDecoration(
+                    color: colors.surface,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: colors.line, width: 1),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.12),
+                        blurRadius: 20,
+                        offset: const Offset(0, 8),
                       ),
-                    ),
+                    ],
                   ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 50),
-            Center(
-              child: InkWell(
-                onTap: () => context.push('/profile/change_password'),
-                child: Text(
-                  'profile.change_password'.tr(),
-                  style: TextStyle(
-                    color: colors.green,
-                    fontSize: 14,
-                    fontWeight: .w700,
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 40),
-            Center(
-              child: InkWell(
-                onTap: () => context.read<AuthCubit>().logout(),
-                child: Text(
-                  'profile.logout'.tr(),
-                  style: TextStyle(
-                    color: colors.green,
-                    fontSize: 14,
-                    fontWeight: .w700,
+                  child: Column(
+                    mainAxisSize: .min,
+                    children: [
+                      CircularProgressIndicator(
+                        color: colors.green,
+                        strokeWidth: 3,
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'profile.logging_out'.tr().toUpperCase(),
+                        style: TextStyle(
+                          color: colors.ink,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                          decoration: TextDecoration.none,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
-            ),
+            ],
           ],
-        ),
-      ),
+        );
+      },
     );
   }
 }

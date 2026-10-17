@@ -120,7 +120,7 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
           child: Padding(
             padding: const EdgeInsets.all(20.0),
             child: Column(
-              mainAxisSize: MainAxisSize.min,
+              mainAxisSize: .min,
               children: [
                 Container(
                   width: 48,
@@ -143,11 +143,11 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
                     fontWeight: .w700,
                     color: colors.ink,
                   ),
-                  textAlign: TextAlign.center,
+                  textAlign: .center,
                 ),
                 const SizedBox(height: 8),
                 RichText(
-                  textAlign: TextAlign.center,
+                  textAlign: .center,
                   text: TextSpan(
                     style: TextStyle(
                       fontSize: 14,
@@ -533,7 +533,7 @@ class _RouteCreateScreenState extends State<RouteCreateScreen> {
               return Padding(
                 padding: const EdgeInsets.fromLTRB(20, 20, 20, 30),
                 child: Column(
-                  mainAxisSize: MainAxisSize.min,
+                  mainAxisSize: .min,
                   children: [
                     if (isEditMode) ...[
                       ItemBottomButton(

@@ -76,7 +76,7 @@ class LanguageSwitchButton extends StatelessWidget {
             ),
           ),
           child: Row(
-            mainAxisSize: MainAxisSize.min,
+            mainAxisSize: .min,
             mainAxisAlignment: .center,
             children: [
               Image.asset(

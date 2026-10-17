@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:stride/core/theme/app_colors.dart';
 import 'package:stride/core/theme/theme_cubit.dart';
+import 'package:stride/core/utils/app_toast.dart';
 import 'package:stride/features/auth/auth_cubit/auth_cubit.dart';
 import 'package:stride/features/auth/auth_cubit/auth_state.dart';
 import 'package:stride/features/reminder/reminder_cubit/reminder_cubit.dart';
@@ -63,12 +64,31 @@ class _MyRouteScreenState extends State<MyRouteScreen>
     final colors = Theme.of(context).extension<AppColors>() ?? AppColors.light;
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
-    return BlocListener<AuthCubit, AuthState>(
-      listener: (context, authState) {
-        if (authState.status == AuthStatus.authenticated) {
-          context.read<RouteCubit>().loadRoutes();
-        }
-      },
+    return MultiBlocListener(
+      listeners: [
+        // 1. Lắng nghe AuthCubit hiện tại của bạn
+        BlocListener<AuthCubit, AuthState>(
+          listener: (context, authState) {
+            if (authState.status == AuthStatus.authenticated) {
+              context.read<RouteCubit>().loadRoutes();
+            }
+          },
+        ),
+
+        // 2. Lắng nghe ReminderCubit để ném toast
+        BlocListener<ReminderCubit, ReminderState>(
+          listenWhen: (previous, current) =>
+              previous.settings.enabled != current.settings.enabled,
+          listener: (context, reminderState) {
+            final isEnabled = reminderState.settings.enabled;
+            if (isEnabled) {
+              AppToast.showSuccess(context, 'reminder_cubit.enabled'.tr());
+            } else {
+              AppToast.showWarning(context, 'reminder_cubit.disabled'.tr());
+            }
+          },
+        ),
+      ],
       child: Scaffold(
         backgroundColor: colors.background,
         appBar: AppBar(
@@ -258,7 +278,7 @@ class _MyRouteScreenState extends State<MyRouteScreen>
                                 Text(
                                   routeState.errorMessage ??
                                       'my_route.error_occurred'.tr(),
-                                  textAlign: TextAlign.center,
+                                  textAlign: .center,
                                   style: TextStyle(
                                     color: colors.error,
                                     fontSize: 14,

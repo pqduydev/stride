@@ -363,7 +363,8 @@
     "personal_info_title": "Personal Information",
     "personal_info_subtitle": "Name, contact, body metrics, ...",
     "change_password": "Change Password",
-    "logout": "Log Out"
+    "logout": "Log Out",
+    "logging_out": "Logging out..."
   },
   "email_verification": {
     "appbar_title": "Your Data",

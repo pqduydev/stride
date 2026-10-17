@@ -14,71 +14,16 @@ class AppToast {
     toastification.showCustom(
       context: context,
       autoCloseDuration: const Duration(seconds: 3),
-      alignment: .topRight,
-      animationDuration: const Duration(milliseconds: 300),
+      alignment: .topCenter, // Căn giữa ở đỉnh màn hình
+      animationDuration: const Duration(milliseconds: 500),
       builder: (context, holder) {
-        return Row(
-          mainAxisAlignment: .end,
-          children: [
-            ConstrainedBox(
-              constraints: const BoxConstraints(
-                maxWidth: 300,
-                minHeight: 50, // Chiều cao tối thiểu tương đương 2 dòng
-              ),
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 8,
-                ),
-                margin: const EdgeInsets.only(top: 5, right: 20),
-                decoration: BoxDecoration(
-                  color: backgroundColor,
-                  borderRadius: BorderRadius.circular(10.0),
-                  boxShadow: [
-                    BoxShadow(
-                      color: colors.background.withValues(alpha: 0.1),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  mainAxisSize: .min,
-                  crossAxisAlignment:
-                      .center, // Căn giữa icon và text theo chiều dọc
-                  children: [
-                    Icon(iconData, color: primaryColor, size: 20),
-                    const SizedBox(width: 8),
-                    // Expanded giúp text tự động xuống dòng và co giãn chiều cao khi dài ra
-                    Expanded(
-                      child: Text(
-                        message,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 13,
-                          color: primaryColor,
-                          height: 1.3,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-
-                    GestureDetector(
-                      onTap: () => toastification.dismiss(holder),
-                      child: Padding(
-                        padding: const EdgeInsets.all(2.0),
-                        child: Icon(
-                          Icons.close,
-                          color: primaryColor.withValues(alpha: 0.7),
-                          size: 16,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
+        return _SwipeableToastContainer(
+          holder: holder,
+          backgroundColor: backgroundColor,
+          primaryColor: primaryColor,
+          iconData: iconData,
+          message: message,
+          colors: colors,
         );
       },
     );
@@ -125,6 +70,107 @@ class AppToast {
       primaryColor: colors.info,
       backgroundColor: colors.infoContainer,
       iconData: Icons.info,
+    );
+  }
+}
+
+/// Widget hỗ trợ xử lý cử chỉ vuốt trái, phải, lên để tắt toast
+class _SwipeableToastContainer extends StatefulWidget {
+  final ToastificationItem holder;
+  final Color backgroundColor;
+  final Color primaryColor;
+  final IconData iconData;
+  final String message;
+  final AppColors colors;
+
+  const _SwipeableToastContainer({
+    required this.holder,
+    required this.backgroundColor,
+    required this.primaryColor,
+    required this.iconData,
+    required this.message,
+    required this.colors,
+  });
+
+  @override
+  State<_SwipeableToastContainer> createState() =>
+      _SwipeableToastContainerState();
+}
+
+class _SwipeableToastContainerState extends State<_SwipeableToastContainer> {
+  Offset _offset = Offset.zero;
+  double _opacity = 1.0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Transform.translate(
+      offset: _offset,
+      child: Opacity(
+        opacity: _opacity,
+        child: GestureDetector(
+          // Lắng nghe cử chỉ chạm
+          onPanUpdate: (details) {
+            setState(() {
+              // Chỉ cho phép dịch chuyển theo chiều ngang (trái/phải), khóa cứng chiều dọc bằng 0
+              double newDx = _offset.dx + details.delta.dx;
+              _offset = Offset(newDx, 0);
+
+              // Tính toán độ mờ dựa trên khoảng cách dịch chuyển ngang
+              double distance = _offset.dx.abs();
+              _opacity = (1.0 - (distance / 150)).clamp(0.0, 1.0);
+            });
+          },
+          onPanEnd: (details) {
+            // Chỉ kiểm tra điều kiện vuốt ngang (trái hoặc phải)
+            if (_offset.dx.abs() > 70 ||
+                details.velocity.pixelsPerSecond.dx.abs() > 400) {
+              // Gọi hàm đóng toast của thư viện toastification
+              toastification.dismiss(widget.holder);
+            } else {
+              // Trả về vị trí cũ nếu chưa đủ điều kiện dismiss
+              setState(() {
+                _offset = Offset.zero;
+                _opacity = 1.0;
+              });
+            }
+          },
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: 420, minHeight: 50),
+            margin: const EdgeInsets.only(top: 0, left: 16, right: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            decoration: BoxDecoration(
+              color: widget.backgroundColor,
+              borderRadius: BorderRadius.circular(12.0),
+              boxShadow: [
+                BoxShadow(
+                  color: widget.colors.background.withValues(alpha: 0.15),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Row(
+              mainAxisSize: .min,
+              crossAxisAlignment: .center,
+              children: [
+                Icon(widget.iconData, color: widget.primaryColor, size: 20),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    widget.message,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 13,
+                      color: widget.primaryColor,
+                      height: 1.3,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

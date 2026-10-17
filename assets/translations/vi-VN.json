@@ -363,7 +363,8 @@
     "personal_info_title": "Thông tin cá nhân",
     "personal_info_subtitle": "Tên, liên hệ, chỉ số cơ thể, ...",
     "change_password": "Đổi mật khẩu",
-    "logout": "Đăng xuất"
+    "logout": "Đăng xuất",
+    "logging_out": "Đang đăng xuất..."
   },
   "email_verification": {
     "appbar_title": "Dữ liệu của bạn",

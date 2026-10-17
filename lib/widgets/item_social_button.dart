@@ -49,7 +49,7 @@ class ItemSocialButton extends StatelessWidget {
                 Expanded(
                   child: Text(
                     text,
-                    textAlign: TextAlign.center,
+                    textAlign: .center,
                     style: TextStyle(
                       color: resolvedTextColor,
                       fontSize: 15,
